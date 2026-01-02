@@ -1,0 +1,187 @@
+{
+  "lastUpdated": "2025-12-26T06:22:08.030Z",
+  "source": "Basketball Reference",
+  "salaryCap": 154647000,
+  "teams": [
+    {
+      "rank": 1,
+      "slug": "CLE",
+      "name": "Cleveland Cavaliers",
+      "payroll": 231130835
+    },
+    {
+      "rank": 2,
+      "slug": "PHO",
+      "name": "Phoenix Suns",
+      "payroll": 222204148
+    },
+    {
+      "rank": 3,
+      "slug": "MIL",
+      "name": "Milwaukee Bucks",
+      "payroll": 215430892
+    },
+    {
+      "rank": 4,
+      "slug": "NYK",
+      "name": "New York Knicks",
+      "payroll": 211144602
+    },
+    {
+      "rank": 5,
+      "slug": "GSW",
+      "name": "Golden State Warriors",
+      "payroll": 205341467
+    },
+    {
+      "rank": 6,
+      "slug": "DAL",
+      "name": "Dallas Mavericks",
+      "payroll": 204748448
+    },
+    {
+      "rank": 7,
+      "slug": "HOU",
+      "name": "Houston Rockets",
+      "payroll": 202689411
+    },
+    {
+      "rank": 8,
+      "slug": "MIN",
+      "name": "Minnesota Timberwolves",
+      "payroll": 202580978
+    },
+    {
+      "rank": 9,
+      "slug": "BOS",
+      "name": "Boston Celtics",
+      "payroll": 202252224
+    },
+    {
+      "rank": 10,
+      "slug": "LAL",
+      "name": "Los Angeles Lakers",
+      "payroll": 197820805
+    },
+    {
+      "rank": 11,
+      "slug": "PHI",
+      "name": "Philadelphia 76ers",
+      "payroll": 196855404
+    },
+    {
+      "rank": 12,
+      "slug": "POR",
+      "name": "Portland Trail Blazers",
+      "payroll": 196375648
+    },
+    {
+      "rank": 13,
+      "slug": "MIA",
+      "name": "Miami Heat",
+      "payroll": 195940117
+    },
+    {
+      "rank": 14,
+      "slug": "LAC",
+      "name": "Los Angeles Clippers",
+      "payroll": 194667024
+    },
+    {
+      "rank": 15,
+      "slug": "ORL",
+      "name": "Orlando Magic",
+      "payroll": 193471232
+    },
+    {
+      "rank": 16,
+      "slug": "TOR",
+      "name": "Toronto Raptors",
+      "payroll": 188430978
+    },
+    {
+      "rank": 17,
+      "slug": "DEN",
+      "name": "Denver Nuggets",
+      "payroll": 188297059
+    },
+    {
+      "rank": 18,
+      "slug": "OKC",
+      "name": "Oklahoma City Thunder",
+      "payroll": 186877564
+    },
+    {
+      "rank": 19,
+      "slug": "NOP",
+      "name": "New Orleans Pelicans",
+      "payroll": 185992845
+    },
+    {
+      "rank": 20,
+      "slug": "SAC",
+      "name": "Sacramento Kings",
+      "payroll": 184484407
+    },
+    {
+      "rank": 21,
+      "slug": "SAS",
+      "name": "San Antonio Spurs",
+      "payroll": 182234835
+    },
+    {
+      "rank": 22,
+      "slug": "IND",
+      "name": "Indiana Pacers",
+      "payroll": 181310632
+    },
+    {
+      "rank": 23,
+      "slug": "MEM",
+      "name": "Memphis Grizzlies",
+      "payroll": 181039285
+    },
+    {
+      "rank": 24,
+      "slug": "ATL",
+      "name": "Atlanta Hawks",
+      "payroll": 179928695
+    },
+    {
+      "rank": 25,
+      "slug": "CHI",
+      "name": "Chicago Bulls",
+      "payroll": 174275854
+    },
+    {
+      "rank": 26,
+      "slug": "CHO",
+      "name": "Charlotte Hornets",
+      "payroll": 171151713
+    },
+    {
+      "rank": 27,
+      "slug": "DET",
+      "name": "Detroit Pistons",
+      "payroll": 168792037
+    },
+    {
+      "rank": 28,
+      "slug": "WAS",
+      "name": "Washington Wizards",
+      "payroll": 164017184
+    },
+    {
+      "rank": 29,
+      "slug": "UTA",
+      "name": "Utah Jazz",
+      "payroll": 147719904
+    },
+    {
+      "rank": 30,
+      "slug": "BRK",
+      "name": "Brooklyn Nets",
+      "payroll": 143305333
+    }
+  ]
+}

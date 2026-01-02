@@ -1,0 +1,62 @@
+name: Update Salary Cap Data
+
+on:
+  schedule:
+    # Run daily at 6 AM UTC (salaries don't change frequently)
+    - cron: '0 6 * * *'
+  workflow_dispatch: # Allows manual trigger from GitHub UI
+
+permissions:
+  contents: write
+
+jobs:
+  update-salary-data:
+    runs-on: ubuntu-latest
+    concurrency:
+      group: update-salary-data
+      cancel-in-progress: false
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Update salary cap data from Basketball Reference
+        id: update-data
+        continue-on-error: true
+        run: npm run update-salary-data
+
+      - name: Retry on failure
+        if: steps.update-data.outcome == 'failure'
+        run: |
+          echo "First attempt failed, waiting 30 seconds before retry..."
+          sleep 30
+          npm run update-salary-data
+
+      - name: Check for changes
+        id: git-check
+        run: |
+          git diff --exit-code public/data/salary-cap/ || echo "changed=true" >> $GITHUB_OUTPUT
+
+      - name: Commit and push if changed
+        if: steps.git-check.outputs.changed == 'true'
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add public/data/salary-cap/
+          git commit -m "Update salary cap data from Basketball Reference [skip ci]"
+          git pull --rebase origin main || true
+          git push origin main
+
+      - name: No changes
+        if: steps.git-check.outputs.changed != 'true'
+        run: echo "Salary cap data unchanged, no commit needed"

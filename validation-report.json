@@ -1,0 +1,495 @@
+{
+  "timestamp": "2025-12-03T07:40:21.332Z",
+  "summary": {
+    "teamsChecked": 30,
+    "errors": 44,
+    "warnings": 0,
+    "infos": 0
+  },
+  "issues": [
+    {
+      "severity": "error",
+      "teamId": "atlanta-hawks",
+      "category": "bidirectional-mismatch",
+      "message": "Outgoing pick to atlanta-hawks not found in their incoming picks",
+      "details": {
+        "year": 2026,
+        "round": 1,
+        "recipientTeamId": "atlanta-hawks"
+      }
+    },
+    {
+      "severity": "error",
+      "teamId": "atlanta-hawks",
+      "category": "bidirectional-mismatch",
+      "message": "Outgoing pick to atlanta-hawks not found in their incoming picks",
+      "details": {
+        "year": 2026,
+        "round": 2,
+        "recipientTeamId": "atlanta-hawks"
+      }
+    },
+    {
+      "severity": "error",
+      "teamId": "atlanta-hawks",
+      "category": "bidirectional-mismatch",
+      "message": "Outgoing pick to new-orleans-pelicans not found in their incoming picks",
+      "details": {
+        "year": 2027,
+        "round": 1,
+        "recipientTeamId": "new-orleans-pelicans"
+      }
+    },
+    {
+      "severity": "error",
+      "teamId": "atlanta-hawks",
+      "category": "bidirectional-mismatch",
+      "message": "Outgoing pick to utah-jazz not found in their incoming picks",
+      "details": {
+        "year": 2028,
+        "round": 1,
+        "recipientTeamId": "utah-jazz"
+      }
+    },
+    {
+      "severity": "error",
+      "teamId": "atlanta-hawks",
+      "category": "bidirectional-mismatch",
+      "message": "Outgoing pick to oklahoma-city-thunder not found in their incoming picks",
+      "details": {
+        "year": 2029,
+        "round": 2,
+        "recipientTeamId": "oklahoma-city-thunder"
+      }
+    },
+    {
+      "severity": "error",
+      "teamId": "atlanta-hawks",
+      "category": "bidirectional-mismatch",
+      "message": "Outgoing pick to atlanta-hawks not found in their incoming picks",
+      "details": {
+        "year": 2031,
+        "round": 2,
+        "recipientTeamId": "atlanta-hawks"
+      }
+    },
+    {
+      "severity": "error",
+      "teamId": "boston-celtics",
+      "category": "bidirectional-mismatch",
+      "message": "Outgoing pick to atlanta-hawks not found in their incoming picks",
+      "details": {
+        "year": 2026,
+        "round": 2,
+        "recipientTeamId": "atlanta-hawks"
+      }
+    },
+    {
+      "severity": "error",
+      "teamId": "boston-celtics",
+      "category": "bidirectional-mismatch",
+      "message": "Outgoing pick to oklahoma-city-thunder not found in their incoming picks",
+      "details": {
+        "year": 2029,
+        "round": 2,
+        "recipientTeamId": "oklahoma-city-thunder"
+      }
+    },
+    {
+      "severity": "error",
+      "teamId": "brooklyn-nets",
+      "category": "bidirectional-mismatch",
+      "message": "Outgoing pick to houston-rockets not found in their incoming picks",
+      "details": {
+        "year": 2029,
+        "round": 1,
+        "recipientTeamId": "houston-rockets"
+      }
+    },
+    {
+      "severity": "error",
+      "teamId": "charlotte-hornets",
+      "category": "bidirectional-mismatch",
+      "message": "Outgoing pick to washington-wizards not found in their incoming picks",
+      "details": {
+        "year": 2026,
+        "round": 1,
+        "recipientTeamId": "washington-wizards"
+      }
+    },
+    {
+      "severity": "error",
+      "teamId": "denver-nuggets",
+      "category": "bidirectional-mismatch",
+      "message": "Outgoing pick to oklahoma-city-thunder not found in their incoming picks",
+      "details": {
+        "year": 2030,
+        "round": 2,
+        "recipientTeamId": "oklahoma-city-thunder"
+      }
+    },
+    {
+      "severity": "error",
+      "teamId": "detroit-pistons",
+      "category": "bidirectional-mismatch",
+      "message": "Outgoing pick to minnesota-timberwolves not found in their incoming picks",
+      "details": {
+        "year": 2031,
+        "round": 2,
+        "recipientTeamId": "minnesota-timberwolves"
+      }
+    },
+    {
+      "severity": "error",
+      "teamId": "golden-state-warriors",
+      "category": "bidirectional-mismatch",
+      "message": "Outgoing pick to memphis-grizzlies not found in their incoming picks",
+      "details": {
+        "year": 2032,
+        "round": 2,
+        "recipientTeamId": "memphis-grizzlies"
+      }
+    },
+    {
+      "severity": "error",
+      "teamId": "houston-rockets",
+      "category": "bidirectional-mismatch",
+      "message": "Outgoing pick to los-angeles-clippers not found in their incoming picks",
+      "details": {
+        "year": 2026,
+        "round": 1,
+        "recipientTeamId": "los-angeles-clippers"
+      }
+    },
+    {
+      "severity": "error",
+      "teamId": "houston-rockets",
+      "category": "bidirectional-mismatch",
+      "message": "Outgoing pick to houston-rockets not found in their incoming picks",
+      "details": {
+        "year": 2027,
+        "round": 1,
+        "recipientTeamId": "houston-rockets"
+      }
+    },
+    {
+      "severity": "error",
+      "teamId": "houston-rockets",
+      "category": "bidirectional-mismatch",
+      "message": "Outgoing pick to houston-rockets not found in their incoming picks",
+      "details": {
+        "year": 2027,
+        "round": 2,
+        "recipientTeamId": "houston-rockets"
+      }
+    },
+    {
+      "severity": "error",
+      "teamId": "houston-rockets",
+      "category": "bidirectional-mismatch",
+      "message": "Outgoing pick to houston-rockets not found in their incoming picks",
+      "details": {
+        "year": 2029,
+        "round": 1,
+        "recipientTeamId": "houston-rockets"
+      }
+    },
+    {
+      "severity": "error",
+      "teamId": "houston-rockets",
+      "category": "bidirectional-mismatch",
+      "message": "Outgoing pick to oklahoma-city-thunder not found in their incoming picks",
+      "details": {
+        "year": 2030,
+        "round": 2,
+        "recipientTeamId": "oklahoma-city-thunder"
+      }
+    },
+    {
+      "severity": "error",
+      "teamId": "indiana-pacers",
+      "category": "bidirectional-mismatch",
+      "message": "Outgoing pick to atlanta-hawks not found in their incoming picks",
+      "details": {
+        "year": 2026,
+        "round": 2,
+        "recipientTeamId": "atlanta-hawks"
+      }
+    },
+    {
+      "severity": "error",
+      "teamId": "memphis-grizzlies",
+      "category": "bidirectional-mismatch",
+      "message": "Outgoing pick to boston-celtics not found in their incoming picks",
+      "details": {
+        "year": 2027,
+        "round": 2,
+        "recipientTeamId": "boston-celtics"
+      }
+    },
+    {
+      "severity": "error",
+      "teamId": "memphis-grizzlies",
+      "category": "bidirectional-mismatch",
+      "message": "Outgoing pick to atlanta-hawks not found in their incoming picks",
+      "details": {
+        "year": 2028,
+        "round": 2,
+        "recipientTeamId": "atlanta-hawks"
+      }
+    },
+    {
+      "severity": "error",
+      "teamId": "memphis-grizzlies",
+      "category": "bidirectional-mismatch",
+      "message": "Outgoing pick to washington-wizards not found in their incoming picks",
+      "details": {
+        "year": 2030,
+        "round": 1,
+        "recipientTeamId": "washington-wizards"
+      }
+    },
+    {
+      "severity": "error",
+      "teamId": "memphis-grizzlies",
+      "category": "bidirectional-mismatch",
+      "message": "Outgoing pick to dallas-mavericks not found in their incoming picks",
+      "details": {
+        "year": 2030,
+        "round": 2,
+        "recipientTeamId": "dallas-mavericks"
+      }
+    },
+    {
+      "severity": "error",
+      "teamId": "memphis-grizzlies",
+      "category": "bidirectional-mismatch",
+      "message": "Outgoing pick to washington-wizards not found in their incoming picks",
+      "details": {
+        "year": 2031,
+        "round": 2,
+        "recipientTeamId": "washington-wizards"
+      }
+    },
+    {
+      "severity": "error",
+      "teamId": "miami-heat",
+      "category": "bidirectional-mismatch",
+      "message": "Outgoing pick to atlanta-hawks not found in their incoming picks",
+      "details": {
+        "year": 2026,
+        "round": 2,
+        "recipientTeamId": "atlanta-hawks"
+      }
+    },
+    {
+      "severity": "error",
+      "teamId": "milwaukee-bucks",
+      "category": "bidirectional-mismatch",
+      "message": "Outgoing pick to atlanta-hawks not found in their incoming picks",
+      "details": {
+        "year": 2026,
+        "round": 1,
+        "recipientTeamId": "atlanta-hawks"
+      }
+    },
+    {
+      "severity": "error",
+      "teamId": "milwaukee-bucks",
+      "category": "bidirectional-mismatch",
+      "message": "Outgoing pick to boston-celtics not found in their incoming picks",
+      "details": {
+        "year": 2026,
+        "round": 2,
+        "recipientTeamId": "boston-celtics"
+      }
+    },
+    {
+      "severity": "error",
+      "teamId": "minnesota-timberwolves",
+      "category": "bidirectional-mismatch",
+      "message": "Outgoing pick to atlanta-hawks not found in their incoming picks",
+      "details": {
+        "year": 2026,
+        "round": 2,
+        "recipientTeamId": "atlanta-hawks"
+      }
+    },
+    {
+      "severity": "error",
+      "teamId": "new-orleans-pelicans",
+      "category": "bidirectional-mismatch",
+      "message": "Outgoing pick to boston-celtics not found in their incoming picks",
+      "details": {
+        "year": 2026,
+        "round": 2,
+        "recipientTeamId": "boston-celtics"
+      }
+    },
+    {
+      "severity": "error",
+      "teamId": "new-orleans-pelicans",
+      "category": "bidirectional-mismatch",
+      "message": "Outgoing pick to new-orleans-pelicans not found in their incoming picks",
+      "details": {
+        "year": 2027,
+        "round": 1,
+        "recipientTeamId": "new-orleans-pelicans"
+      }
+    },
+    {
+      "severity": "error",
+      "teamId": "new-york-knicks",
+      "category": "bidirectional-mismatch",
+      "message": "Outgoing pick to boston-celtics not found in their incoming picks",
+      "details": {
+        "year": 2026,
+        "round": 2,
+        "recipientTeamId": "boston-celtics"
+      }
+    },
+    {
+      "severity": "error",
+      "teamId": "oklahoma-city-thunder",
+      "category": "bidirectional-mismatch",
+      "message": "Outgoing pick to orlando-magic not found in their incoming picks",
+      "details": {
+        "year": 2031,
+        "round": 2,
+        "recipientTeamId": "orlando-magic"
+      }
+    },
+    {
+      "severity": "error",
+      "teamId": "orlando-magic",
+      "category": "bidirectional-mismatch",
+      "message": "Outgoing pick to orlando-magic not found in their incoming picks",
+      "details": {
+        "year": 2030,
+        "round": 2,
+        "recipientTeamId": "orlando-magic"
+      }
+    },
+    {
+      "severity": "error",
+      "teamId": "orlando-magic",
+      "category": "bidirectional-mismatch",
+      "message": "Outgoing pick to orlando-magic not found in their incoming picks",
+      "details": {
+        "year": 2031,
+        "round": 2,
+        "recipientTeamId": "orlando-magic"
+      }
+    },
+    {
+      "severity": "error",
+      "teamId": "phoenix-suns",
+      "category": "bidirectional-mismatch",
+      "message": "Outgoing pick to houston-rockets not found in their incoming picks",
+      "details": {
+        "year": 2032,
+        "round": 2,
+        "recipientTeamId": "houston-rockets"
+      }
+    },
+    {
+      "severity": "error",
+      "teamId": "portland-trail-blazers",
+      "category": "bidirectional-mismatch",
+      "message": "Outgoing pick to boston-celtics not found in their incoming picks",
+      "details": {
+        "year": 2026,
+        "round": 2,
+        "recipientTeamId": "boston-celtics"
+      }
+    },
+    {
+      "severity": "error",
+      "teamId": "san-antonio-spurs",
+      "category": "bidirectional-mismatch",
+      "message": "Outgoing pick to atlanta-hawks not found in their incoming picks",
+      "details": {
+        "year": 2026,
+        "round": 1,
+        "recipientTeamId": "atlanta-hawks"
+      }
+    },
+    {
+      "severity": "error",
+      "teamId": "san-antonio-spurs",
+      "category": "bidirectional-mismatch",
+      "message": "Outgoing pick to atlanta-hawks not found in their incoming picks",
+      "details": {
+        "year": 2026,
+        "round": 2,
+        "recipientTeamId": "atlanta-hawks"
+      }
+    },
+    {
+      "severity": "error",
+      "teamId": "san-antonio-spurs",
+      "category": "bidirectional-mismatch",
+      "message": "Outgoing pick to san-antonio-spurs not found in their incoming picks",
+      "details": {
+        "year": 2030,
+        "round": 1,
+        "recipientTeamId": "san-antonio-spurs"
+      }
+    },
+    {
+      "severity": "error",
+      "teamId": "washington-wizards",
+      "category": "bidirectional-mismatch",
+      "message": "Outgoing pick to houston-rockets not found in their incoming picks",
+      "details": {
+        "year": 2026,
+        "round": 2,
+        "recipientTeamId": "houston-rockets"
+      }
+    },
+    {
+      "severity": "error",
+      "teamId": "washington-wizards",
+      "category": "bidirectional-mismatch",
+      "message": "Outgoing pick to washington-wizards not found in their incoming picks",
+      "details": {
+        "year": 2028,
+        "round": 1,
+        "recipientTeamId": "washington-wizards"
+      }
+    },
+    {
+      "severity": "error",
+      "teamId": "washington-wizards",
+      "category": "bidirectional-mismatch",
+      "message": "Outgoing pick to portland-trail-blazers not found in their incoming picks",
+      "details": {
+        "year": 2028,
+        "round": 1,
+        "recipientTeamId": "portland-trail-blazers"
+      }
+    },
+    {
+      "severity": "error",
+      "teamId": "washington-wizards",
+      "category": "bidirectional-mismatch",
+      "message": "Outgoing pick to washington-wizards not found in their incoming picks",
+      "details": {
+        "year": 2030,
+        "round": 1,
+        "recipientTeamId": "washington-wizards"
+      }
+    },
+    {
+      "severity": "error",
+      "teamId": "washington-wizards",
+      "category": "bidirectional-mismatch",
+      "message": "Outgoing pick to washington-wizards not found in their incoming picks",
+      "details": {
+        "year": 2031,
+        "round": 2,
+        "recipientTeamId": "washington-wizards"
+      }
+    }
+  ]
+}

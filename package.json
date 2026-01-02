@@ -1,0 +1,38 @@
+{
+  "name": "nfl-hub",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --turbopack",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "analyze": "ANALYZE=true npm run build",
+    "validate-picks": "tsx scripts/validate-draft-picks.ts",
+    "add-pick-ids": "tsx scripts/add-pick-ids.ts",
+    "add-timestamps": "tsx scripts/add-timestamps.ts",
+    "update-draft-order": "node scripts/update-draft-order.js",
+    "update-salary-data": "node scripts/update-salary-data.js",
+    "update-missing-teams": "node scripts/update-missing-teams.js"
+  },
+  "dependencies": {
+    "html2canvas": "^1.4.1",
+    "lucide-react": "^0.555.0",
+    "next": "15.4.10",
+    "react": "19.1.2",
+    "react-dom": "19.1.2",
+    "react-hot-toast": "^2.6.0"
+  },
+  "devDependencies": {
+    "@next/bundle-analyzer": "^16.0.3",
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "15.4.8",
+    "tailwindcss": "^4",
+    "tsx": "^4.21.0",
+    "typescript": "^5"
+  }
+}
