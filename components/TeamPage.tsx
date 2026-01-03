@@ -27,7 +27,6 @@ import ScheduleTab from '@/components/tabs/ScheduleTab';
 import StatsTab from '@/components/tabs/StatsTab';
 import NewsTab from '@/components/tabs/NewsTab';
 import InjuryReportTab from '@/components/tabs/InjuryReportTab';
-import GamesPageSidebar from '@/components/GamesPageSidebar';
 
 interface TeamPageProps {
   team: TeamData;
@@ -445,43 +444,29 @@ function TeamPageContent({ team, initialTab }: TeamPageProps) {
       <CriticalCSS />
       <PerformanceMonitor />
 
-      {/* Mobile sidebar */}
-      <div className="lg:hidden">
-        <GamesPageSidebar isMobile={true} currentTeam={team} currentTab={activeTab} />
-      </div>
+      {/* Main content - No sidebar here, layout.tsx handles it */}
+      <main className="w-full min-w-0 bg-gray-50">
+        <LayoutStabilizer minHeight={200}>
+          <TeamHeroSection
+            team={team}
+            liveRecord={standings?.recordString}
+            liveDivisionRank={standings?.divisionRank}
+            teamStats={teamStats}
+          />
+        </LayoutStabilizer>
+        <NavigationTabs activeTab={activeTab} onTabChange={handleTabChange} team={team} />
 
-      <div className="flex min-h-screen bg-gray-50 overflow-x-hidden">
-        {/* Desktop sidebar - Fixed position */}
-        <div className="hidden lg:block">
-          <div className="fixed top-0 left-0 w-64 h-screen z-10">
-            <GamesPageSidebar isMobile={false} currentTeam={team} currentTab={activeTab} />
+        {/* Raptive Header Ad - Below Tabs */}
+        <div className="w-full bg-white border-b border-gray-200">
+          <div className="container mx-auto px-4 py-4">
+            <div className="raptive-pfn-header-90"></div>
           </div>
         </div>
 
-        {/* Main content - Offset to account for fixed sidebar */}
-        <main className="flex-1 lg:ml-64 min-w-0">
-          <LayoutStabilizer minHeight={200}>
-            <TeamHeroSection
-              team={team}
-              liveRecord={standings?.recordString}
-              liveDivisionRank={standings?.divisionRank}
-              teamStats={teamStats}
-            />
-          </LayoutStabilizer>
-          <NavigationTabs activeTab={activeTab} onTabChange={handleTabChange} team={team} />
-
-          {/* Raptive Header Ad - Below Tabs */}
-          <div className="w-full bg-white border-b border-gray-200">
-            <div className="container mx-auto px-4 py-4">
-              <div className="raptive-pfn-header-90"></div>
-            </div>
-          </div>
-
-          <LayoutStabilizer minHeight={400} className="w-full max-w-none px-4 py-6 pb-24">
-            {renderActiveTab()}
-          </LayoutStabilizer>
-        </main>
-      </div>
+        <LayoutStabilizer minHeight={400} className="w-full max-w-none px-4 py-6 pb-24">
+          {renderActiveTab()}
+        </LayoutStabilizer>
+      </main>
     </>
   );
 }
