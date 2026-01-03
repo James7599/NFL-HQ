@@ -69,7 +69,7 @@ export async function generateMetadata({ params }: PageProps) {
   };
 
   const tabTitle = tabTitles[tab] || 'Team Page';
-  const canonicalUrl = `https://www.profootballnetwork.com/nba-hq/teams/${teamId}/${tab}/`;
+  const canonicalUrl = `https://www.profootballnetwork.com/nfl-hq/teams/${teamId}/${tab}/`;
 
   return {
     title: `${team.fullName} ${tabTitle}`,

@@ -2,7 +2,7 @@ import { MetadataRoute } from 'next'
 import { getAllTeamIds } from '@/data/teams'
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = 'https://www.profootballnetwork.com/nba-hq'
+  const baseUrl = 'https://www.profootballnetwork.com/nfl-hq'
   const teamIds = getAllTeamIds()
   const now = new Date()
   const yesterday = new Date(now)

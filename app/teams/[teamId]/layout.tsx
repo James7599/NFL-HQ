@@ -33,7 +33,7 @@ export default function TeamLayout({
   useEffect(() => {
     async function fetchStandings() {
       try {
-        const response = await fetch('/nba-hq/api/nba/standings?season=2025&level=conference');
+        const response = await fetch('/nfl-hq/api/nfl/standings?season=2025&level=conference');
         if (!response.ok) return;
 
         const data = await response.json();
@@ -50,8 +50,8 @@ export default function TeamLayout({
 
                 setLiveStandings({
                   record: `${apiTeam.wins || 0}-${apiTeam.losses || 0}`,
-                  conferenceRank: confRank ? getOrdinalSuffix(confRank) : team.conferenceRank,
-                  divisionRank: divRank ? getOrdinalSuffix(divRank) : team.divisionRank,
+                  conferenceRank: confRank ? getOrdinalSuffix(confRank) : '0th',
+                  divisionRank: divRank ? getOrdinalSuffix(divRank) : team.divisionRank || '0th',
                 });
                 break;
               }

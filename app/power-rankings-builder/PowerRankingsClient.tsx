@@ -97,7 +97,7 @@ export default function PowerRankingsClient() {
 
     async function fetchStandings() {
       try {
-        const response = await fetch('/nba-hq/api/nba/standings?season=2025&level=conference');
+        const response = await fetch('/nfl-hq/api/nfl/standings?season=2025&level=conference');
         if (!response.ok) throw new Error('Failed to fetch standings');
 
         const data = await response.json();
@@ -168,7 +168,7 @@ export default function PowerRankingsClient() {
         const allTeams = getAllTeams();
         const statsPromises = allTeams.map(async (team) => {
           try {
-            const response = await fetch(`/nba-hq/api/nba/team-stats/${team.id}?season=2025&event=regular`);
+            const response = await fetch(`/nfl-hq/api/nfl/team-stats/${team.id}?season=2025&event=regular`);
             if (!response.ok) return { teamId: team.id, stats: {} };
 
             const data = await response.json();
@@ -345,7 +345,7 @@ export default function PowerRankingsClient() {
       await Promise.all(
         allTeams.map(async (team) => {
           try {
-            const proxyUrl = `/nba-hq/api/proxy-image?url=${encodeURIComponent(team.logoUrl)}`;
+            const proxyUrl = `/nfl-hq/api/proxy-image?url=${encodeURIComponent(team.logoUrl)}`;
             const response = await fetch(proxyUrl);
             if (!response.ok) throw new Error('Failed to fetch logo');
 
@@ -648,7 +648,7 @@ export default function PowerRankingsClient() {
     const footerPadding = 30;
     ctx.fillStyle = '#ffffff';
     ctx.font = '600 16px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
-    ctx.fillText('nba-hq.com/power-rankings', footerPadding, footerY + 38);
+    ctx.fillText('nfl-hq.com/power-rankings', footerPadding, footerY + 38);
 
     // PFSN Logo on the right (square aspect ratio)
     if (pfsnLogoImage) {

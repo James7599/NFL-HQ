@@ -90,7 +90,7 @@ export default function StatsPage() {
       setError(null);
 
       try {
-        const response = await fetch('/nba-hq/api/nba/stat-leaders?season=2025&event=regular&limit=100&includeAllStats=true');
+        const response = await fetch('/nfl-hq/api/nfl/stat-leaders?season=2025&event=regular&limit=100&includeAllStats=true');
 
         if (!response.ok) {
           throw new Error('Failed to fetch stat leaders');

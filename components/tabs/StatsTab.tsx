@@ -70,7 +70,7 @@ export default function StatsTab({ team }: StatsTabProps) {
         setError(null);
 
         const response = await fetch(
-          `/nba-hq/api/nba/team-stats/${team.id}?season=${season}&event=${eventType}`
+          `/nfl-hq/api/nfl/team-stats/${team.id}?season=${season}&event=${eventType}`
         );
 
         if (!response.ok) {

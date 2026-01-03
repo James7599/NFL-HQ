@@ -14,7 +14,7 @@ const PlayerRankingsClient = dynamic(() => import('./PlayerRankingsClient'), {
 });
 
 export const metadata: Metadata = {
-  title: 'NBA Player Rankings Builder | NBA Hub',
+  title: 'NFL Player Rankings Builder | NBA Hub',
   description: 'Create and customize your own NBA player rankings. Rank the best players, download and share your rankings.',
 };
 

@@ -25,22 +25,22 @@ const NBATeamsSidebar: React.FC<NBATeamsSidebarProps> = ({ currentTeam, currentT
   // Function to generate team URL based on current tab
   const getTeamUrl = (teamId: string) => {
     if (currentTab === 'overview') {
-      return `/nba-hq/teams/${teamId}`;
+      return `/nfl-hq/teams/${teamId}`;
     }
-    return `/nba-hq/teams/${teamId}/${currentTab}`;
+    return `/nfl-hq/teams/${teamId}/${currentTab}`;
   };
 
   const nbaTools = [
-    { title: 'NBA Schedule', url: '/nba-hq/schedule', external: false },
-    { title: 'NBA Stat Leaders', url: '/nba-hq/stats', external: false },
-    { title: 'NBA Standings', url: '/nba-hq/standings', external: false },
-    { title: 'NBA Draft Order', url: '/nba-hq/draft-order', external: false },
-    { title: 'NBA Lottery Simulator', url: '/nba-hq/lottery-simulator', external: false },
-    { title: 'NBA Power Rankings Builder', url: '/nba-hq/power-rankings-builder', external: false },
-    { title: 'NBA Player Rankings Builder', url: '/nba-hq/player-rankings-builder', external: false },
-    { title: 'NBA Salary Cap Tracker', url: '/nba-hq/salary-cap-tracker', external: false },
-    { title: 'NBA Playoff Predictor', url: 'https://www.profootballnetwork.com/nba/cta-playoff-predictor-nba/', external: true },
-    { title: 'NBA Mock Draft Simulator', url: 'https://www.profootballnetwork.com/nba-mock-draft-simulator', external: true },
+    { title: 'NFL Schedule', url: '/nfl-hq/schedule', external: false },
+    { title: 'NFL Stat Leaders', url: '/nfl-hq/stats', external: false },
+    { title: 'NFL Standings', url: '/nfl-hq/standings', external: false },
+    { title: 'NFL Draft Order', url: '/nfl-hq/draft-order', external: false },
+    { title: 'NFL Lottery Simulator', url: '/nfl-hq/lottery-simulator', external: false },
+    { title: 'NFL Power Rankings Builder', url: '/nfl-hq/power-rankings-builder', external: false },
+    { title: 'NFL Player Rankings Builder', url: '/nfl-hq/player-rankings-builder', external: false },
+    { title: 'NFL Salary Cap Tracker', url: '/nfl-hq/salary-cap-tracker', external: false },
+    { title: 'NFL Playoff Predictor', url: 'https://www.profootballnetwork.com/nba/cta-playoff-predictor-nba/', external: true },
+    { title: 'NFL Mock Draft Simulator', url: 'https://www.profootballnetwork.com/nba-mock-draft-simulator', external: true },
   ];
 
 
@@ -122,7 +122,7 @@ const NBATeamsSidebar: React.FC<NBATeamsSidebarProps> = ({ currentTeam, currentT
             <div className="px-4 py-2 border-b border-gray-800">
               <div className="grid grid-cols-1 gap-1">
                 <a
-                  href="/nba-hq/"
+                  href="/nfl-hq/"
                   className={`block p-2 rounded text-sm transition-colors ${
                     normalizePath(pathname) === '' || normalizePath(pathname) === '/'
                       ? 'bg-[#0050A0] text-white'
@@ -132,7 +132,7 @@ const NBATeamsSidebar: React.FC<NBATeamsSidebarProps> = ({ currentTeam, currentT
                   <div className="text-xs">Home</div>
                 </a>
                 <a
-                  href="/nba-hq/teams"
+                  href="/nfl-hq/teams"
                   className={`block p-2 rounded text-sm transition-colors ${
                     normalizePath(pathname) === '/teams'
                       ? 'bg-[#0050A0] text-white'
@@ -300,7 +300,7 @@ const NBATeamsSidebar: React.FC<NBATeamsSidebarProps> = ({ currentTeam, currentT
           {/* Home Button */}
           <li>
             <a
-              href="/nba-hq/"
+              href="/nfl-hq/"
               className={`relative flex items-center px-3 py-2 mx-1 rounded-md transition-all duration-200 ${
                 normalizePath(pathname) === '' || normalizePath(pathname) === '/'
                   ? 'bg-[#0050A0] text-white'
@@ -330,7 +330,7 @@ const NBATeamsSidebar: React.FC<NBATeamsSidebarProps> = ({ currentTeam, currentT
           {/* Browse All Teams Button */}
           <li className="mb-4">
             <a
-              href="/nba-hq/teams"
+              href="/nfl-hq/teams"
               className={`relative flex items-center px-3 py-2 mx-1 rounded-md transition-all duration-200 ${
                 normalizePath(pathname) === '/teams'
                   ? 'bg-[#0050A0] text-white'

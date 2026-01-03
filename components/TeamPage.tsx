@@ -35,8 +35,8 @@ interface LiveStandings {
 
 function TeamHeroSection({ team, liveStandings }: { team: TeamData; liveStandings?: LiveStandings }) {
   const record = liveStandings?.record || team.record;
-  const conferenceRank = liveStandings?.conferenceRank || team.conferenceRank;
-  const divisionRank = liveStandings?.divisionRank || team.divisionRank;
+  const conferenceRank = liveStandings?.conferenceRank || '0th';
+  const divisionRank = liveStandings?.divisionRank || '0th';
 
   return (
     <div style={{ backgroundColor: team.primaryColor }} className="text-white pt-[57px] lg:pt-0">
@@ -205,7 +205,7 @@ function TeamPageContent({ team, initialTab }: TeamPageProps) {
   useEffect(() => {
     async function fetchStandings() {
       try {
-        const response = await fetch('/nba-hq/api/nba/standings?season=2025&level=conference');
+        const response = await fetch('/nfl-hq/api/nfl/standings?season=2025&level=conference');
         if (!response.ok) return;
 
         const data = await response.json();
@@ -315,7 +315,7 @@ function TeamPageContent({ team, initialTab }: TeamPageProps) {
 
         {/* Mobile sidebar */}
         <div className="lg:hidden fixed top-0 left-0 right-0 z-20">
-          <NBATeamsSidebar currentTeam={team} currentTab={activeTab} isMobile={true} />
+          <NFLTeamsSidebar currentTeam={team} currentTab={activeTab} isMobile={true} />
         </div>
 
         {/* Main content */}

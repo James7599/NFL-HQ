@@ -15,8 +15,8 @@ interface TeamHeroProps {
 
 export default function TeamHero({ team, liveStandings }: TeamHeroProps) {
   const record = liveStandings?.record || team.record;
-  const conferenceRank = liveStandings?.conferenceRank || team.conferenceRank;
-  const divisionRank = liveStandings?.divisionRank || team.divisionRank;
+  const conferenceRank = liveStandings?.conferenceRank || '0th';
+  const divisionRank = liveStandings?.divisionRank || '0th';
 
   return (
     <div style={{ backgroundColor: team.primaryColor }} className="text-white pt-[57px] lg:pt-0">

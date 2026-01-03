@@ -156,7 +156,7 @@ export default function SchedulePage() {
       setExpandedGame(null);
 
       try {
-        const response = await fetch(`/nba-hq/api/nba/schedule/by-date?season=2025&date=${selectedDate}`);
+        const response = await fetch(`/nfl-hq/api/nfl/schedule/by-date?season=2025&date=${selectedDate}`);
 
         if (!response.ok) {
           throw new Error('Failed to fetch schedule');
@@ -196,7 +196,7 @@ export default function SchedulePage() {
         // Fetch games for each day of the week
         await Promise.all(
           weekRange.days.map(async (day) => {
-            const response = await fetch(`/nba-hq/api/nba/schedule/by-date?season=2025&date=${day}`);
+            const response = await fetch(`/nfl-hq/api/nfl/schedule/by-date?season=2025&date=${day}`);
             if (response.ok) {
               const data = await response.json();
               const dayGames = (data.schedule || []).filter((game: Game) => {
@@ -237,7 +237,7 @@ export default function SchedulePage() {
         // Fetch games for each day of the month
         await Promise.all(
           monthDays.map(async (day) => {
-            const response = await fetch(`/nba-hq/api/nba/schedule/by-date?season=2025&date=${day}`);
+            const response = await fetch(`/nfl-hq/api/nfl/schedule/by-date?season=2025&date=${day}`);
             if (response.ok) {
               const data = await response.json();
               const dayGames = (data.schedule || []).filter((game: Game) => {

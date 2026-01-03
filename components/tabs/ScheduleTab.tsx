@@ -62,7 +62,7 @@ export default function ScheduleTab({ team }: ScheduleTabProps) {
         setLoading(true);
         setError(null);
 
-        const response = await fetch(`/nba-hq/api/nba/schedule/${team.id}?season=2025`);
+        const response = await fetch(`/nfl-hq/api/nfl/schedule/${team.id}?season=2025`);
 
         if (!response.ok) {
           throw new Error('Failed to fetch schedule');

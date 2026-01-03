@@ -27,7 +27,7 @@ export default function InjuriesTab({ team }: InjuriesTabProps) {
         setLoading(true);
         setError(null);
 
-        const response = await fetch(`/nba-hq/api/nba/injuries?teamId=${team.id}`);
+        const response = await fetch(`/nfl-hq/api/nfl/injuries?teamId=${team.id}`);
 
         if (!response.ok) {
           throw new Error('Failed to fetch injuries');

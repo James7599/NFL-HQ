@@ -5,19 +5,19 @@ export const metadata: Metadata = {
   title: '2026 NBA Draft Order - Complete Draft Order | NBA Hub',
   description: 'View the complete 2026 NBA Draft order for all rounds. Track draft picks by team with up-to-date standings and projections.',
   keywords: [
-    'NBA Draft Order',
+    'NFL Draft Order',
     '2026 NBA Draft',
-    'NBA Draft Picks',
-    'NBA Lottery',
-    'NBA Draft Prospects',
+    'NFL Draft Picks',
+    'NFL Lottery',
+    'NFL Draft Prospects',
     'Draft Order',
-    'NBA Teams',
+    'NFL Teams',
   ],
   openGraph: {
     title: '2026 NBA Draft Order - Complete Draft Order',
     description: 'View the complete 2026 NBA Draft order for all rounds. Track draft picks by team with up-to-date standings.',
     type: 'website',
-    url: 'https://www.profootballnetwork.com/nba-hq/draft-order/',
+    url: 'https://www.profootballnetwork.com/nfl-hq/draft-order/',
     images: [
       {
         url: '/og-image.png',
@@ -34,7 +34,7 @@ export const metadata: Metadata = {
     images: ['/og-image.png'],
   },
   alternates: {
-    canonical: 'https://www.profootballnetwork.com/nba-hq/draft-order/',
+    canonical: 'https://www.profootballnetwork.com/nfl-hq/draft-order/',
   },
 };
 

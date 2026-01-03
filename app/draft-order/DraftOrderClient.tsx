@@ -85,7 +85,7 @@ export default function DraftOrderClient() {
     async function fetchTankathonData() {
       try {
         setIsLoadingTankathon(true);
-        const response = await fetch('/nba-hq/data/tankathon-draft-order.json');
+        const response = await fetch('/nfl-hq/data/tankathon-draft-order.json');
         if (!response.ok) throw new Error('Failed to fetch draft order');
         const data: TankathonData = await response.json();
         setTankathonData(data);
@@ -105,7 +105,7 @@ export default function DraftOrderClient() {
       try {
         setIsLoadingStandings(true);
         setError(null);
-        const response = await fetch('/nba-hq/api/nba/standings?season=2025&level=conference');
+        const response = await fetch('/nfl-hq/api/nfl/standings?season=2025&level=conference');
         if (!response.ok) throw new Error('Failed to fetch standings');
         const data = await response.json();
 

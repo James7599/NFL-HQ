@@ -41,7 +41,7 @@ export default function LotterySimulatorClient() {
       try {
         setIsLoadingStandings(true);
         setError(null);
-        const response = await fetch('/nba-hq/api/nba/standings?season=2025&level=conference');
+        const response = await fetch('/nfl-hq/api/nfl/standings?season=2025&level=conference');
         if (!response.ok) throw new Error('Failed to fetch standings');
         const data = await response.json();
 

@@ -74,7 +74,7 @@ export default function HomePage() {
   useEffect(() => {
     async function fetchTopStandings() {
       try {
-        const response = await fetch('/nba-hq/api/nba/standings?season=2025&level=conference');
+        const response = await fetch('/nfl-hq/api/nfl/standings?season=2025&level=conference');
 
         if (!response.ok) return;
 
@@ -157,7 +157,7 @@ export default function HomePage() {
     async function fetchTodaysGames() {
       try {
         const today = new Date().toISOString().split('T')[0]; // Format: YYYY-MM-DD
-        const response = await fetch(`/nba-hq/api/nba/schedule/by-date?season=2025&date=${today}`);
+        const response = await fetch(`/nfl-hq/api/nfl/schedule/by-date?season=2025&date=${today}`);
 
         if (!response.ok) return;
 
@@ -180,7 +180,7 @@ export default function HomePage() {
   useEffect(() => {
     async function fetchDraftOrder() {
       try {
-        const response = await fetch('/nba-hq/api/nba/standings?season=2025&level=conference');
+        const response = await fetch('/nfl-hq/api/nfl/standings?season=2025&level=conference');
 
         if (!response.ok) return;
 
@@ -234,7 +234,7 @@ export default function HomePage() {
   useEffect(() => {
     async function fetchStatLeaders() {
       try {
-        const response = await fetch('/nba-hq/api/nba/stat-leaders?season=2025&event=regular');
+        const response = await fetch('/nfl-hq/api/nfl/stat-leaders?season=2025&event=regular');
 
         if (!response.ok) return;
 

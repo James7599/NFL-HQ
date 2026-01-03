@@ -87,7 +87,7 @@ export default function OverviewTab({ team, onTabChange }: OverviewTabProps) {
   useEffect(() => {
     async function fetchTeamSchedule() {
       try {
-        const response = await fetch(`/nba-hq/api/nba/schedule/${team.id}?season=2025`);
+        const response = await fetch(`/nfl-hq/api/nfl/schedule/${team.id}?season=2025`);
 
         if (!response.ok) return;
 
@@ -120,7 +120,7 @@ export default function OverviewTab({ team, onTabChange }: OverviewTabProps) {
   useEffect(() => {
     async function fetchDivisionStandings() {
       try {
-        const response = await fetch('/nba-hq/api/nba/standings?season=2025&level=conference');
+        const response = await fetch('/nfl-hq/api/nfl/standings?season=2025&level=conference');
 
         if (!response.ok) return;
 
@@ -170,7 +170,7 @@ export default function OverviewTab({ team, onTabChange }: OverviewTabProps) {
   useEffect(() => {
     async function fetchStatLeaders() {
       try {
-        const response = await fetch(`/nba-hq/api/nba/team-stats/${team.id}?season=2025&event=regular`);
+        const response = await fetch(`/nfl-hq/api/nfl/team-stats/${team.id}?season=2025&event=regular`);
 
         if (!response.ok) return;
 
@@ -210,7 +210,7 @@ export default function OverviewTab({ team, onTabChange }: OverviewTabProps) {
   useEffect(() => {
     async function fetchArticles() {
       try {
-        const response = await fetch('/nba-hq/api/nba/overview-articles');
+        const response = await fetch('/nfl-hq/api/nfl/overview-articles');
 
         if (!response.ok) return;
 

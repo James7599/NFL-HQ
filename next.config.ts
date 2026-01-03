@@ -6,8 +6,8 @@ const bundleAnalyzer = withBundleAnalyzer({
 });
 
 const nextConfig: NextConfig = {
-  basePath: '/nba-hq',
-  assetPrefix: '/nba-hq/',
+  basePath: '/nfl-hq',
+  assetPrefix: '/nfl-hq/',
   images: {
     remotePatterns: [
       {

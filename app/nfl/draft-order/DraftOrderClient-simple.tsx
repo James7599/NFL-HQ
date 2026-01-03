@@ -22,36 +22,38 @@ interface TankathonData {
 
 // Team abbreviation to team ID mapping
 const TEAM_ABBREV_TO_ID: Record<string, string> = {
-  'ATL': 'atlanta-hawks',
-  'BOS': 'boston-celtics',
-  'BKN': 'brooklyn-nets',
-  'CHA': 'charlotte-hornets',
-  'CHI': 'chicago-bulls',
-  'CLE': 'cleveland-cavaliers',
-  'DAL': 'dallas-mavericks',
-  'DEN': 'denver-nuggets',
-  'DET': 'detroit-pistons',
-  'GSW': 'golden-state-warriors',
-  'HOU': 'houston-rockets',
-  'IND': 'indiana-pacers',
-  'LAC': 'los-angeles-clippers',
-  'LAL': 'los-angeles-lakers',
-  'MEM': 'memphis-grizzlies',
-  'MIA': 'miami-heat',
-  'MIL': 'milwaukee-bucks',
-  'MIN': 'minnesota-timberwolves',
-  'NOP': 'new-orleans-pelicans',
-  'NYK': 'new-york-knicks',
-  'OKC': 'oklahoma-city-thunder',
-  'ORL': 'orlando-magic',
-  'PHI': 'philadelphia-76ers',
-  'PHX': 'phoenix-suns',
-  'POR': 'portland-trail-blazers',
-  'SAC': 'sacramento-kings',
-  'SAS': 'san-antonio-spurs',
-  'TOR': 'toronto-raptors',
-  'UTA': 'utah-jazz',
-  'WAS': 'washington-wizards'
+  'ARI': 'arizona-cardinals',
+  'ATL': 'atlanta-falcons',
+  'BAL': 'baltimore-ravens',
+  'BUF': 'buffalo-bills',
+  'CAR': 'carolina-panthers',
+  'CHI': 'chicago-bears',
+  'CIN': 'cincinnati-bengals',
+  'CLE': 'cleveland-browns',
+  'DAL': 'dallas-cowboys',
+  'DEN': 'denver-broncos',
+  'DET': 'detroit-lions',
+  'GB': 'green-bay-packers',
+  'HOU': 'houston-texans',
+  'IND': 'indianapolis-colts',
+  'JAX': 'jacksonville-jaguars',
+  'KC': 'kansas-city-chiefs',
+  'LV': 'las-vegas-raiders',
+  'LAC': 'los-angeles-chargers',
+  'LAR': 'los-angeles-rams',
+  'MIA': 'miami-dolphins',
+  'MIN': 'minnesota-vikings',
+  'NE': 'new-england-patriots',
+  'NO': 'new-orleans-saints',
+  'NYG': 'new-york-giants',
+  'NYJ': 'new-york-jets',
+  'PHI': 'philadelphia-eagles',
+  'PIT': 'pittsburgh-steelers',
+  'SF': 'san-francisco-49ers',
+  'SEA': 'seattle-seahawks',
+  'TB': 'tampa-bay-buccaneers',
+  'TEN': 'tennessee-titans',
+  'WAS': 'washington-commanders'
 };
 
 export default function DraftOrderClient() {
@@ -67,7 +69,7 @@ export default function DraftOrderClient() {
         setIsLoading(true);
         setError(null);
 
-        const response = await fetch('/nba-hq/data/tankathon-draft-order.json');
+        const response = await fetch('/nfl-hq/data/tankathon-draft-order.json');
 
         if (!response.ok) {
           throw new Error('Failed to fetch draft order');

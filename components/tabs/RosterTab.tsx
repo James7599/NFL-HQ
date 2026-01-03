@@ -42,7 +42,7 @@ export default function RosterTab({ team }: RosterTabProps) {
         setLoading(true);
         setError(null);
 
-        const response = await fetch(`/nba-hq/api/nba/roster/${team.id}`);
+        const response = await fetch(`/nfl-hq/api/nfl/roster/${team.id}`);
 
         if (!response.ok) {
           throw new Error('Failed to fetch roster');

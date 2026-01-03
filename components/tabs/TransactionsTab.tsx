@@ -21,7 +21,7 @@ export default function TransactionsTab({ team }: TransactionsTabProps) {
 
         // Fetch all transactions (already grouped by month in API response)
         const response = await fetch(
-          `/nba-hq/api/nba/transactions/${team.id}?season=2025`
+          `/nfl-hq/api/nfl/transactions/${team.id}?season=2025`
         );
 
         if (!response.ok) {

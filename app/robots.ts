@@ -9,6 +9,6 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ['/api/', '/admin/'],
       },
     ],
-    sitemap: 'https://www.profootballnetwork.com/nba-hq/sitemap.xml',
+    sitemap: 'https://www.profootballnetwork.com/nfl-hq/sitemap.xml',
   }
 }

@@ -35,7 +35,7 @@ export default function NewsTab({ team }: NewsTabProps) {
         setLoading(true);
         setError(null);
 
-        const response = await fetch(`/nba-hq/api/nba/news?teamId=${team.id}`);
+        const response = await fetch(`/nfl-hq/api/nfl/news?teamId=${team.id}`);
 
         if (!response.ok) {
           throw new Error('Failed to fetch news');
