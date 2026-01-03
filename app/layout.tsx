@@ -3,6 +3,8 @@ import "./globals.css";
 import GoogleAnalytics from '@/components/GoogleAnalytics';
 import RaptiveScript from '@/components/RaptiveScript';
 import VisiblTracking from '@/components/VisiblTracking';
+import CanonicalURL from '@/components/CanonicalURL';
+import StructuredData from '@/components/StructuredData';
 import { WebVitals } from '@/components/WebVitals';
 import VideoPlayerScript from '@/components/VideoPlayerScript';
 
@@ -102,6 +104,8 @@ export default function RootLayout({
         <meta httpEquiv="X-DNS-Prefetch-Control" content="on" />
       </head>
       <body className="antialiased raptive-pfn-disable-footer-close pb-24">
+        <CanonicalURL />
+        <StructuredData />
         <WebVitals />
         <VideoPlayerScript />
         {children}

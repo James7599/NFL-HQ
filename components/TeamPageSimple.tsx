@@ -13,7 +13,7 @@ import DraftPicksTab from '@/components/tabs/DraftPicksTab';
 import SalaryCapTab from '@/components/tabs/SalaryCapTab';
 import TeamInfoTab from '@/components/tabs/TeamInfoTab';
 import InjuriesTab from '@/components/tabs/InjuriesTab';
-import StructuredData from '@/components/StructuredData';
+import TeamStructuredData from '@/components/TeamStructuredData';
 
 interface TeamPageSimpleProps {
   team: TeamData;
@@ -141,7 +141,7 @@ export default function TeamPageSimple({ team, initialTab = 'overview' }: TeamPa
 
   return (
     <>
-      <StructuredData team={team} />
+      <TeamStructuredData team={team} />
 
       <NavigationTabs activeTab={activeTab} onTabChange={handleTabChange} team={team} />
 

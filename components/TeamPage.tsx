@@ -3,7 +3,7 @@
 import { useState, useEffect, Suspense, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { TeamData, getAllTeams } from '@/data/teams';
-import NBATeamsSidebar from '@/components/NBATeamsSidebar';
+import NFLTeamsSidebar from '@/components/NFLTeamsSidebar';
 import OverviewTab from '@/components/tabs/OverviewTab';
 import NewsTab from '@/components/tabs/NewsTab';
 import ScheduleTab from '@/components/tabs/ScheduleTab';
@@ -14,7 +14,7 @@ import DraftPicksTab from '@/components/tabs/DraftPicksTab';
 import SalaryCapTab from '@/components/tabs/SalaryCapTab';
 import TeamInfoTab from '@/components/tabs/TeamInfoTab';
 import InjuriesTab from '@/components/tabs/InjuriesTab';
-import StructuredData from '@/components/StructuredData';
+import TeamStructuredData from '@/components/TeamStructuredData';
 
 interface TeamPageProps {
   team: TeamData;
@@ -304,12 +304,12 @@ function TeamPageContent({ team, initialTab }: TeamPageProps) {
 
   return (
     <>
-      <StructuredData team={team} />
+      <TeamStructuredData team={team} />
       <div className="flex min-h-screen bg-gray-50">
         {/* Desktop sidebar */}
         <div className="hidden lg:block">
           <div className="fixed top-0 left-0 w-64 h-screen z-10">
-            <NBATeamsSidebar currentTeam={team} currentTab={activeTab} />
+            <NFLTeamsSidebar currentTeam={team} currentTab={activeTab} />
           </div>
         </div>
 
