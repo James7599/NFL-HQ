@@ -33,7 +33,7 @@ export default function NewsTab({ team }: NewsTabProps) {
       setError(null);
 
       // Use our dynamic Next.js API route to avoid CORS issues
-      const response = await fetch(`/nfl/teams/api/news/${team.id}`, {
+      const response = await fetch(`/nfl-hq/nfl/teams/api/news/${team.id}`, {
         method: 'GET',
         headers: {
           'Accept': 'application/json',

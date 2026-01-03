@@ -72,7 +72,7 @@ export default function ScheduleTab({ team }: ScheduleTabProps) {
       setLoading(true);
       setError(null);
 
-      const response = await fetch(`/nfl/teams/api/schedule/${team.id}`);
+      const response = await fetch(`/nfl-hq/nfl/teams/api/schedule/${team.id}`);
 
       if (!response.ok) {
         if (response.status === 404) {

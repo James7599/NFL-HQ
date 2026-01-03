@@ -152,7 +152,7 @@ export default function DepthChartTab({ team }: DepthChartTabProps) {
       setLoading(true);
       setError(null);
 
-      const response = await fetch(`/nfl/teams/api/depth-chart/${team.id}`);
+      const response = await fetch(`/nfl-hq/nfl/teams/api/depth-chart/${team.id}`);
 
       if (!response.ok) {
         if (response.status === 404) {

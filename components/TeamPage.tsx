@@ -270,7 +270,7 @@ function TeamPageContent({ team, initialTab }: TeamPageProps) {
     const fetchScheduleAndCalculateStandings = async () => {
       try {
         // Get current team's schedule
-        const response = await fetch(`/nfl/teams/api/schedule/${team.id}`);
+        const response = await fetch(`/nfl-hq/nfl/teams/api/schedule/${team.id}`);
         if (response.ok) {
           const data = await response.json();
           const schedule: ScheduleGame[] = data.schedule || [];
@@ -283,7 +283,7 @@ function TeamPageContent({ team, initialTab }: TeamPageProps) {
           const divisionTeams = getDivisionTeams(team);
           const standingsPromises = divisionTeams.map(async (divisionTeam) => {
             try {
-              const divisionResponse = await fetch(`/nfl/teams/api/schedule/${divisionTeam.id}`);
+              const divisionResponse = await fetch(`/nfl-hq/nfl/teams/api/schedule/${divisionTeam.id}`);
               if (divisionResponse.ok) {
                 const divisionData = await divisionResponse.json();
                 const divisionSchedule: ScheduleGame[] = divisionData.schedule || [];
@@ -369,7 +369,7 @@ function TeamPageContent({ team, initialTab }: TeamPageProps) {
         }
 
         // Fetch fresh stats
-        const response = await fetch(`/nfl/teams/api/team-stats/${team.id}/`);
+        const response = await fetch(`/nfl-hq/nfl/teams/api/team-stats/${team.id}/`);
         console.log('Team stats response status:', response.status);
         if (response.ok) {
           const data = await response.json();

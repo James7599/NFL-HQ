@@ -98,7 +98,7 @@ export default function DraftPicksTab({ team }: DraftPicksTabProps) {
       setLoading(true);
       setError(null);
 
-      const response = await fetch(`/nfl/teams/api/draft-picks/${team.id}`);
+      const response = await fetch(`/nfl-hq/nfl/teams/api/draft-picks/${team.id}`);
 
       if (!response.ok) {
         if (response.status === 404) {

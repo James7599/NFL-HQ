@@ -60,7 +60,7 @@ export default function SalaryCapTab({ team }: SalaryCapTabProps) {
       setLoading(true);
       setError(null);
 
-      const response = await fetch(`/nfl/teams/api/salary-cap/${team.id}`);
+      const response = await fetch(`/nfl-hq/nfl/teams/api/salary-cap/${team.id}`);
 
       if (!response.ok) {
         if (response.status === 404) {

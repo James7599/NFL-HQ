@@ -263,8 +263,8 @@ export default function InjuryReportTab({ team }: InjuryReportTabProps) {
       try {
         // Fetch both injury data and roster data in parallel
         const [injuryResponse, rosterResponse] = await Promise.all([
-          fetch('/nfl/teams/api/injuries'),
-          fetch(`/nfl/teams/api/roster/${team.id}`)
+          fetch('/nfl-hq/nfl/teams/api/injuries'),
+          fetch(`/nfl-hq/nfl/teams/api/roster/${team.id}`)
         ]);
 
         if (!injuryResponse.ok) {

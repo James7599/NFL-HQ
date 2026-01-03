@@ -44,7 +44,7 @@ export default function TeamsPage() {
           const batch = teamsList.slice(i, i + batchSize);
           const batchPromises = batch.map(async (team) => {
             try {
-              const response = await fetch(`/nfl/teams/api/schedule/${team.id}`, {
+              const response = await fetch(`/nfl-hq/nfl/teams/api/schedule/${team.id}`, {
                 headers: {
                   'Content-Type': 'application/json',
                 },

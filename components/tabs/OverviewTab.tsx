@@ -154,7 +154,7 @@ export default function OverviewTab({ team, onTabChange }: OverviewTabProps) {
       setError(null);
 
       // Use the team-specific API endpoint that works for all teams
-      const response = await fetch(`/nfl/teams/api/overview-articles/${team.id}`);
+      const response = await fetch(`/nfl-hq/nfl/teams/api/overview-articles/${team.id}`);
 
       if (!response.ok) {
         throw new Error(`API error: ${response.status} ${response.statusText}`);
@@ -181,7 +181,7 @@ export default function OverviewTab({ team, onTabChange }: OverviewTabProps) {
       setScheduleLoading(true);
       setScheduleError(null);
 
-      const response = await fetch(`/nfl/teams/api/schedule/${team.id}`);
+      const response = await fetch(`/nfl-hq/nfl/teams/api/schedule/${team.id}`);
 
       if (!response.ok) {
         if (response.status === 404) {
@@ -241,7 +241,7 @@ export default function OverviewTab({ team, onTabChange }: OverviewTabProps) {
       setStatsLoading(true);
       setStatsError(null);
 
-      const response = await fetch(`/nfl/teams/api/stats/${team.id}`);
+      const response = await fetch(`/nfl-hq/nfl/teams/api/stats/${team.id}`);
 
       if (!response.ok) {
         if (response.status === 404) {
@@ -274,7 +274,7 @@ export default function OverviewTab({ team, onTabChange }: OverviewTabProps) {
       const divisionTeams = getDivisionTeams(team);
       const standingsPromises = divisionTeams.map(async (divisionTeam) => {
         try {
-          const response = await fetch(`/nfl/teams/api/schedule/${divisionTeam.id}`);
+          const response = await fetch(`/nfl-hq/nfl/teams/api/schedule/${divisionTeam.id}`);
           if (!response.ok) {
             throw new Error(`Failed to fetch schedule for ${divisionTeam.name}`);
           }

@@ -62,7 +62,7 @@ export default function TransactionsTab({ team }: TransactionsTabProps) {
       setLoading(true);
       setError(null);
 
-      const response = await fetch(`/nfl/teams/api/transactions/${team.id}`);
+      const response = await fetch(`/nfl-hq/nfl/teams/api/transactions/${team.id}`);
 
       if (!response.ok) {
         if (response.status === 404) {
