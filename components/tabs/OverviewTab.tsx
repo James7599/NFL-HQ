@@ -372,7 +372,7 @@ export default function OverviewTab({ team, onTabChange }: OverviewTabProps) {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         {/* Column 1 - Schedule Widget */}
         <div>
-          <div className="bg-white rounded-lg shadow p-6 min-h-[400px] flex flex-col">
+          <div className="bg-white rounded-lg shadow p-6 h-[430px] flex flex-col">
             <h2 className="text-xl font-bold text-gray-900 mb-4">2025 Schedule</h2>
 
             <div className="space-y-3 flex-grow">
@@ -456,7 +456,7 @@ export default function OverviewTab({ team, onTabChange }: OverviewTabProps) {
 
         {/* Column 2 - Division Standings */}
         <div>
-          <div className="bg-white rounded-lg shadow p-6 min-h-[400px] flex flex-col">
+          <div className="bg-white rounded-lg shadow p-6 h-[430px] flex flex-col">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-lg font-bold text-gray-900">{team.division} Standings</h2>
             </div>
@@ -542,7 +542,7 @@ export default function OverviewTab({ team, onTabChange }: OverviewTabProps) {
 
         {/* Column 3 - Team Stat Leaders */}
         <div>
-          <div className="bg-white rounded-lg shadow p-6 min-h-[400px] flex flex-col">
+          <div className="bg-white rounded-lg shadow p-6 h-[430px] flex flex-col">
             <div className="mb-4">
               <h2 className="text-lg font-bold text-gray-900">{team.name} Leaders</h2>
             </div>
