@@ -404,9 +404,9 @@ function TeamPageContent({ team, initialTab }: TeamPageProps) {
 
     // Navigate to path-based URL
     if (tab === 'overview') {
-      router.replace(`/nfl/teams/${team.id}`, { scroll: false });
+      router.replace(`/nfl-hq/teams/${team.id}`, { scroll: false });
     } else {
-      router.replace(`/nfl/teams/${team.id}/${tab}`, { scroll: false });
+      router.replace(`/nfl-hq/teams/${team.id}/${tab}`, { scroll: false });
     }
   };
 
