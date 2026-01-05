@@ -75,7 +75,7 @@ export default function PowerRankingsClient() {
         if (conferences) {
           for (const conf of conferences) {
             for (const team of conf.teams) {
-              const teamId = teamSlugMapping[team.sk_slug] || team.sk_slug;
+              const teamId = team.sk_slug; // NFL teams use slug directly
               const confRank = team.conference_rank?.rank;
               recordsMap[teamId] = {
                 wins: team.wins || 0,
