@@ -52,7 +52,7 @@ export default function SalaryCapTrackerClient() {
             teamId: team.id,
             teamName: team.fullName,
             capSpace: 0,
-            salaryCap: 255400000, // 2025 NFL salary cap
+            salaryCap: 255400000, // 2025 NFL salary cap in dollars
             activeCapSpend: 0,
             deadMoney: 0
           };
@@ -83,7 +83,7 @@ export default function SalaryCapTrackerClient() {
       currency: 'USD',
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
-    }).format(amount * 1000000); // Convert from millions to dollars
+    }).format(amount); // Amount is already in full dollars
   };
 
   // Handle column sort

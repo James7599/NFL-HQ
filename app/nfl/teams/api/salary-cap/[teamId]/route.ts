@@ -107,7 +107,7 @@ const teamIdMap: Record<string, string> = {
 
 // Helper function to parse currency strings
 function parseCurrency(value: string): number {
-  return parseFloat(value.replace(/[,$]/g, '')) / 1000000; // Convert to millions
+  return parseFloat(value.replace(/[,$]/g, '')); // Keep as full dollar amounts
 }
 
 export async function GET(
