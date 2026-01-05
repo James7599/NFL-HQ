@@ -63,26 +63,22 @@ export default function PowerRankingsClient() {
 
     async function fetchStandings() {
       try {
-        const response = await fetch('/nfl-hq/api/nfl/standings?season=2025&level=conference');
+        const response = await fetch('/nfl/teams/api/standings');
         if (!response.ok) throw new Error('Failed to fetch standings');
 
         const data = await response.json();
-        const conferences = data.data?.standings?.conferences;
+        const standings = data.standings;
 
         // Create a map of team records
         const recordsMap: Record<string, { wins: number; losses: number; conferenceRank: string }> = {};
 
-        if (conferences) {
-          for (const conf of conferences) {
-            for (const team of conf.teams) {
-              const teamId = team.sk_slug; // NFL teams use slug directly
-              const confRank = team.conference_rank?.rank;
-              recordsMap[teamId] = {
-                wins: team.wins || 0,
-                losses: team.losses || 0,
-                conferenceRank: confRank ? `${confRank}${getOrdinalSuffix(confRank)}` : '0th',
-              };
-            }
+        if (standings) {
+          for (const team of standings) {
+            recordsMap[team.teamId] = {
+              wins: team.record.wins || 0,
+              losses: team.record.losses || 0,
+              conferenceRank: team.divisionRank || '0th',
+            };
           }
         }
 
