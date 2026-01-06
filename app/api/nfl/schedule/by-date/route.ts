@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { wildCardGames2026, StaticPlayoffGame } from '@/data/playoffGames2026';
+import { getAllTeams } from '@/data/teams';
 
 // Function to determine cache revalidation time based on NFL game schedule
 function getRevalidationTime(): number {
@@ -20,6 +22,50 @@ function getRevalidationTime(): number {
 
   // All other times: Update every 6 hours (less frequent)
   return 21600; // 6 hours
+}
+
+// Function to convert static playoff games to API format
+function convertStaticGameToAPIFormat(game: StaticPlayoffGame): TransformedGame {
+  const allTeams = getAllTeams();
+  const awayTeam = allTeams.find(t => t.id === game.awayTeam);
+  const homeTeam = allTeams.find(t => t.id === game.homeTeam);
+
+  // Convert date and time to ISO format
+  const [month, day, year] = game.date.split('-').map(Number);
+  const dateStr = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+
+  return {
+    event_id: `playoff-${game.date}-${game.awayTeam}-${game.homeTeam}`,
+    start_date: `${dateStr}T${game.time}`,
+    status: 'Pre-Game',
+    has_score: false,
+    away_team: {
+      team_slug: game.awayTeam,
+      abbr: awayTeam?.abbreviation || '',
+      team_name: awayTeam?.fullName || '',
+      wins: 0,
+      losses: 0,
+    },
+    home_team: {
+      team_slug: game.homeTeam,
+      abbr: homeTeam?.abbreviation || '',
+      team_name: homeTeam?.fullName || '',
+      wins: 0,
+      losses: 0,
+    },
+    venue: {
+      name: game.venue,
+      city: game.city,
+      state: {
+        name: game.state,
+        abbreviation: game.state,
+      },
+    },
+    tv_stations: game.tv.split('/').map(station => ({
+      name: station.trim(),
+      call_letters: station.trim(),
+    })),
+  };
 }
 
 interface SportsKeedaTeam {
@@ -246,6 +292,16 @@ export async function GET(request: NextRequest) {
         loser_high,
       };
     }).filter(Boolean) as TransformedGame[];
+
+    // Check if we should add static playoff games for this date
+    const staticPlayoffGames = wildCardGames2026.filter(game => game.date === requestedDate);
+
+    // If we have static playoff games for this date and no API games (or very few), add them
+    // API games will replace static games once results are available
+    if (staticPlayoffGames.length > 0 && transformedGames.length === 0) {
+      const staticGames = staticPlayoffGames.map(convertStaticGameToAPIFormat);
+      transformedGames.push(...staticGames);
+    }
 
     return NextResponse.json({
       schedule: transformedGames,
