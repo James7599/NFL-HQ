@@ -1,5 +1,27 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+// Function to determine cache revalidation time based on NFL game schedule
+function getRevalidationTime(): number {
+  // Get current time in Pacific Time
+  const now = new Date();
+  const pacificTime = new Date(now.toLocaleString('en-US', { timeZone: 'America/Los_Angeles' }));
+  const dayOfWeek = pacificTime.getDay(); // 0 = Sunday, 1 = Monday, etc.
+  const hour = pacificTime.getHours();
+
+  // Saturday (6) or Sunday (0): Update every hour all day
+  if (dayOfWeek === 0 || dayOfWeek === 6) {
+    return 3600; // 1 hour
+  }
+
+  // Monday (1) or Thursday (4): Update every hour from 6 PM to midnight PT (game window)
+  if ((dayOfWeek === 1 || dayOfWeek === 4) && hour >= 18 && hour <= 23) {
+    return 3600; // 1 hour
+  }
+
+  // All other times: Update every 6 hours (less frequent)
+  return 21600; // 6 hours
+}
+
 interface SportsKeedaTeam {
   team_id: number;
   location: string;
@@ -125,13 +147,16 @@ export async function GET(request: NextRequest) {
     }
 
     // Fetch all NFL games for the season from Sportskeeda
+    // Use dynamic cache time based on game schedule
+    const revalidateTime = getRevalidationTime();
+
     const response = await fetch(
       `https://cf-gotham.sportskeeda.com/taxonomy/sport/nfl/schedule/${season}`,
       {
         headers: {
           'User-Agent': 'Mozilla/5.0 (compatible; NFL-Team-Pages/1.0)',
         },
-        next: { revalidate: 3600 } // Cache for 1 hour
+        next: { revalidate: revalidateTime }
       }
     );
 
