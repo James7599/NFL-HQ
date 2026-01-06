@@ -69,6 +69,27 @@ interface TransformedSalaryCapData {
   players: TransformedPlayer[];
 }
 
+// Fallback data for teams where Sportskeeda API is not available (as of Dec 2025)
+const fallbackSalaryCapData: Record<string, {
+  capSpace: number;
+  salaryCap: number;
+  activeCapSpend: number;
+  deadMoney: number;
+}> = {
+  'san-francisco-49ers': {
+    capSpace: 37135702,
+    salaryCap: 315417966,
+    activeCapSpend: 256418523,
+    deadMoney: 21863741,
+  },
+  'seattle-seahawks': {
+    capSpace: 69066458,
+    salaryCap: 312206203,
+    activeCapSpend: 242656022,
+    deadMoney: 483723,
+  },
+};
+
 // Team ID to Sportskeeda abbreviation mapping - same as draft picks
 const teamIdMap: Record<string, string> = {
   'arizona-cardinals': 'ari',
@@ -127,6 +148,23 @@ export async function GET(
       );
     }
 
+    // Check if fallback data exists for this team
+    if (fallbackSalaryCapData[teamId]) {
+      const fallbackData = fallbackSalaryCapData[teamId];
+
+      return NextResponse.json({
+        teamId,
+        salaryCapData: {
+          teamSummary: fallbackData,
+          players: [], // No player-level data for fallback
+        },
+        totalPlayers: 0,
+        lastUpdated: new Date().toISOString(),
+        season: 2025,
+        source: 'fallback', // Indicate this is fallback data
+      });
+    }
+
     // Fetch data from Sportskeeda API
     const response = await fetch(
       `https://statics.sportskeeda.com/assets/sheets/static/nfl/team/subpage/salary-cap/${teamAbbr}.json`,
@@ -139,6 +177,7 @@ export async function GET(
     );
 
     if (!response.ok) {
+      // If Sportskeeda fails and we don't have fallback, throw error
       throw new Error(`Sportskeeda API error: ${response.status}`);
     }
 
