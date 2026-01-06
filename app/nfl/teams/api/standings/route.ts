@@ -45,7 +45,10 @@ interface StandingsResponse {
 async function calculateTeamRecord(teamId: string, retries = 2): Promise<TeamRecord> {
   for (let attempt = 0; attempt <= retries; attempt++) {
     try {
-      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+      // Use Vercel URL in production, localhost in development
+      const baseUrl = process.env.VERCEL_URL
+        ? `https://${process.env.VERCEL_URL}`
+        : 'http://localhost:3000';
       const basePath = process.env.NODE_ENV === 'production' ? '/nfl-hq' : '';
       const response = await fetch(`${baseUrl}${basePath}/nfl/teams/api/schedule/${teamId}`, {
         next: { revalidate: 3600 }, // Cache for 1 hour
