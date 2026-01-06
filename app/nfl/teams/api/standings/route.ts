@@ -45,7 +45,9 @@ interface StandingsResponse {
 async function calculateTeamRecord(teamId: string, retries = 2): Promise<TeamRecord> {
   for (let attempt = 0; attempt <= retries; attempt++) {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/nfl/teams/api/schedule/${teamId}`, {
+      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+      const basePath = process.env.NODE_ENV === 'production' ? '/nfl-hq' : '';
+      const response = await fetch(`${baseUrl}${basePath}/nfl/teams/api/schedule/${teamId}`, {
         next: { revalidate: 3600 }, // Cache for 1 hour
         signal: AbortSignal.timeout(10000) // 10 second timeout
       });
