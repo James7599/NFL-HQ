@@ -69,26 +69,69 @@ interface TransformedSalaryCapData {
   players: TransformedPlayer[];
 }
 
-// Fallback data for teams where Sportskeeda API is not available (as of Dec 2025)
-const fallbackSalaryCapData: Record<string, {
+// Map team IDs to PFN display names
+const teamIdToPFNName: Record<string, string> = {
+  'san-francisco-49ers': 'San Francisco 49ers',
+  'seattle-seahawks': 'Seattle Seahawks',
+};
+
+// Function to scrape salary cap data from Pro Football Network as fallback
+async function scrapePFNSalaryCapData(teamId: string): Promise<{
   capSpace: number;
   salaryCap: number;
   activeCapSpend: number;
   deadMoney: number;
-}> = {
-  'san-francisco-49ers': {
-    capSpace: 37135702,
-    salaryCap: 315417966,
-    activeCapSpend: 256418523,
-    deadMoney: 21863741,
-  },
-  'seattle-seahawks': {
-    capSpace: 69066458,
-    salaryCap: 312206203,
-    activeCapSpend: 242656022,
-    deadMoney: 483723,
-  },
-};
+} | null> {
+  try {
+    const pfnTeamName = teamIdToPFNName[teamId];
+    if (!pfnTeamName) {
+      return null;
+    }
+
+    const response = await fetch(
+      'https://www.profootballnetwork.com/nfl-salary-cap-space-by-team',
+      {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (compatible; NFL-Team-Pages/1.0)',
+        },
+        next: { revalidate: 604800 } // Cache for 1 week (7 days)
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`PFN fetch error: ${response.status}`);
+    }
+
+    const html = await response.text();
+
+    // Parse the HTML to find the team's row
+    // Format: <tr data-team=San Francisco 49ers data-cap-space=$37,135,702 data-salary-cap=$315,417,966 data-active-cap=$256,418,523 data-dead-money=$21,863,741>
+    const teamRowMatch = html.match(
+      new RegExp(`<tr data-team=${pfnTeamName}[^>]*data-cap-space=\\$([0-9,]+)[^>]*data-salary-cap=\\$([0-9,]+)[^>]*data-active-cap=\\$([0-9,]+)[^>]*data-dead-money=\\$([0-9,]+)`, 'i')
+    );
+
+    if (!teamRowMatch) {
+      console.error(`Could not find salary cap data for ${pfnTeamName} in PFN HTML`);
+      return null;
+    }
+
+    // Parse the captured values
+    const capSpace = parseFloat(teamRowMatch[1].replace(/,/g, ''));
+    const salaryCap = parseFloat(teamRowMatch[2].replace(/,/g, ''));
+    const activeCapSpend = parseFloat(teamRowMatch[3].replace(/,/g, ''));
+    const deadMoney = parseFloat(teamRowMatch[4].replace(/,/g, ''));
+
+    return {
+      capSpace,
+      salaryCap,
+      activeCapSpend,
+      deadMoney,
+    };
+  } catch (error) {
+    console.error(`Error scraping PFN data for ${teamId}:`, error);
+    return null;
+  }
+}
 
 // Team ID to Sportskeeda abbreviation mapping - same as draft picks
 const teamIdMap: Record<string, string> = {
@@ -148,37 +191,52 @@ export async function GET(
       );
     }
 
-    // Check if fallback data exists for this team
-    if (fallbackSalaryCapData[teamId]) {
-      const fallbackData = fallbackSalaryCapData[teamId];
+    // Try Sportskeeda API first
+    let useFallback = false;
+    let response: Response | null = null;
 
-      return NextResponse.json({
-        teamId,
-        salaryCapData: {
-          teamSummary: fallbackData,
-          players: [], // No player-level data for fallback
-        },
-        totalPlayers: 0,
-        lastUpdated: new Date().toISOString(),
-        season: 2025,
-        source: 'fallback', // Indicate this is fallback data
-      });
+    try {
+      response = await fetch(
+        `https://statics.sportskeeda.com/assets/sheets/static/nfl/team/subpage/salary-cap/${teamAbbr}.json`,
+        {
+          headers: {
+            'User-Agent': 'Mozilla/5.0 (compatible; NFL-Team-Pages/1.0)',
+          },
+          next: { revalidate: 604800 } // Cache for 1 week (7 days)
+        }
+      );
+
+      if (!response.ok) {
+        useFallback = true;
+      }
+    } catch (error) {
+      console.error(`Sportskeeda API error for ${teamId}:`, error);
+      useFallback = true;
     }
 
-    // Fetch data from Sportskeeda API
-    const response = await fetch(
-      `https://statics.sportskeeda.com/assets/sheets/static/nfl/team/subpage/salary-cap/${teamAbbr}.json`,
-      {
-        headers: {
-          'User-Agent': 'Mozilla/5.0 (compatible; NFL-Team-Pages/1.0)',
-        },
-        next: { revalidate: 604800 } // Cache for 1 week (7 days)
-      }
-    );
+    // If Sportskeeda fails, try PFN scraper for specific teams
+    if (useFallback && teamIdToPFNName[teamId]) {
+      console.log(`Using PFN fallback for ${teamId}`);
+      const pfnData = await scrapePFNSalaryCapData(teamId);
 
-    if (!response.ok) {
-      // If Sportskeeda fails and we don't have fallback, throw error
-      throw new Error(`Sportskeeda API error: ${response.status}`);
+      if (pfnData) {
+        return NextResponse.json({
+          teamId,
+          salaryCapData: {
+            teamSummary: pfnData,
+            players: [], // No player-level data from PFN
+          },
+          totalPlayers: 0,
+          lastUpdated: new Date().toISOString(),
+          season: 2025,
+          source: 'pfn', // Indicate this is from Pro Football Network
+        });
+      }
+    }
+
+    // If we got here and useFallback is true or response is null, we couldn't get data
+    if (useFallback || !response) {
+      throw new Error(`Failed to fetch salary cap data from all sources`);
     }
 
     const data: SportsKeedaSalaryCapResponse = await response.json();
