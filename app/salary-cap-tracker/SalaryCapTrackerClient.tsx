@@ -57,14 +57,14 @@ export default function SalaryCapTrackerClient() {
             };
           } catch (error) {
             console.error(`Error fetching salary cap for ${team.id}:`, error);
-            // Return default values if fetch fails
+            // Return null values if fetch fails (will be filtered out or shown as N/A)
             return {
               teamId: team.id,
               teamName: team.fullName,
-              capSpace: 0,
+              capSpace: NaN, // Use NaN to indicate data unavailable
               salaryCap: 255400000, // 2025 NFL salary cap in dollars
-              activeCapSpend: 0,
-              deadMoney: 0
+              activeCapSpend: NaN,
+              deadMoney: NaN
             };
           }
         });
@@ -98,6 +98,9 @@ export default function SalaryCapTrackerClient() {
 
   // Format currency
   const formatCurrency = (amount: number) => {
+    if (isNaN(amount)) {
+      return 'N/A';
+    }
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: 'USD',
@@ -289,7 +292,7 @@ export default function SalaryCapTrackerClient() {
                               </span>
                             </a>
                           </td>
-                          <td className={`px-4 py-4 font-semibold ${team.capSpace >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                          <td className={`px-4 py-4 font-semibold ${isNaN(team.capSpace) ? 'text-gray-500' : team.capSpace >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                             {formatCurrency(team.capSpace)}
                           </td>
                           <td className="px-4 py-4 text-gray-700">
