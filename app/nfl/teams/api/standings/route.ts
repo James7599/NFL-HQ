@@ -1,6 +1,42 @@
 import { NextResponse } from 'next/server';
 import { teams } from '@/data/teams';
 
+// Team ID to Sportskeeda team ID mapping
+const teamIdToSportsKeedaId: Record<string, number> = {
+  'arizona-cardinals': 355,
+  'atlanta-falcons': 323,
+  'baltimore-ravens': 366,
+  'buffalo-bills': 324,
+  'carolina-panthers': 364,
+  'chicago-bears': 326,
+  'cincinnati-bengals': 327,
+  'cleveland-browns': 329,
+  'dallas-cowboys': 331,
+  'denver-broncos': 332,
+  'detroit-lions': 334,
+  'green-bay-packers': 335,
+  'houston-texans': 325,
+  'indianapolis-colts': 338,
+  'jacksonville-jaguars': 365,
+  'kansas-city-chiefs': 339,
+  'las-vegas-raiders': 341,
+  'los-angeles-chargers': 357,
+  'los-angeles-rams': 343,
+  'miami-dolphins': 345,
+  'minnesota-vikings': 347,
+  'new-england-patriots': 348,
+  'new-orleans-saints': 350,
+  'new-york-giants': 351,
+  'new-york-jets': 352,
+  'philadelphia-eagles': 354,
+  'pittsburgh-steelers': 356,
+  'san-francisco-49ers': 359,
+  'seattle-seahawks': 361,
+  'tampa-bay-buccaneers': 362,
+  'tennessee-titans': 336,
+  'washington-commanders': 363,
+};
+
 interface ScheduleGame {
   week: string | number;
   date: string;
@@ -41,39 +77,78 @@ interface StandingsResponse {
   lastUpdated: string;
 }
 
-// Function to calculate team record from schedule with retry logic
+// Sportskeeda schedule interfaces
+interface SportsKeedaGame {
+  event_id: number;
+  event_type: number; // 1 = regular season
+  status: string;
+  teams: Array<{
+    team_id: number;
+    score?: number;
+    is_winner?: boolean;
+  }>;
+}
+
+interface SportsKeedaScheduleResponse {
+  schedule: SportsKeedaGame[];
+}
+
+// Function to calculate team record from Sportskeeda API directly
 async function calculateTeamRecord(teamId: string, retries = 2): Promise<TeamRecord> {
   for (let attempt = 0; attempt <= retries; attempt++) {
     try {
-      // Use Vercel URL in production, localhost in development
-      const baseUrl = process.env.VERCEL_URL
-        ? `https://${process.env.VERCEL_URL}`
-        : 'http://localhost:3000';
-      const basePath = process.env.NODE_ENV === 'production' ? '/nfl-hq' : '';
-      const response = await fetch(`${baseUrl}${basePath}/nfl/teams/api/schedule/${teamId}`, {
-        next: { revalidate: 3600 }, // Cache for 1 hour
-        signal: AbortSignal.timeout(10000) // 10 second timeout
-      });
+      const sportsKeedaTeamId = teamIdToSportsKeedaId[teamId];
 
-      if (!response.ok) {
-        throw new Error(`Schedule API error: ${response.status}`);
+      if (!sportsKeedaTeamId) {
+        console.error(`No Sportskeeda ID for team: ${teamId}`);
+        return { wins: 0, losses: 0, ties: 0 };
       }
 
-      const data = await response.json();
-      const schedule: ScheduleGame[] = data.schedule || [];
-
-      // Only count regular season games with results
-      const completedRegularSeasonGames = schedule.filter(
-        game => game.eventType === 'Regular Season' && game.result
+      // Fetch directly from Sportskeeda
+      const response = await fetch(
+        `https://cf-gotham.sportskeeda.com/taxonomy/sport/nfl/schedule/2025?team=${sportsKeedaTeamId}`,
+        {
+          headers: {
+            'User-Agent': 'Mozilla/5.0 (compatible; NFL-Team-Pages/1.0)',
+          },
+          next: { revalidate: 3600 }, // Cache for 1 hour
+          signal: AbortSignal.timeout(10000) // 10 second timeout
+        }
       );
 
-      const record: TeamRecord = {
-        wins: completedRegularSeasonGames.filter(game => game.result === 'W').length,
-        losses: completedRegularSeasonGames.filter(game => game.result === 'L').length,
-        ties: completedRegularSeasonGames.filter(game => game.result === 'T').length
-      };
+      if (!response.ok) {
+        throw new Error(`Sportskeeda API error: ${response.status}`);
+      }
 
-      return record;
+      const data: SportsKeedaScheduleResponse = await response.json();
+
+      // Only count regular season games (event_type === 1) that are Final
+      const completedRegularSeasonGames = data.schedule.filter(
+        game => game.event_type === 1 && game.status === 'Final'
+      );
+
+      let wins = 0;
+      let losses = 0;
+      let ties = 0;
+
+      for (const game of completedRegularSeasonGames) {
+        const team = game.teams.find(t => t.team_id === sportsKeedaTeamId);
+        if (team && typeof team.score === 'number') {
+          if (team.is_winner) {
+            wins++;
+          } else {
+            // Check if it's a tie (both teams have same score)
+            const opponent = game.teams.find(t => t.team_id !== sportsKeedaTeamId);
+            if (opponent && team.score === opponent.score) {
+              ties++;
+            } else {
+              losses++;
+            }
+          }
+        }
+      }
+
+      return { wins, losses, ties };
     } catch (error) {
       console.error(`Error calculating record for ${teamId} (attempt ${attempt + 1}):`, error);
 
