@@ -192,20 +192,63 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Fetch all NFL games for the season from Sportskeeda
-    // Use dynamic cache time based on game schedule
-    // NOTE: General API without team param only returns current/upcoming games
-    // We need to aggregate from multiple teams to get full season history
-    // Query 4 teams from different divisions to get comprehensive coverage
-    const revalidateTime = getRevalidationTime();
+    // Determine if requested date is in the past
+    const requestedDateObj = new Date(requestedDate + 'T12:00:00');
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const isHistoricalDate = requestedDateObj < today;
 
-    const teamIds = [366, 331, 359, 339]; // Ravens, Cowboys, 49ers, Chiefs - good coverage
-    const allGames = new Map<number, SportsKeedaGame>(); // Use Map to deduplicate by event_id
+    // For historical dates: Use longer cache and fetch from team APIs (comprehensive data)
+    // For current/future dates: Use dynamic cache and general API (faster, current data)
+    let revalidateTime: number;
+    let allGames = new Map<number, SportsKeedaGame>();
 
-    for (const teamId of teamIds) {
+    if (isHistoricalDate) {
+      // Historical games - cache for 1 week since data won't change
+      revalidateTime = 604800; // 1 week
+
+      // Fetch from ALL 32 teams to ensure complete historical coverage
+      // This runs once per week per historical date, so it's worth being comprehensive
+      const allTeamIds = [
+        355, 323, 366, 324, 364, 326, 327, 329, 331, 332, // ARI, ATL, BAL, BUF, CAR, CHI, CIN, CLE, DAL, DEN
+        334, 335, 325, 338, 365, 339, 341, 357, 343, 345, // DET, GB, HOU, IND, JAX, KC, LV, LAC, LAR, MIA
+        347, 348, 350, 351, 352, 354, 356, 359, 361, 362, // MIN, NE, NO, NYG, NYJ, PHI, PIT, SF, SEA, TB
+        336, 363 // TEN, WAS
+      ];
+
+      for (const teamId of allTeamIds) {
+        try {
+          const response = await fetch(
+            `https://cf-gotham.sportskeeda.com/taxonomy/sport/nfl/schedule/${season}?team=${teamId}`,
+            {
+              headers: {
+                'User-Agent': 'Mozilla/5.0 (compatible; NFL-Team-Pages/1.0)',
+              },
+              next: { revalidate: revalidateTime }
+            }
+          );
+
+          if (response.ok) {
+            const data: SportsKeedaScheduleResponse = await response.json();
+            if (data.schedule && Array.isArray(data.schedule)) {
+              data.schedule.forEach(game => {
+                allGames.set(game.event_id, game);
+              });
+            }
+          }
+        } catch (error) {
+          console.error(`Error fetching schedule for team ${teamId}:`, error);
+          // Continue with other teams
+        }
+      }
+    } else {
+      // Current/upcoming games - use dynamic cache based on game schedule
+      revalidateTime = getRevalidationTime();
+
+      // General API is fine for current/upcoming games
       try {
         const response = await fetch(
-          `https://cf-gotham.sportskeeda.com/taxonomy/sport/nfl/schedule/${season}?team=${teamId}`,
+          `https://cf-gotham.sportskeeda.com/taxonomy/sport/nfl/schedule/${season}`,
           {
             headers: {
               'User-Agent': 'Mozilla/5.0 (compatible; NFL-Team-Pages/1.0)',
@@ -217,15 +260,13 @@ export async function GET(request: NextRequest) {
         if (response.ok) {
           const data: SportsKeedaScheduleResponse = await response.json();
           if (data.schedule && Array.isArray(data.schedule)) {
-            // Add games to map, deduplicating by event_id
             data.schedule.forEach(game => {
               allGames.set(game.event_id, game);
             });
           }
         }
       } catch (error) {
-        console.error(`Error fetching schedule for team ${teamId}:`, error);
-        // Continue with other teams
+        console.error('Error fetching current schedule:', error);
       }
     }
 
