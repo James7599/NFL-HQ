@@ -164,70 +164,38 @@ export default function HomePage() {
   useEffect(() => {
     async function fetchUpcomingGames() {
       try {
-        // Fetch schedule from API
-        const response = await fetch(
-          'https://cf-gotham.sportskeeda.com/taxonomy/sport/nfl/schedule/2025',
-          {
-            headers: {
-              'User-Agent': 'Mozilla/5.0 (compatible; NFL-Team-Pages/1.0)',
-            },
-          }
-        );
+        // Fetch schedule from our internal API for the next 7 days
+        const now = new Date();
+        const allGames: any[] = [];
 
-        if (!response.ok) {
-          setGamesLoading(false);
-          return;
+        // Fetch games for next 7 days to find upcoming games
+        for (let i = 0; i < 7; i++) {
+          const date = new Date(now);
+          date.setDate(date.getDate() + i);
+          const dateStr = date.toISOString().split('T')[0]; // YYYY-MM-DD
+
+          const response = await fetch(getApiPath(`api/nfl/schedule/by-date?season=2025&date=${dateStr}`));
+
+          if (response.ok) {
+            const data = await response.json();
+            if (data.schedule && Array.isArray(data.schedule)) {
+              allGames.push(...data.schedule);
+            }
+          }
         }
 
-        const data = await response.json();
-
-        if (data.schedule && Array.isArray(data.schedule)) {
-          // Get current time
-          const now = new Date();
-
-          // Filter for upcoming games (not started yet)
-          const upcoming = data.schedule
-            .filter((game: any) => {
-              const gameDate = new Date(game.start_date.full);
-              return gameDate > now;
-            })
+        if (allGames.length > 0) {
+          // Filter for upcoming games (not Final or in progress)
+          const upcoming = allGames
+            .filter((game: any) => game.status === 'Pre-Game')
             .sort((a: any, b: any) => {
-              const dateA = new Date(a.start_date.full);
-              const dateB = new Date(b.start_date.full);
+              const dateA = new Date(a.start_date);
+              const dateB = new Date(b.start_date);
               return dateA.getTime() - dateB.getTime();
             })
             .slice(0, 3); // Get next 3 games
 
-          // Transform to the format we need
-          const transformedGames = upcoming.map((game: any) => {
-            const awayTeam = game.teams.find((t: any) => t.location_type === 'away');
-            const homeTeam = game.teams.find((t: any) => t.location_type === 'home');
-
-            return {
-              event_id: game.event_id,
-              start_date: game.start_date.full,
-              status: game.status,
-              has_score: game.has_score,
-              away_team: {
-                team_slug: awayTeam?.team_slug || '',
-                abbr: awayTeam?.abbr || '',
-                wins: awayTeam?.wins || 0,
-                losses: awayTeam?.losses || 0,
-                score: awayTeam?.score,
-                is_winner: awayTeam?.is_winner,
-              },
-              home_team: {
-                team_slug: homeTeam?.team_slug || '',
-                abbr: homeTeam?.abbr || '',
-                wins: homeTeam?.wins || 0,
-                losses: homeTeam?.losses || 0,
-                score: homeTeam?.score,
-                is_winner: homeTeam?.is_winner,
-              },
-            };
-          });
-
-          setUpcomingGames(transformedGames);
+          setUpcomingGames(upcoming);
         }
       } catch (err) {
         console.error('Error fetching upcoming games:', err);

@@ -31,12 +31,24 @@ function convertStaticGameToAPIFormat(game: StaticPlayoffGame): TransformedGame 
   const homeTeam = allTeams.find(t => t.id === game.homeTeam);
 
   // Convert date and time to ISO format
-  const [month, day, year] = game.date.split('-').map(Number);
-  const dateStr = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+  // Parse time like "1:30 PM ET" and convert to 24-hour format for ISO
+  const timeMatch = game.time.match(/(\d{1,2}):(\d{2})\s*(AM|PM)/i);
+  let isoTime = '12:00:00';
+  if (timeMatch) {
+    let hours = parseInt(timeMatch[1]);
+    const minutes = timeMatch[2];
+    const period = timeMatch[3].toUpperCase();
+
+    // Convert to 24-hour format
+    if (period === 'PM' && hours !== 12) hours += 12;
+    if (period === 'AM' && hours === 12) hours = 0;
+
+    isoTime = `${String(hours).padStart(2, '0')}:${minutes}:00`;
+  }
 
   return {
     event_id: `playoff-${game.date}-${game.awayTeam}-${game.homeTeam}`,
-    start_date: `${dateStr}T${game.time}`,
+    start_date: `${game.date}T${isoTime}`,
     status: 'Pre-Game',
     has_score: false,
     away_team: {
