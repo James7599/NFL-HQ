@@ -126,37 +126,167 @@ export async function GET(request: NextRequest) {
     const limit = parseInt(searchParams.get('limit') || '100');
     const includeAllStats = searchParams.get('includeAllStats') === 'true';
 
-    // Fetch player stats from Sportskeeda
-    const apiUrl = `https://cf-gotham.sportskeeda.com/taxonomy/sport/nfl/player-stats/${season}`;
-    console.log('Fetching stat leaders from:', apiUrl);
+    console.log('Fetching stat leaders for season:', season);
 
-    const response = await fetch(apiUrl, {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (compatible; NFL-Team-Pages/1.0)',
-      },
-      next: { revalidate: 3600 } // Cache for 1 hour
+    // Fetch stats from all 32 teams in parallel
+    const allTeamSlugs = Object.values(teamIdMap);
+
+    const teamStatsPromises = allTeamSlugs.map(async (teamSlug) => {
+      try {
+        const response = await fetch(
+          `https://cf-gotham.sportskeeda.com/taxonomy/sport/nfl/team/${teamSlug}/stats?season=${season}&event=regular`,
+          {
+            headers: {
+              'User-Agent': 'Mozilla/5.0 (compatible; NFL-Team-Pages/1.0)',
+            },
+            next: { revalidate: 3600 } // Cache for 1 hour
+          }
+        );
+
+        if (!response.ok) {
+          console.warn(`Failed to fetch stats for ${teamSlug}:`, response.status);
+          return null;
+        }
+
+        const data = await response.json();
+        return {
+          teamSlug,
+          playerStats: data.data?.player_stats || {}
+        };
+      } catch (error) {
+        console.warn(`Error fetching stats for ${teamSlug}:`, error);
+        return null;
+      }
     });
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error(`Sportskeeda API error: ${response.status}`, errorText);
-      throw new Error(`Sportskeeda API error: ${response.status}`);
+    const allTeamStats = (await Promise.all(teamStatsPromises)).filter(Boolean);
+
+    // Combine all player stats from all teams
+    const allPlayers: SportsKeedaPlayerStat[] = [];
+
+    for (const teamData of allTeamStats) {
+      if (!teamData) continue;
+
+      const { teamSlug, playerStats } = teamData;
+
+      // Process passing stats
+      if (playerStats.passing) {
+        for (const player of playerStats.passing) {
+          // Generate a unique player ID from the slug
+          const playerId = player.slug ? player.slug.split('').reduce((acc: number, char: string) => acc + char.charCodeAt(0), 0) : Math.random() * 1000000;
+
+          allPlayers.push({
+            player_id: playerId,
+            player_name: player.name,
+            player_slug: player.slug || '',
+            team_id: 0,
+            team_slug: teamSlug,
+            position: 'QB',
+            games_played: player.games_played || 0,
+            passing_yards: player.yards || 0,
+            passing_touchdowns: player.touchdowns || 0,
+            passing_interceptions: player.interceptions || 0,
+            pass_completions: player.completions || 0,
+            pass_attempts: player.attempts || 0,
+            passer_rating: parseFloat(player.qb_rating) || 0,
+          });
+        }
+      }
+
+      // Process rushing stats
+      if (playerStats.rushing) {
+        for (const player of playerStats.rushing) {
+          const playerId = player.slug ? player.slug.split('').reduce((acc: number, char: string) => acc + char.charCodeAt(0), 0) : Math.random() * 1000000;
+          const existingPlayer = allPlayers.find(p => p.player_slug === player.slug);
+          if (existingPlayer) {
+            existingPlayer.rushing_yards = player.yards || 0;
+            existingPlayer.rushing_touchdowns = player.touchdowns || 0;
+            existingPlayer.rushing_attempts = player.attempts || 0;
+          } else {
+            allPlayers.push({
+              player_id: playerId,
+              player_name: player.name,
+              player_slug: player.slug || '',
+              team_id: 0,
+              team_slug: teamSlug,
+              position: 'RB',
+              games_played: player.games_played || 0,
+              rushing_yards: player.yards || 0,
+              rushing_touchdowns: player.touchdowns || 0,
+              rushing_attempts: player.attempts || 0,
+            });
+          }
+        }
+      }
+
+      // Process receiving stats
+      if (playerStats.receiving) {
+        for (const player of playerStats.receiving) {
+          const playerId = player.slug ? player.slug.split('').reduce((acc: number, char: string) => acc + char.charCodeAt(0), 0) : Math.random() * 1000000;
+          const existingPlayer = allPlayers.find(p => p.player_slug === player.slug);
+          if (existingPlayer) {
+            existingPlayer.receiving_yards = player.yards || 0;
+            existingPlayer.receptions = player.receptions || 0;
+            existingPlayer.receiving_touchdowns = player.touchdowns || 0;
+            existingPlayer.receiving_targets = player.targets || 0;
+          } else {
+            allPlayers.push({
+              player_id: playerId,
+              player_name: player.name,
+              player_slug: player.slug || '',
+              team_id: 0,
+              team_slug: teamSlug,
+              position: 'WR',
+              games_played: player.games_played || 0,
+              receiving_yards: player.yards || 0,
+              receptions: player.receptions || 0,
+              receiving_touchdowns: player.touchdowns || 0,
+              receiving_targets: player.targets || 0,
+            });
+          }
+        }
+      }
+
+      // Process defensive stats
+      if (playerStats.defense) {
+        for (const player of playerStats.defense) {
+          const playerId = player.slug ? player.slug.split('').reduce((acc: number, char: string) => acc + char.charCodeAt(0), 0) : Math.random() * 1000000;
+          const existingPlayer = allPlayers.find(p => p.player_slug === player.slug);
+          if (existingPlayer) {
+            existingPlayer.total_tackles = player.total_tackles || 0;
+            existingPlayer.sacks = player.sacks || 0;
+            existingPlayer.interceptions = player.interceptions || 0;
+            existingPlayer.forced_fumbles = player.forced_fumbles || 0;
+          } else {
+            allPlayers.push({
+              player_id: playerId,
+              player_name: player.name,
+              player_slug: player.slug || '',
+              team_id: 0,
+              team_slug: teamSlug,
+              position: 'DEF',
+              games_played: player.games_played || 0,
+              total_tackles: player.total_tackles || 0,
+              sacks: player.sacks || 0,
+              interceptions: player.interceptions || 0,
+              forced_fumbles: player.forced_fumbles || 0,
+            });
+          }
+        }
+      }
     }
 
-    const data = await response.json();
-    console.log('API response structure:', Object.keys(data));
+    console.log(`Collected stats for ${allPlayers.length} players`);
 
-    const players: SportsKeedaPlayerStat[] = data.players || [];
-
-    if (players.length === 0) {
-      console.warn('No players found in API response');
+    if (allPlayers.length === 0) {
+      console.warn('No players found in API responses');
     }
 
     // Transform and sort players by each category
-    const allPlayerStats: PlayerFullStats[] = players.map(player => ({
+    const allPlayerStats: PlayerFullStats[] = allPlayers.map(player => ({
       playerId: player.player_id,
       name: player.player_name,
-      teamId: teamIdMap[player.team_id] || `team-${player.team_id}`,
+      teamId: player.team_slug,
       gamesPlayed: player.games_played || 0,
       position: player.position || 'N/A',
       // Passing
@@ -187,7 +317,7 @@ export async function GET(request: NextRequest) {
       statKey: keyof SportsKeedaPlayerStat,
       outputKey: keyof PlayerFullStats
     ): StatLeader[] => {
-      return players
+      return allPlayers
         .filter(p => (p[statKey] as number || 0) > 0)
         .sort((a, b) => ((b[statKey] as number) || 0) - ((a[statKey] as number) || 0))
         .slice(0, limit)
@@ -198,7 +328,7 @@ export async function GET(request: NextRequest) {
             playerSlug: player.player_slug,
             name: player.player_name,
             value: fullStats[outputKey] as string,
-            teamId: teamIdMap[player.team_id] || `team-${player.team_id}`,
+            teamId: player.team_slug,
             gamesPlayed: player.games_played || 0,
             position: player.position || 'N/A',
           };
