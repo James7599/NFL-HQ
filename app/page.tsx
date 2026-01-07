@@ -82,31 +82,24 @@ export default function HomePage() {
   useEffect(() => {
     async function fetchTopStandings() {
       try {
-        const response = await fetch('/nfl-hq/api/nfl/standings?season=2025&level=conference');
+        const response = await fetch(getApiPath('nfl/teams/api/standings?season=2025'));
 
         if (!response.ok) return;
 
         const data = await response.json();
 
-        // Collect all teams from both conferences
+        // Collect all teams from the standings API response
         const allTeamsData: Array<{ teamId: string; teamName: string; wins: number; losses: number; winPct: number }> = [];
 
-        if (data.standings?.conferences) {
-          for (const conf of data.standings.conferences) {
-            for (const team of conf.teams) {
-              const teamId = teamSlugMapping[team.sk_slug] || team.sk_slug;
-              const ourTeam = allTeams.find(t => t.id === teamId);
-
-              if (ourTeam) {
-                allTeamsData.push({
-                  teamId,
-                  teamName: ourTeam.fullName,
-                  wins: team.wins || 0,
-                  losses: team.losses || 0,
-                  winPct: parseFloat(team.percentage || '0')
-                });
-              }
-            }
+        if (data.standings && Array.isArray(data.standings)) {
+          for (const team of data.standings) {
+            allTeamsData.push({
+              teamId: team.teamId,
+              teamName: team.fullName,
+              wins: team.record?.wins || 0,
+              losses: team.record?.losses || 0,
+              winPct: team.winPercentage || 0
+            });
           }
         }
 
