@@ -84,17 +84,16 @@ export default function StatsPage() {
   const [activeCategory, setActiveCategory] = useState<StatCategory>('passingYards');
 
   // Filter state
-  const [selectedTeam, setSelectedTeam] = useState<string>('all');
   const [displayLimit, setDisplayLimit] = useState(25);
 
   // Modal state
   const [selectedPlayer, setSelectedPlayer] = useState<PlayerFullStats | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Reset display limit when team or category changes
+  // Reset display limit when category changes
   useEffect(() => {
     setDisplayLimit(25);
-  }, [selectedTeam, activeCategory]);
+  }, [activeCategory]);
 
   // Fetch stat leaders
   useEffect(() => {
@@ -176,59 +175,9 @@ export default function StatsPage() {
     return 'bg-gray-100 text-gray-700 border-gray-200';
   };
 
-  // Filter players based on search and team selection
+  // Filter players by display limit
   const filteredLeaders = useMemo(() => {
     if (!statLeaders) return null;
-
-    // If a specific team is selected, show all players from that team sorted by category
-    if (selectedTeam !== 'all') {
-      const teamPlayers = allPlayerStats.filter(player => player.teamId === selectedTeam);
-
-      // Helper to sort players by a specific stat
-      const sortByCategory = (category: StatCategory): StatLeader[] => {
-        const statKey = {
-          'passingYards': 'passingYards',
-          'passingTDs': 'passingTDs',
-          'rushingYards': 'rushingYards',
-          'rushingTDs': 'rushingTDs',
-          'receivingYards': 'receivingYards',
-          'receivingTDs': 'receivingTDs',
-          'receptions': 'receptions',
-          'tackles': 'tackles',
-          'sacks': 'sacks',
-          'interceptions': 'defensiveInterceptions',
-        }[category] as keyof PlayerFullStats;
-
-        return [...teamPlayers]
-          .sort((a, b) => {
-            const aVal = parseFloat(String(a[statKey]) || '0');
-            const bVal = parseFloat(String(b[statKey]) || '0');
-            return bVal - aVal;
-          })
-          .map((player, index) => ({
-            playerId: player.playerId,
-            playerSlug: '', // Not needed for display
-            name: player.name,
-            value: String(player[statKey]),
-            teamId: player.teamId,
-            gamesPlayed: player.gamesPlayed,
-            position: player.position,
-          }));
-      };
-
-      return {
-        passingYards: sortByCategory('passingYards'),
-        passingTDs: sortByCategory('passingTDs'),
-        rushingYards: sortByCategory('rushingYards'),
-        rushingTDs: sortByCategory('rushingTDs'),
-        receivingYards: sortByCategory('receivingYards'),
-        receivingTDs: sortByCategory('receivingTDs'),
-        receptions: sortByCategory('receptions'),
-        tackles: sortByCategory('tackles'),
-        sacks: sortByCategory('sacks'),
-        interceptions: sortByCategory('interceptions'),
-      };
-    }
 
     // Show league-wide leaders, limited by displayLimit
     const limitPlayers = (players: StatLeader[]) => {
@@ -247,7 +196,7 @@ export default function StatsPage() {
       sacks: limitPlayers(statLeaders.sacks),
       interceptions: limitPlayers(statLeaders.interceptions),
     };
-  }, [statLeaders, allPlayerStats, selectedTeam, displayLimit]);
+  }, [statLeaders, displayLimit]);
 
   // Open player modal
   const openPlayerModal = (playerId: number, playerName: string, teamId: string) => {
@@ -336,31 +285,9 @@ export default function StatsPage() {
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
               {/* Table Header */}
               <div className="bg-gradient-to-r from-[#0050A0] to-blue-700 text-white px-6 py-4">
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                  <h2 className="text-xl font-bold">
-                    {activeCategoryInfo.label}
-                    {selectedTeam !== 'all' && getTeamInfo(selectedTeam) && (
-                      <span className="text-white/90 font-normal ml-2">
-                        - {getTeamInfo(selectedTeam)!.fullName}
-                      </span>
-                    )}
-                  </h2>
-                  <div>
-                    <select
-                      id="team-filter-header"
-                      value={selectedTeam}
-                      onChange={(e) => setSelectedTeam(e.target.value)}
-                      className="px-3 py-1.5 bg-white/10 border border-white/30 text-white rounded-lg focus:ring-2 focus:ring-white/50 focus:border-white outline-none transition-all text-sm backdrop-blur-sm hover:bg-white/20"
-                    >
-                      <option value="all" className="text-gray-900">All Teams</option>
-                      {allTeams.sort((a, b) => a.fullName.localeCompare(b.fullName)).map((team) => (
-                        <option key={team.id} value={team.id} className="text-gray-900">
-                          {team.fullName}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
+                <h2 className="text-xl font-bold">
+                  {activeCategoryInfo.label}
+                </h2>
               </div>
 
               {/* Table */}
@@ -370,14 +297,6 @@ export default function StatsPage() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                   </svg>
                   <p className="text-gray-500 mb-2">No players found</p>
-                  {selectedTeam !== 'all' && (
-                    <button
-                      onClick={() => setSelectedTeam('all')}
-                      className="text-[#0050A0] hover:underline font-medium"
-                    >
-                      View all teams
-                    </button>
-                  )}
                 </div>
               ) : (
                 <div className="overflow-x-auto -mx-6 sm:mx-0">
@@ -468,8 +387,8 @@ export default function StatsPage() {
                 </div>
               )}
 
-              {/* Expand buttons for All Teams view */}
-              {selectedTeam === 'all' && filteredLeaders[activeCategory].length > 0 && (
+              {/* Expand buttons */}
+              {filteredLeaders[activeCategory].length > 0 && (
                 <div className="px-4 sm:px-6 py-4 bg-gray-50 border-t border-gray-200 flex items-center justify-center gap-2 sm:gap-3">
                   {displayLimit === 25 && (
                     <>
