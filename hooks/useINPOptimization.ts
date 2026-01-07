@@ -128,16 +128,6 @@ export function useINPMonitoring() {
       for (const entry of list.getEntries()) {
         if (entry.duration > 50) { // Long task threshold
           console.warn(`⚠️ Long task detected: ${entry.duration}ms`, entry);
-          
-          // Send to analytics
-          if (process.env.NODE_ENV === 'production') {
-            navigator.sendBeacon('/nfl/teams/api/performance/long-task', JSON.stringify({
-              duration: entry.duration,
-              startTime: entry.startTime,
-              name: entry.name,
-              url: location.href
-            }));
-          }
         }
       }
     });

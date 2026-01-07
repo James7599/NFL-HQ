@@ -35,22 +35,6 @@ export default function PerformanceMonitor() {
           non_interaction: true,
         });
       }
-
-      // Custom analytics endpoint
-      fetch('/nfl/teams/api/analytics/web-vitals', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: metric.name,
-          value: metric.value,
-          id: metric.id,
-          label: metric.label,
-          delta: metric.delta,
-          url: window.location.href,
-          userAgent: navigator.userAgent,
-          timestamp: Date.now(),
-        }),
-      }).catch(console.error);
     }
   });
 
@@ -73,17 +57,6 @@ export default function PerformanceMonitor() {
                   startTime: eventEntry.startTime,
                   target: (eventEntry as PerformanceEventTiming & { target?: { tagName: string } }).target?.tagName || 'unknown'
                 });
-                
-                // Send to analytics if in production
-                if (process.env.NODE_ENV === 'production') {
-                  navigator.sendBeacon('/nfl/teams/api/performance/inp', JSON.stringify({
-                    type: eventEntry.name,
-                    duration,
-                    startTime: eventEntry.startTime,
-                    url: location.href,
-                    timestamp: Date.now()
-                  }));
-                }
               }
             }
           }
@@ -131,16 +104,6 @@ export default function PerformanceMonitor() {
               duration: `${entry.duration.toFixed(2)}ms`,
               startTime: entry.startTime
             });
-            
-            if (process.env.NODE_ENV === 'production') {
-              navigator.sendBeacon('/nfl/teams/api/performance/long-task', JSON.stringify({
-                name: entry.name,
-                duration: entry.duration,
-                startTime: entry.startTime,
-                url: location.href,
-                timestamp: Date.now()
-              }));
-            }
           }
         }
       });
