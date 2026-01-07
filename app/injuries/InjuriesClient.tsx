@@ -239,12 +239,9 @@ export default function InjuriesClient() {
 
             {/* Last Updated */}
             <div className="mt-4 pt-4 border-t border-gray-200">
-              <div className="flex items-center justify-between text-sm">
+              <div className="text-sm">
                 <span className="text-gray-600">
                   <strong>Last Updated:</strong> {lastUpdated || 'Loading...'}
-                </span>
-                <span className="text-gray-600">
-                  <strong>Total Injuries:</strong> {filteredInjuries.length}
                 </span>
               </div>
             </div>
