@@ -291,7 +291,7 @@ export async function GET(request: NextRequest) {
     });
 
     // Transform to expected format
-    const transformedGames: TransformedGame[] = filteredGames.map((game) => {
+    let transformedGames: TransformedGame[] = filteredGames.map((game) => {
       const awayTeam = game.teams.find(t => t.location_type === 'away');
       const homeTeam = game.teams.find(t => t.location_type === 'home');
 
