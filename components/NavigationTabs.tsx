@@ -1,6 +1,6 @@
 'use client';
 
-import { useOptimizedTabChange, useINPMonitoring } from '../hooks/useINPOptimization';
+import { useINPMonitoring } from '../hooks/useINPOptimization';
 import { useMemo, useEffect, useRef } from 'react';
 import { TeamData } from '@/data/teams';
 
@@ -13,9 +13,6 @@ interface NavigationTabsProps {
 export default function NavigationTabs({ activeTab, onTabChange, team }: NavigationTabsProps) {
   // Enable INP monitoring for this component
   useINPMonitoring();
-
-  // Optimize tab change handler
-  const optimizedTabChange = useOptimizedTabChange(onTabChange);
 
   // Refs for scroll management
   const navRef = useRef<HTMLElement>(null);
@@ -86,7 +83,7 @@ export default function NavigationTabs({ activeTab, onTabChange, team }: Navigat
             <button
               key={tab.id}
               ref={activeTab === tab.id ? activeButtonRef : null}
-              onClick={() => optimizedTabChange(tab.id)}
+              onClick={() => onTabChange(tab.id)}
               className={`py-4 px-2 border-b-2 font-medium text-sm whitespace-nowrap transition-colors will-change-auto ${
                 activeTab === tab.id
                   ? 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
