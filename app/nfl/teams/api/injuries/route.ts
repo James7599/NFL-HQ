@@ -67,11 +67,16 @@ async function fetchRotoballerInjuries(): Promise<Record<string, InjuryData[]>> 
           next: { revalidate: 300 }
         }
       ),
-      ...allTeams.map(team =>
-        fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3003'}/nfl/teams/api/roster/${team.id}`, {
+      ...allTeams.map(team => {
+        // Determine base URL for internal API calls (server-side only)
+        const baseUrl = process.env.VERCEL_URL
+          ? `https://${process.env.VERCEL_URL}`
+          : 'http://localhost:3000';
+
+        return fetch(`${baseUrl}/nfl-hq/nfl/teams/api/roster/${team.id}`, {
           next: { revalidate: 3600 }
-        }).catch(() => null)
-      )
+        }).catch(() => null);
+      })
     ]);
 
     if (!injuryResponse.ok) {

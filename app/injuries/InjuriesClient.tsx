@@ -36,15 +36,12 @@ export default function InjuriesClient() {
           setInjuries(data.injuries.ALL);
           setLastUpdated(
             data.lastUpdated
-              ? new Date(data.lastUpdated).toLocaleString('en-US', {
+              ? new Date(data.lastUpdated).toLocaleDateString('en-US', {
                   month: 'short',
                   day: 'numeric',
                   year: 'numeric',
-                  hour: 'numeric',
-                  minute: '2-digit',
-                  hour12: true,
                 })
-              : new Date().toLocaleString()
+              : new Date().toLocaleDateString()
           );
         }
       } catch (error) {

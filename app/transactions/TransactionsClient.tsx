@@ -48,13 +48,10 @@ export default function TransactionsClient() {
         const data = await response.json();
         setAllTransactions(data.transactions || []);
         setAvailableMonths(data.availableMonths || []);
-        setLastUpdated(new Date(data.lastUpdated).toLocaleString('en-US', {
+        setLastUpdated(new Date(data.lastUpdated).toLocaleDateString('en-US', {
           month: 'short',
           day: 'numeric',
-          year: 'numeric',
-          hour: 'numeric',
-          minute: '2-digit',
-          hour12: true
+          year: 'numeric'
         }));
       } catch (error) {
         console.error('Error fetching transactions:', error);

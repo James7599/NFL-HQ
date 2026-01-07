@@ -81,14 +81,10 @@ export default function SalaryCapTrackerClient() {
 
       // Update UI only after all teams have loaded
       setSalaryCapData(results);
-      setLastUpdated(new Date().toLocaleString('en-US', {
+      setLastUpdated(new Date().toLocaleDateString('en-US', {
         month: 'short',
         day: 'numeric',
-        year: 'numeric',
-        hour: 'numeric',
-        minute: '2-digit',
-        hour12: true,
-        timeZoneName: 'short'
+        year: 'numeric'
       }));
       setLoading(false);
     }
