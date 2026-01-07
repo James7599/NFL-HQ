@@ -32,13 +32,14 @@ const NFLTeamsSidebar: React.FC<NFLTeamsSidebarProps> = ({ currentTeam, currentT
 
   const nflTools = [
     { title: 'NFL Schedule', url: '/nfl-hq/schedule', external: false },
-    { title: 'NFL Stat Leaders', url: '/nfl-hq/stats', external: false },
     { title: 'NFL Standings', url: '/nfl-hq/standings', external: false },
-    { title: 'NFL Transactions', url: '/nfl-hq/transactions', external: false },
-    { title: 'NFL Power Rankings Builder', url: '/nfl-hq/power-rankings-builder', external: false },
-    { title: 'NFL Salary Cap Tracker', url: '/nfl-hq/salary-cap-tracker', external: false },
+    { title: 'NFL Injury Report', url: '/nfl-hq/injuries', external: false },
+    { title: 'NFL Stat Leaders', url: '/nfl-hq/stats', external: false },
     { title: 'NFL Playoff Predictor', url: 'https://www.profootballnetwork.com/nfl-playoff-predictor', external: true },
+    { title: 'NFL Power Rankings Builder', url: '/nfl-hq/power-rankings-builder', external: false },
+    { title: 'NFL Transactions', url: '/nfl-hq/transactions', external: false },
     { title: 'NFL Mock Draft Simulator', url: 'https://www.profootballnetwork.com/mockdraft', external: true },
+    { title: 'NFL Salary Cap Tracker', url: '/nfl-hq/salary-cap-tracker', external: false },
     { title: 'NFL Ultimate GM Simulator', url: 'https://www.profootballnetwork.com/cta-ultimate-gm-simulator-nfl/', external: true },
   ];
 
@@ -46,10 +47,10 @@ const NFLTeamsSidebar: React.FC<NFLTeamsSidebarProps> = ({ currentTeam, currentT
   const otherTools = [
     { title: 'Fantasy Football Hub', url: 'https://www.profootballnetwork.com/fantasy/football/' },
     { title: 'NFL Draft Hub', url: 'https://www.profootballnetwork.com/nfl-draft-hq/' },
-    { title: 'World Cup Simulator', url: 'https://www.profootballnetwork.com/fifa-world-cup-simulator/' },
     { title: 'CFB Playoff Predictor', url: 'https://www.profootballnetwork.com/cfb/playoff-predictor-cfb-cta/' },
-    { title: 'MLB Playoff Predictor', url: 'https://www.profootballnetwork.com/mlb-playoff-predictor/' },
     { title: 'NBA Mock Draft Simulator', url: 'https://www.profootballnetwork.com/nba-mock-draft-simulator' },
+    { title: 'World Cup Simulator', url: 'https://www.profootballnetwork.com/fifa-world-cup-simulator/' },
+    { title: 'MLB Playoff Predictor', url: 'https://www.profootballnetwork.com/mlb-playoff-predictor/' },
   ];
 
   // Mobile version
