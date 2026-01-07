@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import NFLTeamsSidebar from '@/components/NFLTeamsSidebar';
 import { getAllTeams } from '@/data/teams';
@@ -34,6 +34,7 @@ export default function TransactionsClient() {
   const [loading, setLoading] = useState(true);
   const [selectedTeam, setSelectedTeam] = useState('all');
   const [selectedMonth, setSelectedMonth] = useState('all');
+  const [selectedPosition, setSelectedPosition] = useState('all');
   const [availableMonths, setAvailableMonths] = useState<string[]>([]);
   const [lastUpdated, setLastUpdated] = useState('');
 
@@ -63,7 +64,13 @@ export default function TransactionsClient() {
     fetchTransactions();
   }, []);
 
-  // Filter transactions client-side when team or month changes
+  // Get unique positions from all transactions
+  const availablePositions = useMemo(() => {
+    const positions = new Set(allTransactions.map(t => t.position).filter(Boolean));
+    return Array.from(positions).sort();
+  }, [allTransactions]);
+
+  // Filter transactions client-side when team, month, or position changes
   useEffect(() => {
     let filtered = allTransactions;
 
@@ -81,8 +88,13 @@ export default function TransactionsClient() {
       filtered = filtered.filter(t => t.month === selectedMonth);
     }
 
+    // Filter by position
+    if (selectedPosition !== 'all') {
+      filtered = filtered.filter(t => t.position === selectedPosition);
+    }
+
     setTransactions(filtered);
-  }, [selectedTeam, selectedMonth, allTransactions]);
+  }, [selectedTeam, selectedMonth, selectedPosition, allTransactions]);
 
   // Group transactions by date
   const groupedTransactions: GroupedTransactions = {};
@@ -158,7 +170,7 @@ export default function TransactionsClient() {
         <div className="mx-auto px-4 sm:px-6 lg:px-8 py-6 max-w-7xl">
           {/* Filters and Last Updated */}
           <div className="bg-white rounded-lg shadow-sm p-4 mb-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
               {/* Team Filter */}
               <div>
                 <label htmlFor="team-filter" className="block text-sm font-semibold text-gray-700 mb-2">
@@ -194,6 +206,26 @@ export default function TransactionsClient() {
                   {availableMonths.map(month => (
                     <option key={month} value={month}>
                       {month}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Position Filter */}
+              <div>
+                <label htmlFor="position-filter" className="block text-sm font-semibold text-gray-700 mb-2">
+                  Position:
+                </label>
+                <select
+                  id="position-filter"
+                  value={selectedPosition}
+                  onChange={(e) => setSelectedPosition(e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0050A0] bg-white text-sm"
+                >
+                  <option value="all">All Positions</option>
+                  {availablePositions.map(position => (
+                    <option key={position} value={position}>
+                      {position}
                     </option>
                   ))}
                 </select>

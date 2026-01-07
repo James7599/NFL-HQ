@@ -86,6 +86,9 @@ export default function StatsPage() {
   // Filter state
   const [displayLimit, setDisplayLimit] = useState(25);
 
+  // Per-game toggle state
+  const [showPerGame, setShowPerGame] = useState(false);
+
   // Modal state
   const [selectedPlayer, setSelectedPlayer] = useState<PlayerFullStats | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -175,12 +178,35 @@ export default function StatsPage() {
     return 'bg-gray-100 text-gray-700 border-gray-200';
   };
 
-  // Filter players by display limit
+  // Calculate per-game value
+  const calculatePerGame = (value: string, gamesPlayed: number): string => {
+    if (gamesPlayed === 0) return '0.0';
+    const numValue = parseFloat(value);
+    const perGame = numValue / gamesPlayed;
+    return perGame.toFixed(1);
+  };
+
+  // Get display value based on per-game toggle
+  const getDisplayValue = (player: StatLeader): string => {
+    if (!showPerGame) return player.value;
+    return calculatePerGame(player.value, player.gamesPlayed);
+  };
+
+  // Filter players by display limit and re-sort by per-game if needed
   const filteredLeaders = useMemo(() => {
     if (!statLeaders) return null;
 
     // Show league-wide leaders, limited by displayLimit
     const limitPlayers = (players: StatLeader[]) => {
+      if (showPerGame) {
+        // Re-sort by per-game average
+        const sorted = [...players].sort((a, b) => {
+          const aPerGame = parseFloat(calculatePerGame(a.value, a.gamesPlayed));
+          const bPerGame = parseFloat(calculatePerGame(b.value, b.gamesPlayed));
+          return bPerGame - aPerGame;
+        });
+        return sorted.slice(0, displayLimit);
+      }
       return players.slice(0, displayLimit);
     };
 
@@ -196,7 +222,7 @@ export default function StatsPage() {
       sacks: limitPlayers(statLeaders.sacks),
       interceptions: limitPlayers(statLeaders.interceptions),
     };
-  }, [statLeaders, displayLimit]);
+  }, [statLeaders, displayLimit, showPerGame]);
 
   // Open player modal
   const openPlayerModal = (playerId: number, playerName: string, teamId: string) => {
@@ -285,9 +311,22 @@ export default function StatsPage() {
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
               {/* Table Header */}
               <div className="bg-gradient-to-r from-[#0050A0] to-blue-700 text-white px-6 py-4">
-                <h2 className="text-xl font-bold">
-                  {activeCategoryInfo.label}
-                </h2>
+                <div className="flex items-center justify-between">
+                  <h2 className="text-xl font-bold">
+                    {activeCategoryInfo.label}
+                  </h2>
+                  {/* Per-Game Toggle */}
+                  <button
+                    onClick={() => setShowPerGame(!showPerGame)}
+                    className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
+                      showPerGame
+                        ? 'bg-white text-[#0050A0]'
+                        : 'bg-white/20 text-white hover:bg-white/30'
+                    }`}
+                  >
+                    {showPerGame ? 'Per Game' : 'Total Stats'}
+                  </button>
+                </div>
               </div>
 
               {/* Table */}
@@ -308,7 +347,9 @@ export default function StatsPage() {
                         <th className="px-2 sm:px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider w-20 sm:w-24">Position</th>
                         <th className="px-2 sm:px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Team</th>
                         <th className="px-2 sm:px-4 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider w-16 sm:w-20">GP</th>
-                        <th className="px-4 sm:px-6 py-3 text-right text-xs font-bold text-gray-500 uppercase tracking-wider w-20 sm:w-24">{activeCategoryInfo.abbr}</th>
+                        <th className="px-4 sm:px-6 py-3 text-right text-xs font-bold text-gray-500 uppercase tracking-wider w-20 sm:w-24">
+                          {showPerGame ? `${activeCategoryInfo.abbr}/G` : activeCategoryInfo.abbr}
+                        </th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200">
@@ -376,7 +417,7 @@ export default function StatsPage() {
                             {/* Stat Value */}
                             <td className="px-4 sm:px-6 py-3 sm:py-4 text-right">
                               <span className="text-base sm:text-lg font-bold text-[#0050A0]">
-                                {activeCategoryInfo.format ? activeCategoryInfo.format(player.value) : player.value}
+                                {getDisplayValue(player)}
                               </span>
                             </td>
                           </tr>
@@ -447,10 +488,25 @@ export default function StatsPage() {
           {!loading && !error && statLeaders && (
             <div className="mt-8">
               <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-                <h2 className="text-2xl font-bold text-gray-900 mb-6">Top 3 Leaders - All Categories</h2>
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-2xl font-bold text-gray-900">Top 3 Leaders - All Categories</h2>
+                  <span className="text-sm text-gray-600">
+                    {showPerGame ? 'Per Game Averages' : 'Total Stats'}
+                  </span>
+                </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                   {STAT_CATEGORIES.map((category) => {
-                    const leaders = statLeaders[category.key].slice(0, 3);
+                    let leaders = statLeaders[category.key].slice(0, 3);
+                    // If showing per-game, re-sort the category by per-game average
+                    if (showPerGame) {
+                      leaders = [...statLeaders[category.key]]
+                        .sort((a, b) => {
+                          const aPerGame = parseFloat(calculatePerGame(a.value, a.gamesPlayed));
+                          const bPerGame = parseFloat(calculatePerGame(b.value, b.gamesPlayed));
+                          return bPerGame - aPerGame;
+                        })
+                        .slice(0, 3);
+                    }
                     return (
                       <div
                         key={category.key}
@@ -462,11 +518,14 @@ export default function StatsPage() {
                       >
                         <div className="flex items-center justify-between mb-4">
                           <h3 className="font-bold text-sm text-gray-900 group-hover:text-[#0050A0] transition-colors">{category.label}</h3>
-                          <span className="text-xs font-semibold text-gray-500 bg-white px-2 py-1 rounded border border-gray-200">{category.abbr}</span>
+                          <span className="text-xs font-semibold text-gray-500 bg-white px-2 py-1 rounded border border-gray-200">
+                            {showPerGame ? `${category.abbr}/G` : category.abbr}
+                          </span>
                         </div>
                         <div className="space-y-3">
                           {leaders.map((player, idx) => {
                             const team = getTeamInfo(player.teamId);
+                            const displayValue = showPerGame ? calculatePerGame(player.value, player.gamesPlayed) : player.value;
                             return (
                               <div key={player.playerId} className="flex items-center gap-2">
                                 <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 ${
@@ -480,13 +539,13 @@ export default function StatsPage() {
                                   <img
                                     src={team.logoUrl}
                                     alt={team.abbreviation}
-                                    
-                                    
+
+
                                     className="w-4 h-4 flex-shrink-0"
                                   />
                                 )}
                                 <span className="text-xs font-medium text-gray-900 truncate flex-1">{player.name}</span>
-                                <span className="text-xs font-bold text-[#0050A0]">{category.format ? category.format(player.value) : player.value}</span>
+                                <span className="text-xs font-bold text-[#0050A0]">{displayValue}</span>
                               </div>
                             );
                           })}

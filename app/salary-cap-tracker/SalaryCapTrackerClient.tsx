@@ -115,6 +115,33 @@ export default function SalaryCapTrackerClient() {
     }
   };
 
+  // Calculate league averages
+  const leagueAverages = useMemo(() => {
+    if (salaryCapData.length === 0) {
+      return {
+        avgCapSpace: 0,
+        avgSalaryCap: 0,
+        avgActiveCapSpend: 0,
+        avgDeadMoney: 0
+      };
+    }
+
+    // Filter out teams with NaN values for proper averaging
+    const validTeams = salaryCapData.filter(t => !isNaN(t.capSpace) && !isNaN(t.activeCapSpend) && !isNaN(t.deadMoney));
+
+    const totalCapSpace = validTeams.reduce((sum, team) => sum + team.capSpace, 0);
+    const totalSalaryCap = salaryCapData.reduce((sum, team) => sum + team.salaryCap, 0);
+    const totalActiveCapSpend = validTeams.reduce((sum, team) => sum + team.activeCapSpend, 0);
+    const totalDeadMoney = validTeams.reduce((sum, team) => sum + team.deadMoney, 0);
+
+    return {
+      avgCapSpace: totalCapSpace / validTeams.length,
+      avgSalaryCap: totalSalaryCap / salaryCapData.length,
+      avgActiveCapSpend: totalActiveCapSpend / validTeams.length,
+      avgDeadMoney: totalDeadMoney / validTeams.length
+    };
+  }, [salaryCapData]);
+
   // Sort data
   const sortedData = useMemo(() => {
     const sorted = [...salaryCapData].sort((a, b) => {
@@ -262,6 +289,31 @@ export default function SalaryCapTrackerClient() {
                     </tr>
                   </thead>
                   <tbody>
+                    {/* League Averages Row */}
+                    <tr className="bg-gradient-to-r from-blue-50 to-indigo-50 border-t-2 border-b-2 border-[#0050A0]">
+                      <td className="px-2 sm:px-4 py-3 sm:py-4">
+                        <div className="flex items-center gap-2">
+                          <svg className="w-5 h-5 text-[#0050A0]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                          </svg>
+                          <span className="font-bold text-sm sm:text-base text-[#0050A0]">
+                            LEAGUE AVERAGE
+                          </span>
+                        </div>
+                      </td>
+                      <td className="px-2 sm:px-4 py-3 sm:py-4 text-sm sm:text-base font-bold text-gray-900">
+                        {formatCurrency(leagueAverages.avgCapSpace)}
+                      </td>
+                      <td className="px-2 sm:px-4 py-3 sm:py-4 text-xs sm:text-sm font-semibold text-gray-700">
+                        {formatCurrency(leagueAverages.avgSalaryCap)}
+                      </td>
+                      <td className="px-2 sm:px-4 py-3 sm:py-4 text-xs sm:text-sm font-semibold text-gray-700">
+                        {formatCurrency(leagueAverages.avgActiveCapSpend)}
+                      </td>
+                      <td className="px-2 sm:px-4 py-3 sm:py-4 text-xs sm:text-sm font-semibold text-gray-700">
+                        {formatCurrency(leagueAverages.avgDeadMoney)}
+                      </td>
+                    </tr>
                     {sortedData.map((team, index) => {
                       const teamInfo = getTeamInfo(team.teamId);
                       return (

@@ -113,6 +113,53 @@ const sampleStandingsData: StandingData[] = [
 
 type SortKey = 'wins' | 'losses' | 'winPct' | 'gamesBack' | 'confRecord' | 'divRecord' | 'streak' | 'last10';
 
+// Calculate Games Back for each team based on their division leader
+function calculateGamesBack(standings: StandingData[]): StandingData[] {
+  // Group teams by division
+  const divisionGroups: Record<string, StandingData[]> = {};
+
+  standings.forEach(team => {
+    if (!divisionGroups[team.division]) {
+      divisionGroups[team.division] = [];
+    }
+    divisionGroups[team.division].push(team);
+  });
+
+  // Calculate games back for each division
+  const updatedStandings: StandingData[] = [];
+
+  Object.keys(divisionGroups).forEach(division => {
+    const divisionTeams = divisionGroups[division];
+
+    // Sort by wins (descending) to find division leader
+    const sortedTeams = [...divisionTeams].sort((a, b) => {
+      // Primary: wins
+      if (b.wins !== a.wins) return b.wins - a.wins;
+      // Tiebreaker: losses (fewer is better)
+      if (a.losses !== b.losses) return a.losses - b.losses;
+      // Tiebreaker: win percentage
+      return b.winPct - a.winPct;
+    });
+
+    const leader = sortedTeams[0];
+
+    // Calculate games back for each team
+    sortedTeams.forEach(team => {
+      if (team.teamId === leader.teamId) {
+        // Leader has 0 games back
+        team.gamesBack = 0;
+      } else {
+        // GB = ((Leader Wins - Team Wins) + (Team Losses - Leader Losses)) / 2
+        const gb = ((leader.wins - team.wins) + (team.losses - leader.losses)) / 2;
+        team.gamesBack = gb;
+      }
+      updatedStandings.push(team);
+    });
+  });
+
+  return updatedStandings;
+}
+
 export default function StandingsClient() {
   const [conferenceView, setConferenceView] = useState<'all' | 'conference' | 'AFC' | 'NFC'>('all');
   const [sortKey, setSortKey] = useState<SortKey>('wins');
@@ -171,7 +218,9 @@ export default function StandingsClient() {
         }
 
         if (transformedData.length > 0) {
-          setStandingsData(transformedData);
+          // Calculate Games Back for each team by division
+          const dataWithGamesBack = calculateGamesBack(transformedData);
+          setStandingsData(dataWithGamesBack);
         } else {
           // If no data, keep using sample data
           console.warn('No standings data received from API, using sample data');
@@ -243,6 +292,53 @@ export default function StandingsClient() {
 
   const afcTeams = filteredAndSortedData.filter(team => team.conference === 'AFC');
   const nfcTeams = filteredAndSortedData.filter(team => team.conference === 'NFC');
+
+  // Calculate playoff picture
+  const getPlayoffPicture = (conferenceTeams: StandingData[]) => {
+    // Get division winners (top team from each division)
+    const divisions = ['East', 'North', 'South', 'West'];
+    const conference = conferenceTeams[0]?.conference || 'AFC';
+
+    const divisionWinners: StandingData[] = [];
+    divisions.forEach(div => {
+      const divisionName = `${conference} ${div}`;
+      const divTeams = conferenceTeams.filter(t => t.division === divisionName);
+      if (divTeams.length > 0) {
+        // Sort by wins, then by win percentage
+        const sorted = [...divTeams].sort((a, b) => {
+          if (b.wins !== a.wins) return b.wins - a.wins;
+          return b.winPct - a.winPct;
+        });
+        divisionWinners.push(sorted[0]);
+      }
+    });
+
+    // Sort division winners by record (seeds 1-4)
+    const seededDivisionWinners = [...divisionWinners].sort((a, b) => {
+      if (b.wins !== a.wins) return b.wins - a.wins;
+      return b.winPct - a.winPct;
+    });
+
+    // Get wild card teams (best 3 non-division winners)
+    const nonDivisionWinners = conferenceTeams.filter(
+      team => !divisionWinners.some(dw => dw.teamId === team.teamId)
+    );
+    const wildCardTeams = [...nonDivisionWinners]
+      .sort((a, b) => {
+        if (b.wins !== a.wins) return b.wins - a.wins;
+        return b.winPct - a.winPct;
+      })
+      .slice(0, 3);
+
+    return {
+      divisionWinners: seededDivisionWinners,
+      wildCardTeams,
+      inTheHunt: nonDivisionWinners.slice(3, 6) // Next 3 teams in the hunt
+    };
+  };
+
+  const afcPlayoffs = getPlayoffPicture(afcTeams);
+  const nfcPlayoffs = getPlayoffPicture(nfcTeams);
 
   // Group teams by division
   const afcEastTeams = afcTeams.filter(team => team.division === 'AFC East');
@@ -498,6 +594,164 @@ export default function StandingsClient() {
               </button>
             </div>
           </div>
+
+          {/* Playoff Picture */}
+          {!isLoading && (conferenceView === 'conference' || conferenceView === 'all') && (
+            <div className="mb-8">
+              <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+                <h2 className="text-2xl font-bold text-gray-900 mb-6">Playoff Picture</h2>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                  {/* AFC Playoff Picture */}
+                  <div>
+                    <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+                      <span className="bg-red-100 text-red-700 px-3 py-1 rounded-md text-sm">AFC</span>
+                      American Football Conference
+                    </h3>
+                    <div className="space-y-3">
+                      {/* Division Winners */}
+                      <div>
+                        <p className="text-xs font-bold text-gray-500 uppercase mb-2">Division Winners</p>
+                        {afcPlayoffs.divisionWinners.map((team, idx) => {
+                          const teamInfo = getTeamInfo(team.teamName);
+                          return (
+                            <div key={team.teamId} className="flex items-center gap-3 py-2 px-3 bg-green-50 rounded-lg mb-2 border border-green-200">
+                              <span className="w-8 h-8 rounded-full bg-green-600 text-white flex items-center justify-center font-bold text-sm">
+                                {idx + 1}
+                              </span>
+                              {teamInfo && (
+                                <img src={teamInfo.logoUrl} alt={teamInfo.abbreviation} className="w-6 h-6" />
+                              )}
+                              <div className="flex-1">
+                                <span className="font-bold text-gray-900 text-sm">{teamInfo?.abbreviation}</span>
+                                <span className="text-xs text-gray-600 ml-2">({team.wins}-{team.losses})</span>
+                              </div>
+                              <span className="text-xs text-green-700 font-semibold">{team.division.replace('AFC ', '')}</span>
+                            </div>
+                          );
+                        })}
+                      </div>
+                      {/* Wild Card Teams */}
+                      <div>
+                        <p className="text-xs font-bold text-gray-500 uppercase mb-2">Wild Card</p>
+                        {afcPlayoffs.wildCardTeams.map((team, idx) => {
+                          const teamInfo = getTeamInfo(team.teamName);
+                          return (
+                            <div key={team.teamId} className="flex items-center gap-3 py-2 px-3 bg-blue-50 rounded-lg mb-2 border border-blue-200">
+                              <span className="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-sm">
+                                {idx + 5}
+                              </span>
+                              {teamInfo && (
+                                <img src={teamInfo.logoUrl} alt={teamInfo.abbreviation} className="w-6 h-6" />
+                              )}
+                              <div className="flex-1">
+                                <span className="font-bold text-gray-900 text-sm">{teamInfo?.abbreviation}</span>
+                                <span className="text-xs text-gray-600 ml-2">({team.wins}-{team.losses})</span>
+                              </div>
+                              <span className="text-xs text-blue-700 font-semibold">WC</span>
+                            </div>
+                          );
+                        })}
+                      </div>
+                      {/* In the Hunt */}
+                      {afcPlayoffs.inTheHunt.length > 0 && (
+                        <div>
+                          <p className="text-xs font-bold text-gray-500 uppercase mb-2">In the Hunt</p>
+                          {afcPlayoffs.inTheHunt.map((team) => {
+                            const teamInfo = getTeamInfo(team.teamName);
+                            return (
+                              <div key={team.teamId} className="flex items-center gap-3 py-2 px-3 bg-gray-50 rounded-lg mb-2 border border-gray-200">
+                                {teamInfo && (
+                                  <img src={teamInfo.logoUrl} alt={teamInfo.abbreviation} className="w-6 h-6" />
+                                )}
+                                <div className="flex-1">
+                                  <span className="font-bold text-gray-900 text-sm">{teamInfo?.abbreviation}</span>
+                                  <span className="text-xs text-gray-600 ml-2">({team.wins}-{team.losses})</span>
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* NFC Playoff Picture */}
+                  <div>
+                    <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+                      <span className="bg-blue-100 text-blue-700 px-3 py-1 rounded-md text-sm">NFC</span>
+                      National Football Conference
+                    </h3>
+                    <div className="space-y-3">
+                      {/* Division Winners */}
+                      <div>
+                        <p className="text-xs font-bold text-gray-500 uppercase mb-2">Division Winners</p>
+                        {nfcPlayoffs.divisionWinners.map((team, idx) => {
+                          const teamInfo = getTeamInfo(team.teamName);
+                          return (
+                            <div key={team.teamId} className="flex items-center gap-3 py-2 px-3 bg-green-50 rounded-lg mb-2 border border-green-200">
+                              <span className="w-8 h-8 rounded-full bg-green-600 text-white flex items-center justify-center font-bold text-sm">
+                                {idx + 1}
+                              </span>
+                              {teamInfo && (
+                                <img src={teamInfo.logoUrl} alt={teamInfo.abbreviation} className="w-6 h-6" />
+                              )}
+                              <div className="flex-1">
+                                <span className="font-bold text-gray-900 text-sm">{teamInfo?.abbreviation}</span>
+                                <span className="text-xs text-gray-600 ml-2">({team.wins}-{team.losses})</span>
+                              </div>
+                              <span className="text-xs text-green-700 font-semibold">{team.division.replace('NFC ', '')}</span>
+                            </div>
+                          );
+                        })}
+                      </div>
+                      {/* Wild Card Teams */}
+                      <div>
+                        <p className="text-xs font-bold text-gray-500 uppercase mb-2">Wild Card</p>
+                        {nfcPlayoffs.wildCardTeams.map((team, idx) => {
+                          const teamInfo = getTeamInfo(team.teamName);
+                          return (
+                            <div key={team.teamId} className="flex items-center gap-3 py-2 px-3 bg-blue-50 rounded-lg mb-2 border border-blue-200">
+                              <span className="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-sm">
+                                {idx + 5}
+                              </span>
+                              {teamInfo && (
+                                <img src={teamInfo.logoUrl} alt={teamInfo.abbreviation} className="w-6 h-6" />
+                              )}
+                              <div className="flex-1">
+                                <span className="font-bold text-gray-900 text-sm">{teamInfo?.abbreviation}</span>
+                                <span className="text-xs text-gray-600 ml-2">({team.wins}-{team.losses})</span>
+                              </div>
+                              <span className="text-xs text-blue-700 font-semibold">WC</span>
+                            </div>
+                          );
+                        })}
+                      </div>
+                      {/* In the Hunt */}
+                      {nfcPlayoffs.inTheHunt.length > 0 && (
+                        <div>
+                          <p className="text-xs font-bold text-gray-500 uppercase mb-2">In the Hunt</p>
+                          {nfcPlayoffs.inTheHunt.map((team) => {
+                            const teamInfo = getTeamInfo(team.teamName);
+                            return (
+                              <div key={team.teamId} className="flex items-center gap-3 py-2 px-3 bg-gray-50 rounded-lg mb-2 border border-gray-200">
+                                {teamInfo && (
+                                  <img src={teamInfo.logoUrl} alt={teamInfo.abbreviation} className="w-6 h-6" />
+                                )}
+                                <div className="flex-1">
+                                  <span className="font-bold text-gray-900 text-sm">{teamInfo?.abbreviation}</span>
+                                  <span className="text-xs text-gray-600 ml-2">({team.wins}-{team.losses})</span>
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Standings Tables */}
           {isLoading ? (
