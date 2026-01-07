@@ -245,8 +245,13 @@ export default function StatsPage() {
   }, [statLeaders, allPlayerStats, selectedTeam, displayLimit]);
 
   // Open player modal
-  const openPlayerModal = (playerId: number) => {
-    const playerStats = allPlayerStats.find(p => p.playerId === playerId);
+  const openPlayerModal = (playerId: number, playerName: string, teamId: string) => {
+    // Match on playerId, name, and teamId to avoid hash collisions
+    const playerStats = allPlayerStats.find(p =>
+      p.playerId === playerId &&
+      p.name === playerName &&
+      p.teamId === teamId
+    );
     if (playerStats) {
       setSelectedPlayer(playerStats);
       setIsModalOpen(true);
@@ -390,7 +395,7 @@ export default function StatsPage() {
                         return (
                           <tr
                             key={player.playerId}
-                            onClick={() => openPlayerModal(player.playerId)}
+                            onClick={() => openPlayerModal(player.playerId, player.name, player.teamId)}
                             className={`hover:bg-gray-50 transition-colors cursor-pointer ${isTop3 ? 'bg-blue-50/50' : ''}`}
                           >
                             {/* Rank */}
