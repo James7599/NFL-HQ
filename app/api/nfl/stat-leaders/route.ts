@@ -128,38 +128,85 @@ export async function GET(request: NextRequest) {
 
     console.log('Fetching stat leaders for season:', season);
 
-    // Fetch stats from all 32 teams in parallel
+    // Fetch stats and rosters from all 32 teams in parallel
     const allTeamSlugs = Object.values(teamIdMap);
 
-    const teamStatsPromises = allTeamSlugs.map(async (teamSlug) => {
-      try {
-        const response = await fetch(
-          `https://cf-gotham.sportskeeda.com/taxonomy/sport/nfl/team/${teamSlug}/stats?season=${season}&event=regular`,
-          {
-            headers: {
-              'User-Agent': 'Mozilla/5.0 (compatible; NFL-Team-Pages/1.0)',
-            },
-            next: { revalidate: 3600 } // Cache for 1 hour
-          }
-        );
+    // Determine base URL for internal API calls
+    const baseUrl = typeof window !== 'undefined'
+      ? window.location.origin
+      : process.env.VERCEL_URL
+        ? `https://${process.env.VERCEL_URL}`
+        : 'http://localhost:3000';
 
-        if (!response.ok) {
-          console.warn(`Failed to fetch stats for ${teamSlug}:`, response.status);
+    // Fetch both stats and rosters
+    const teamDataPromises = allTeamSlugs.map(async (teamSlug) => {
+      try {
+        const [statsResponse, rosterResponse] = await Promise.all([
+          fetch(
+            `https://cf-gotham.sportskeeda.com/taxonomy/sport/nfl/team/${teamSlug}/stats?season=${season}&event=regular`,
+            {
+              headers: {
+                'User-Agent': 'Mozilla/5.0 (compatible; NFL-Team-Pages/1.0)',
+              },
+              next: { revalidate: 3600 }
+            }
+          ),
+          fetch(
+            `${baseUrl}/nfl-hq/nfl/teams/api/roster/${teamSlug}`,
+            {
+              next: { revalidate: 86400 } // Cache rosters for 24 hours
+            }
+          ).catch(() => null)
+        ]);
+
+        if (!statsResponse.ok) {
+          console.warn(`Failed to fetch stats for ${teamSlug}:`, statsResponse.status);
           return null;
         }
 
-        const data = await response.json();
+        const statsData = await statsResponse.json();
+        let rosterPlayers: any[] = [];
+
+        if (rosterResponse && rosterResponse.ok) {
+          const rosterData = await rosterResponse.json();
+          // Combine all roster categories
+          const roster = rosterData.roster || {};
+          rosterPlayers = [
+            ...(roster.activeRoster || []),
+            ...(roster.injuredReserve || []),
+            ...(roster.practiceSquad || [])
+          ];
+        }
+
         return {
           teamSlug,
-          playerStats: data.data?.player_stats || {}
+          playerStats: statsData.data?.player_stats || {},
+          roster: rosterPlayers
         };
       } catch (error) {
-        console.warn(`Error fetching stats for ${teamSlug}:`, error);
+        console.warn(`Error fetching data for ${teamSlug}:`, error);
         return null;
       }
     });
 
-    const allTeamStats = (await Promise.all(teamStatsPromises)).filter(Boolean);
+    const allTeamStats = (await Promise.all(teamDataPromises)).filter(Boolean);
+
+    // Build roster lookup map for positions
+    const rosterPositions: Map<string, string> = new Map();
+
+    for (const teamData of allTeamStats) {
+      if (!teamData || !teamData.roster) continue;
+
+      for (const rosterPlayer of teamData.roster) {
+        if (rosterPlayer.name && rosterPlayer.position) {
+          // Use team+name as key for unique identification
+          const key = `${teamData.teamSlug}:${rosterPlayer.name.toLowerCase().trim()}`;
+          rosterPositions.set(key, rosterPlayer.position);
+        }
+      }
+    }
+
+    console.log(`Built roster lookup with ${rosterPositions.size} players`);
 
     // Combine all player stats from all teams
     const allPlayers: SportsKeedaPlayerStat[] = [];
@@ -282,28 +329,37 @@ export async function GET(request: NextRequest) {
       console.warn('No players found in API responses');
     }
 
-    // Determine positions based on primary stat production
+    // Determine positions from roster data or fall back to stat-based inference
     for (const player of allPlayers) {
-      const passingYards = player.passing_yards || 0;
-      const rushingYards = player.rushing_yards || 0;
-      const receivingYards = player.receiving_yards || 0;
+      // Try to get position from roster first
+      const rosterKey = `${player.team_slug}:${player.player_name.toLowerCase().trim()}`;
+      const rosterPosition = rosterPositions.get(rosterKey);
 
-      // QB if they have significant passing yards
-      if (passingYards > 0) {
-        player.position = 'QB';
-      }
-      // WR/TE if receiving yards are their primary stat
-      else if (receivingYards > rushingYards && receivingYards > 0) {
-        player.position = 'WR';
-      }
-      // RB if rushing yards are their primary stat
-      else if (rushingYards > 0) {
-        player.position = 'RB';
-      }
-      // DEF stays as is
-      // If no offensive stats and position is not DEF, set to N/A
-      else if (player.position !== 'DEF') {
-        player.position = 'N/A';
+      if (rosterPosition) {
+        player.position = rosterPosition;
+      } else {
+        // Fall back to stat-based inference
+        const passingYards = player.passing_yards || 0;
+        const rushingYards = player.rushing_yards || 0;
+        const receivingYards = player.receiving_yards || 0;
+
+        // QB if they have significant passing yards
+        if (passingYards > 0) {
+          player.position = 'QB';
+        }
+        // WR/TE if receiving yards are their primary stat
+        else if (receivingYards > rushingYards && receivingYards > 0) {
+          player.position = 'WR';
+        }
+        // RB if rushing yards are their primary stat
+        else if (rushingYards > 0) {
+          player.position = 'RB';
+        }
+        // DEF stays as is
+        // If no offensive stats and position is not DEF, set to N/A
+        else if (player.position !== 'DEF') {
+          player.position = 'N/A';
+        }
       }
     }
 
