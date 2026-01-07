@@ -50,7 +50,7 @@ async function fetchRotoballerInjuries(): Promise<Record<string, InjuryData[]>> 
       const injury: InjuryData = {
         player: playerData.Name || 'Unknown Player',
         position: playerData.Position || 'N/A',
-        team: 'ALL', // We'll organize by team in the frontend component
+        team: playerData.Team || 'N/A', // Extract team abbreviation from API
         status: playerData.Status || 'Unknown',
         injury: playerData.Part || 'Undisclosed',
         playerID: playerID
