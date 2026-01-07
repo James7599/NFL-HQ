@@ -110,13 +110,13 @@ export default function HomePage() {
           }
         }
 
-        // Sort by win percentage and take top 5
-        const top5 = allTeamsData
+        // Sort by win percentage and take top 3
+        const top3 = allTeamsData
           .sort((a, b) => b.winPct - a.winPct)
-          .slice(0, 5);
+          .slice(0, 3);
 
-        if (top5.length > 0) {
-          setTopStandings(top5);
+        if (top3.length > 0) {
+          setTopStandings(top3);
         }
       } catch (err) {
         console.error('Error fetching homepage standings:', err);
@@ -580,9 +580,9 @@ export default function HomePage() {
                 Current season standings and conference rankings
               </p>
 
-              {/* Top 5 Teams Preview */}
+              {/* Top 3 Teams Preview */}
               <div className="space-y-2 bg-gray-50 rounded-lg p-3">
-                <div className="text-xs font-semibold text-gray-500 mb-2">TOP 5 TEAMS</div>
+                <div className="text-xs font-semibold text-gray-500 mb-2">TOP 3 TEAMS</div>
                 {topStandings.map((team, idx) => {
                   const teamInfo = allTeams.find(t => t.id === team.teamId);
                   return (
@@ -614,27 +614,27 @@ export default function HomePage() {
               </div>
             </Link>
 
-            {/* Schedule Card */}
+            {/* Free Agency Tracker Card */}
             <Link
-              href="/schedule"
+              href="/free-agency-tracker"
               className="group relative bg-gray-50 rounded-xl p-6 border border-gray-200 hover:border-[#0050A0] hover:bg-white transition-all duration-300 hover:shadow-lg"
             >
               <div className="flex items-center gap-3 mb-4">
                 <h3 className="text-xl font-bold text-gray-900 group-hover:text-[#0050A0] transition-colors">
-                  NFL Schedule
+                  Free Agency Tracker
                 </h3>
               </div>
               <p className="text-gray-600 text-sm mb-4">
-                View complete NFL schedule by day, week, or month
+                Track NFL free agents, signings, and available players
               </p>
 
               <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg p-4 text-center">
-                <p className="text-sm font-semibold text-gray-700">Full Season Schedule</p>
-                <p className="text-xs text-gray-600 mt-1">Daily, weekly & monthly views</p>
+                <p className="text-sm font-semibold text-gray-700">Free Agent Marketplace</p>
+                <p className="text-xs text-gray-600 mt-1">Player signings & availability</p>
               </div>
 
               <div className="mt-4 flex items-center text-[#0050A0] opacity-0 group-hover:opacity-100 transition-opacity">
-                <span className="text-sm font-medium">View Schedule</span>
+                <span className="text-sm font-medium">View Free Agents</span>
                 <svg className="w-4 h-4 ml-2 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>
