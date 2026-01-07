@@ -243,7 +243,93 @@ export default function InjuriesClient() {
             <div className="bg-white rounded-lg shadow-sm p-8 text-center">
               <p className="text-gray-600">No injuries found matching your filters.</p>
             </div>
+          ) : selectedTeam === 'all' ? (
+            /* Single table view for all teams */
+            <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+              {/* Header */}
+              <div className="bg-gray-100 border-b border-gray-200 px-4 sm:px-6 py-3">
+                <h2 className="text-lg font-bold text-gray-900">
+                  ALL
+                  <span className="ml-2 text-sm font-normal text-gray-600">
+                    ({filteredInjuries.length} {filteredInjuries.length === 1 ? 'injury' : 'injuries'})
+                  </span>
+                </h2>
+              </div>
+
+              {/* Single table with all injuries */}
+              <div className="overflow-x-auto">
+                <table className="w-full min-w-[700px]">
+                  <thead className="bg-[#0050A0] text-white">
+                    <tr>
+                      <th className="px-4 py-3 text-left text-xs sm:text-sm font-bold">PLAYER</th>
+                      <th className="px-4 py-3 text-left text-xs sm:text-sm font-bold w-24">POS</th>
+                      <th className="px-4 py-3 text-left text-xs sm:text-sm font-bold w-32">TEAM</th>
+                      <th className="px-4 py-3 text-left text-xs sm:text-sm font-bold">INJURY</th>
+                      <th className="px-4 py-3 text-left text-xs sm:text-sm font-bold w-40">STATUS</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredInjuries.map((injury, index) => {
+                      const teamInfo = getTeamInfo(injury.team);
+                      return (
+                        <tr
+                          key={injury.playerID}
+                          className={`border-b border-gray-200 ${
+                            index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
+                          } hover:bg-blue-50 transition-colors`}
+                        >
+                          {/* Player */}
+                          <td className="px-4 py-3">
+                            <span className="font-semibold text-gray-900 text-sm">{injury.player}</span>
+                          </td>
+
+                          {/* Position */}
+                          <td className="px-4 py-3">
+                            <span className={`inline-block px-2 py-1 rounded text-xs font-semibold border ${getPositionColor(injury.position)}`}>
+                              {injury.position}
+                            </span>
+                          </td>
+
+                          {/* Team */}
+                          <td className="px-4 py-3">
+                            <div className="flex items-center gap-2">
+                              {teamInfo && (
+                                <img
+                                  src={teamInfo.logoUrl}
+                                  alt={teamInfo.abbreviation}
+                                  className="w-6 h-6 object-contain"
+                                />
+                              )}
+                              <span className="font-semibold text-[#0050A0] text-xs sm:text-sm">
+                                {injury.team}
+                              </span>
+                            </div>
+                          </td>
+
+                          {/* Injury */}
+                          <td className="px-4 py-3">
+                            <span className="text-sm text-gray-700">{injury.injury}</span>
+                          </td>
+
+                          {/* Status */}
+                          <td className="px-4 py-3">
+                            <span
+                              className={`inline-block px-3 py-1 rounded-full text-xs font-semibold border ${getStatusColor(
+                                injury.status
+                              )}`}
+                            >
+                              {injury.status}
+                            </span>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </div>
           ) : (
+            /* Grouped by team view for specific team selection */
             <div className="space-y-6">
               {teamNames.map(teamAbbr => {
                 const teamInfo = getTeamInfo(teamAbbr);
