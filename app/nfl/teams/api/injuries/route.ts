@@ -56,6 +56,11 @@ async function fetchRotoballerInjuries(): Promise<Record<string, InjuryData[]>> 
   try {
     const allTeams = getAllTeams();
 
+    // Get the base URL for internal API calls
+    const baseUrl = process.env.VERCEL_URL
+      ? `https://${process.env.VERCEL_URL}`
+      : process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+
     // Fetch both injury data and all team rosters in parallel
     const [injuryResponse, ...rosterResponses] = await Promise.all([
       fetch(
@@ -68,7 +73,7 @@ async function fetchRotoballerInjuries(): Promise<Record<string, InjuryData[]>> 
         }
       ),
       ...allTeams.map(team =>
-        fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3003'}/nfl/teams/api/roster/${team.id}`, {
+        fetch(`${baseUrl}/nfl-hq/nfl/teams/api/roster/${team.id}`, {
           next: { revalidate: 3600 }
         }).catch(() => null)
       )
