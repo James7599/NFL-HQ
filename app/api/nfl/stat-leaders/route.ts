@@ -253,10 +253,10 @@ export async function GET(request: NextRequest) {
           const playerId = player.slug ? player.slug.split('').reduce((acc: number, char: string) => acc + char.charCodeAt(0), 0) : Math.random() * 1000000;
           const existingPlayer = allPlayers.find(p => p.player_slug === player.slug);
           if (existingPlayer) {
-            existingPlayer.total_tackles = player.total_tackles || 0;
-            existingPlayer.sacks = player.sacks || 0;
-            existingPlayer.interceptions = player.interceptions || 0;
-            existingPlayer.forced_fumbles = player.forced_fumbles || 0;
+            existingPlayer.total_tackles = player.tackles?.total_tackles || 0;
+            existingPlayer.sacks = player.sacks?.sacks || 0;
+            existingPlayer.interceptions = player.interceptions?.interceptions || 0;
+            existingPlayer.forced_fumbles = player.fumbles?.forced_fumbles || 0;
           } else {
             allPlayers.push({
               player_id: playerId,
@@ -266,10 +266,10 @@ export async function GET(request: NextRequest) {
               team_slug: teamSlug,
               position: 'DEF',
               games_played: player.games_played || 0,
-              total_tackles: player.total_tackles || 0,
-              sacks: player.sacks || 0,
-              interceptions: player.interceptions || 0,
-              forced_fumbles: player.forced_fumbles || 0,
+              total_tackles: player.tackles?.total_tackles || 0,
+              sacks: player.sacks?.sacks || 0,
+              interceptions: player.interceptions?.interceptions || 0,
+              forced_fumbles: player.fumbles?.forced_fumbles || 0,
             });
           }
         }
