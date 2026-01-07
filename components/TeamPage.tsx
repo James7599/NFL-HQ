@@ -4,7 +4,7 @@ import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { TeamData, getAllTeams } from '@/data/teams';
 import { useSEO } from '@/hooks/useSEO';
-import { useOptimizedTabChange, useINPMonitoring } from '@/hooks/useINPOptimization';
+import { useINPMonitoring } from '@/hooks/useINPOptimization';
 import PerformanceMonitor from '@/components/PerformanceMonitor';
 import CriticalCSS from '@/components/CriticalCSS';
 import {
@@ -238,9 +238,8 @@ function TeamPageContent({ team, initialTab }: TeamPageProps) {
   // Update SEO metadata based on active tab
   useSEO(team, activeTab);
 
-  // Performance monitoring and INP optimization
+  // Performance monitoring
   useINPMonitoring();
-  const optimizedTabChange = useOptimizedTabChange(setActiveTab);
 
   // Analytics tracking
   useEffect(() => {
@@ -409,8 +408,8 @@ function TeamPageContent({ team, initialTab }: TeamPageProps) {
     // Track tab change for analytics
     trackTabChange(tab, team.id);
 
-    // Use optimized tab change to prevent INP degradation
-    optimizedTabChange(tab);
+    // Update state immediately (not in requestAnimationFrame)
+    setActiveTab(tab);
 
     // Navigate to path-based URL
     if (tab === 'overview') {
