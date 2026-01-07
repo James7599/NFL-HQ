@@ -64,6 +64,13 @@ export default function InjuriesClient() {
   // Filter and search injuries
   const filteredInjuries = useMemo(() => {
     return injuries.filter(injury => {
+      const statusLower = injury.status.toLowerCase();
+
+      // Exclude suspended and exempt list players
+      if (statusLower.includes('suspended') || statusLower.includes('exempt')) {
+        return false;
+      }
+
       const matchesTeam = selectedTeam === 'all' || injury.team === selectedTeam;
       const matchesPosition = selectedPosition === 'all' || injury.position === selectedPosition;
       const matchesSearch =
@@ -105,6 +112,14 @@ export default function InjuriesClient() {
 
   const getTeamInfo = (teamAbbr: string) => {
     return allTeams.find(t => t.abbreviation === teamAbbr);
+  };
+
+  // Simplify status by removing practice participation details
+  const simplifyStatus = (status: string) => {
+    // Remove practice participation details (DNP, Limited, Full, etc.)
+    return status
+      .replace(/\s*-\s*(DNP|Limited|Full|Did Not Participate|Limited Participation|Full Participation)/gi, '')
+      .trim();
   };
 
   // Get position badge color
@@ -326,7 +341,7 @@ export default function InjuriesClient() {
                                 injury.status
                               )}`}
                             >
-                              {injury.status}
+                              {simplifyStatus(injury.status)}
                             </span>
                           </td>
                         </tr>
@@ -419,7 +434,7 @@ export default function InjuriesClient() {
                                     injury.status
                                   )}`}
                                 >
-                                  {injury.status}
+                                  {simplifyStatus(injury.status)}
                                 </span>
                               </td>
                             </tr>
