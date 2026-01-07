@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { getAllTeams } from '@/data/teams';
 import NFLTeamsSidebar from '@/components/NFLTeamsSidebar';
 import { getApiPath } from '@/utils/api';
+import SkeletonLoader from '@/components/SkeletonLoader';
 
 // Map API team slugs to our team IDs (Sportskeeda uses various formats)
 const teamSlugMapping: Record<string, string> = {
@@ -179,13 +180,19 @@ interface Game {
     name: string;
     call_letters: string;
   }>;
-  winner_high?: {
+  hi_pass?: {
     player_id: number;
     player_name: string;
     player_slug: string;
     value: number;
   };
-  loser_high?: {
+  hi_rush?: {
+    player_id: number;
+    player_name: string;
+    player_slug: string;
+    value: number;
+  };
+  hi_rec?: {
     player_id: number;
     player_name: string;
     player_slug: string;
@@ -643,10 +650,7 @@ export default function SchedulePage() {
           {viewMode === 'daily' && (
             <>{/* Games Grid */}
           {loading ? (
-            <div className="flex flex-col items-center justify-center py-20">
-              <div className="w-12 h-12 border-4 border-gray-200 border-t-[#0050A0] rounded-full animate-spin"></div>
-              <p className="mt-4 text-gray-600">Loading games...</p>
-            </div>
+            <SkeletonLoader type="cards" rows={6} />
           ) : error ? (
             <div className="bg-red-50 border border-red-200 rounded-xl p-6 text-center">
               <p className="text-red-600">{error}</p>
@@ -676,12 +680,7 @@ export default function SchedulePage() {
                 const isLive = game.status !== 'Pre-Game' && game.status !== 'Final' && game.has_score;
                 const isFinal = game.status === 'Final';
                 const isExpanded = expandedGame === game.event_id;
-                const hasDetails = game.venue || game.tv_stations?.length || game.winner_high || game.loser_high;
-
-                // Determine which team's high scorer is which
-                const awayIsWinner = game.away_team.is_winner;
-                const awayHighScorer = awayIsWinner ? game.winner_high : game.loser_high;
-                const homeHighScorer = awayIsWinner ? game.loser_high : game.winner_high;
+                const hasDetails = game.venue || game.tv_stations?.length || game.hi_pass || game.hi_rush || game.hi_rec;
 
                 return (
                   <div
@@ -820,55 +819,46 @@ export default function SchedulePage() {
                     {isExpanded && hasDetails && (
                       <div className="border-t border-gray-200 bg-gray-50 p-5">
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                          {/* High Scorers */}
-                          {isFinal && (awayHighScorer || homeHighScorer) && (
+                          {/* Game Leaders */}
+                          {isFinal && (game.hi_pass || game.hi_rush || game.hi_rec) && (
                             <div>
-                              <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-3">Top Scorers</h4>
+                              <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-3">Game Leaders</h4>
                               <div className="space-y-3">
-                                {awayHighScorer && (
-                                  <div className="flex items-center gap-3">
-                                    {awayTeam && (
-                                      <img
-                                        src={awayTeam.logoUrl}
-                                        alt={awayTeam.abbreviation}
-                                        
-                                        
-                                        className="w-6 h-6"
-                                      />
-                                    )}
+                                {game.hi_pass && (
+                                  <div className="flex items-center gap-2">
                                     <div className="flex-1">
-                                      <div className="text-sm font-semibold text-gray-900">{awayHighScorer.player_name}</div>
-                                      <div className="text-xs text-gray-500">{awayTeam?.abbreviation || game.away_team.abbr}</div>
+                                      <div className="text-sm font-semibold text-gray-900">{game.hi_pass.player_name}</div>
+                                      <div className="text-xs text-gray-500">Passing</div>
                                     </div>
-                                    <div className="text-lg font-bold text-[#0050A0]">{awayHighScorer.value} PTS</div>
+                                    <div className="text-sm font-bold text-[#0050A0]">{game.hi_pass.value} YDS</div>
                                   </div>
                                 )}
-                                {homeHighScorer && (
-                                  <div className="flex items-center gap-3">
-                                    {homeTeam && (
-                                      <img
-                                        src={homeTeam.logoUrl}
-                                        alt={homeTeam.abbreviation}
-                                        
-                                        
-                                        className="w-6 h-6"
-                                      />
-                                    )}
+                                {game.hi_rush && (
+                                  <div className="flex items-center gap-2">
                                     <div className="flex-1">
-                                      <div className="text-sm font-semibold text-gray-900">{homeHighScorer.player_name}</div>
-                                      <div className="text-xs text-gray-500">{homeTeam?.abbreviation || game.home_team.abbr}</div>
+                                      <div className="text-sm font-semibold text-gray-900">{game.hi_rush.player_name}</div>
+                                      <div className="text-xs text-gray-500">Rushing</div>
                                     </div>
-                                    <div className="text-lg font-bold text-[#0050A0]">{homeHighScorer.value} PTS</div>
+                                    <div className="text-sm font-bold text-[#0050A0]">{game.hi_rush.value} YDS</div>
+                                  </div>
+                                )}
+                                {game.hi_rec && (
+                                  <div className="flex items-center gap-2">
+                                    <div className="flex-1">
+                                      <div className="text-sm font-semibold text-gray-900">{game.hi_rec.player_name}</div>
+                                      <div className="text-xs text-gray-500">Receiving</div>
+                                    </div>
+                                    <div className="text-sm font-bold text-[#0050A0]">{game.hi_rec.value} YDS</div>
                                   </div>
                                 )}
                               </div>
                             </div>
                           )}
 
-                          {/* Venue */}
+                          {/* Stadium */}
                           {game.venue && (
                             <div>
-                              <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-3">Venue</h4>
+                              <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-3">Stadium</h4>
                               <div className="flex items-start gap-3">
                                 <svg className="w-5 h-5 text-gray-400 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
@@ -955,9 +945,16 @@ export default function SchedulePage() {
           {viewMode === 'weekly' && (
             <>
               {loading ? (
-                <div className="flex flex-col items-center justify-center py-20">
-                  <div className="w-12 h-12 border-4 border-gray-200 border-t-[#0050A0] rounded-full animate-spin"></div>
-                  <p className="mt-4 text-gray-600">Loading week...</p>
+                <div className="grid grid-cols-1 md:grid-cols-7 gap-4" style={{ minHeight: '500px' }}>
+                  {Array.from({ length: 7 }).map((_, i) => (
+                    <div key={i} className="bg-white rounded-xl border border-gray-200 shadow-sm animate-pulse">
+                      <div className="p-3 bg-gray-200 h-16"></div>
+                      <div className="p-2 space-y-2">
+                        <div className="h-20 bg-gray-200 rounded"></div>
+                        <div className="h-20 bg-gray-200 rounded"></div>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               ) : error ? (
                 <div className="bg-red-50 border border-red-200 rounded-xl p-6 text-center">
@@ -991,7 +988,7 @@ export default function SchedulePage() {
                                 const isFinal = game.status === 'Final';
                                 const isLive = game.status !== 'Pre-Game' && game.status !== 'Final' && (game.has_score || (game.away_team.score !== undefined && game.away_team.score !== null));
                                 const isExpanded = expandedWeeklyGame === game.event_id;
-                                const hasDetails = game.venue || game.tv_stations?.length || game.winner_high || game.loser_high;
+                                const hasDetails = game.venue || game.tv_stations?.length || game.hi_pass || game.hi_rush || game.hi_rec;
 
                                 return (
                                   <div key={game.event_id} className={`border rounded-lg overflow-hidden ${isLive ? 'border-green-400 ring-1 ring-green-400' : 'border-gray-200'}`}>
@@ -1033,10 +1030,10 @@ export default function SchedulePage() {
                                     {/* Expanded Details */}
                                     {isExpanded && hasDetails && (
                                       <div className="border-t border-gray-200 bg-gray-50 p-3 text-xs">
-                                        {/* Venue */}
+                                        {/* Stadium */}
                                         {game.venue && (
                                           <div className="mb-3">
-                                            <h4 className="text-[10px] font-bold text-gray-500 uppercase tracking-wide mb-1">Venue</h4>
+                                            <h4 className="text-[10px] font-bold text-gray-500 uppercase tracking-wide mb-1">Stadium</h4>
                                             <div className="text-xs">
                                               <div className="font-semibold text-gray-900">{game.venue.name}</div>
                                               <div className="text-gray-500">
@@ -1103,9 +1100,19 @@ export default function SchedulePage() {
           {viewMode === 'monthly' && (
             <>
               {loading ? (
-                <div className="flex flex-col items-center justify-center py-20">
-                  <div className="w-12 h-12 border-4 border-gray-200 border-t-[#0050A0] rounded-full animate-spin"></div>
-                  <p className="mt-4 text-gray-600">Loading month...</p>
+                <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden animate-pulse" style={{ minHeight: '600px' }}>
+                  <div className="grid grid-cols-7 bg-gray-200 border-b border-gray-300">
+                    {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
+                      <div key={day} className="p-3 h-12"></div>
+                    ))}
+                  </div>
+                  <div className="grid grid-cols-7">
+                    {Array.from({ length: 35 }).map((_, i) => (
+                      <div key={i} className="aspect-square border-r border-b border-gray-200 p-3">
+                        <div className="h-6 w-6 bg-gray-200 rounded mb-2"></div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               ) : error ? (
                 <div className="bg-red-50 border border-red-200 rounded-xl p-6 text-center">

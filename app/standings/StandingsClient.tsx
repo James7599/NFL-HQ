@@ -4,14 +4,16 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { getAllTeams } from '@/data/teams';
 import Link from 'next/link';
 import NFLTeamsSidebar from '@/components/NFLTeamsSidebar';
+import SkeletonLoader from '@/components/SkeletonLoader';
 
 interface StandingData {
   teamId: string;
   teamName: string;
-  conference: 'Eastern' | 'Western';
+  conference: 'AFC' | 'NFC';
   division: string;
   wins: number;
   losses: number;
+  ties: number;
   winPct: number;
   gamesBack: number;
   homeRecord: string;
@@ -22,92 +24,97 @@ interface StandingData {
   last10: string;
 }
 
-// Map API team slugs to our team IDs
+// Map API team slugs to our team IDs (already defined in teams data)
 const teamSlugMapping: Record<string, string> = {
-  'atlanta-hawks': 'atlanta-hawks',
-  'boston-celtics': 'boston-celtics',
-  'brooklyn-nets': 'brooklyn-nets',
-  'charlotte-hornets': 'charlotte-hornets',
-  'chicago-bulls': 'chicago-bulls',
-  'cleveland-cavaliers': 'cleveland-cavaliers',
-  'dallas-mavericks': 'dallas-mavericks',
-  'denver-nuggets': 'denver-nuggets',
-  'detroit-pistons': 'detroit-pistons',
-  'golden-state-warriors': 'golden-state-warriors',
-  'houston-rockets': 'houston-rockets',
-  'indiana-pacers': 'indiana-pacers',
-  'la-clippers': 'los-angeles-clippers',
-  'los-angeles-clippers': 'los-angeles-clippers',
-  'lakers': 'los-angeles-lakers',
-  'los-angeles-lakers': 'los-angeles-lakers',
-  'memphis-grizzlies': 'memphis-grizzlies',
-  'miami-heat': 'miami-heat',
-  'milwaukee-bucks': 'milwaukee-bucks',
-  'minnesota-timberwolves': 'minnesota-timberwolves',
-  'new-orleans-pelicans': 'new-orleans-pelicans',
-  'new-york-knicks': 'new-york-knicks',
-  'oklahoma-city-thunder': 'oklahoma-city-thunder',
-  'orlando-magic': 'orlando-magic',
-  'philadelphia-76ers': 'philadelphia-76ers',
-  'phoenix-suns': 'phoenix-suns',
-  'portland-trail-blazers': 'portland-trail-blazers',
-  'portland-trailblazers': 'portland-trail-blazers',
-  'sacramento-kings': 'sacramento-kings',
-  'san-antonio-spurs': 'san-antonio-spurs',
-  'toronto-raptors': 'toronto-raptors',
-  'utah-jazz': 'utah-jazz',
-  'washington-wizards': 'washington-wizards',
+  'arizona-cardinals': 'arizona-cardinals',
+  'atlanta-falcons': 'atlanta-falcons',
+  'baltimore-ravens': 'baltimore-ravens',
+  'buffalo-bills': 'buffalo-bills',
+  'carolina-panthers': 'carolina-panthers',
+  'chicago-bears': 'chicago-bears',
+  'cincinnati-bengals': 'cincinnati-bengals',
+  'cleveland-browns': 'cleveland-browns',
+  'dallas-cowboys': 'dallas-cowboys',
+  'denver-broncos': 'denver-broncos',
+  'detroit-lions': 'detroit-lions',
+  'green-bay-packers': 'green-bay-packers',
+  'houston-texans': 'houston-texans',
+  'indianapolis-colts': 'indianapolis-colts',
+  'jacksonville-jaguars': 'jacksonville-jaguars',
+  'kansas-city-chiefs': 'kansas-city-chiefs',
+  'las-vegas-raiders': 'las-vegas-raiders',
+  'los-angeles-chargers': 'los-angeles-chargers',
+  'los-angeles-rams': 'los-angeles-rams',
+  'miami-dolphins': 'miami-dolphins',
+  'minnesota-vikings': 'minnesota-vikings',
+  'new-england-patriots': 'new-england-patriots',
+  'new-orleans-saints': 'new-orleans-saints',
+  'new-york-giants': 'new-york-giants',
+  'new-york-jets': 'new-york-jets',
+  'philadelphia-eagles': 'philadelphia-eagles',
+  'pittsburgh-steelers': 'pittsburgh-steelers',
+  'san-francisco-49ers': 'san-francisco-49ers',
+  'seattle-seahawks': 'seattle-seahawks',
+  'tampa-bay-buccaneers': 'tampa-bay-buccaneers',
+  'tennessee-titans': 'tennessee-titans',
+  'washington-commanders': 'washington-commanders',
 };
 
-// Sample standings data for 2025-26 season (fallback)
+// Sample standings data for 2025 season (fallback - will be replaced by API data)
 const sampleStandingsData: StandingData[] = [
-  // Eastern Conference - Atlantic
-  { teamId: 'boston-celtics', teamName: 'Boston Celtics', conference: 'Eastern', division: 'Atlantic', wins: 12, losses: 3, winPct: 0.800, gamesBack: 0, homeRecord: '7-1', awayRecord: '5-2', confRecord: '8-2', divRecord: '3-1', streak: 'W3', last10: '8-2' },
-  { teamId: 'new-york-knicks', teamName: 'New York Knicks', conference: 'Eastern', division: 'Atlantic', wins: 10, losses: 5, winPct: 0.667, gamesBack: 2, homeRecord: '6-2', awayRecord: '4-3', confRecord: '7-3', divRecord: '3-1', streak: 'W1', last10: '7-3' },
-  { teamId: 'philadelphia-76ers', teamName: 'Philadelphia 76ers', conference: 'Eastern', division: 'Atlantic', wins: 9, losses: 6, winPct: 0.600, gamesBack: 3, homeRecord: '5-3', awayRecord: '4-3', confRecord: '6-4', divRecord: '2-2', streak: 'L1', last10: '6-4' },
-  { teamId: 'brooklyn-nets', teamName: 'Brooklyn Nets', conference: 'Eastern', division: 'Atlantic', wins: 6, losses: 9, winPct: 0.400, gamesBack: 6, homeRecord: '4-4', awayRecord: '2-5', confRecord: '4-6', divRecord: '1-3', streak: 'L2', last10: '4-6' },
-  { teamId: 'toronto-raptors', teamName: 'Toronto Raptors', conference: 'Eastern', division: 'Atlantic', wins: 4, losses: 11, winPct: 0.267, gamesBack: 8, homeRecord: '3-5', awayRecord: '1-6', confRecord: '3-7', divRecord: '1-3', streak: 'L3', last10: '3-7' },
+  // AFC East
+  { teamId: 'buffalo-bills', teamName: 'Buffalo Bills', conference: 'AFC', division: 'AFC East', wins: 13, losses: 3, ties: 0, winPct: 0.813, gamesBack: 0, homeRecord: '7-1', awayRecord: '6-2', confRecord: '9-2', divRecord: '5-1', streak: 'W3', last10: '8-2' },
+  { teamId: 'miami-dolphins', teamName: 'Miami Dolphins', conference: 'AFC', division: 'AFC East', wins: 11, losses: 5, ties: 0, winPct: 0.688, gamesBack: 2, homeRecord: '6-2', awayRecord: '5-3', confRecord: '7-4', divRecord: '4-2', streak: 'W2', last10: '7-3' },
+  { teamId: 'new-york-jets', teamName: 'New York Jets', conference: 'AFC', division: 'AFC East', wins: 7, losses: 9, ties: 0, winPct: 0.438, gamesBack: 6, homeRecord: '4-4', awayRecord: '3-5', confRecord: '5-6', divRecord: '2-4', streak: 'L2', last10: '4-6' },
+  { teamId: 'new-england-patriots', teamName: 'New England Patriots', conference: 'AFC', division: 'AFC East', wins: 4, losses: 12, ties: 0, winPct: 0.250, gamesBack: 9, homeRecord: '3-5', awayRecord: '1-7', confRecord: '3-8', divRecord: '1-5', streak: 'L4', last10: '2-8' },
 
-  // Eastern Conference - Central
-  { teamId: 'cleveland-cavaliers', teamName: 'Cleveland Cavaliers', conference: 'Eastern', division: 'Central', wins: 11, losses: 4, winPct: 0.733, gamesBack: 1, homeRecord: '6-2', awayRecord: '5-2', confRecord: '7-3', divRecord: '3-1', streak: 'W2', last10: '7-3' },
-  { teamId: 'milwaukee-bucks', teamName: 'Milwaukee Bucks', conference: 'Eastern', division: 'Central', wins: 9, losses: 6, winPct: 0.600, gamesBack: 3, homeRecord: '5-3', awayRecord: '4-3', confRecord: '6-4', divRecord: '2-2', streak: 'W1', last10: '6-4' },
-  { teamId: 'indiana-pacers', teamName: 'Indiana Pacers', conference: 'Eastern', division: 'Central', wins: 8, losses: 7, winPct: 0.533, gamesBack: 4, homeRecord: '5-3', awayRecord: '3-4', confRecord: '5-5', divRecord: '2-2', streak: 'L1', last10: '5-5' },
-  { teamId: 'chicago-bulls', teamName: 'Chicago Bulls', conference: 'Eastern', division: 'Central', wins: 7, losses: 8, winPct: 0.467, gamesBack: 5, homeRecord: '4-4', awayRecord: '3-4', confRecord: '5-5', divRecord: '2-2', streak: 'W1', last10: '5-5' },
-  { teamId: 'detroit-pistons', teamName: 'Detroit Pistons', conference: 'Eastern', division: 'Central', wins: 5, losses: 10, winPct: 0.333, gamesBack: 7, homeRecord: '3-5', awayRecord: '2-5', confRecord: '4-6', divRecord: '1-3', streak: 'L2', last10: '4-6' },
+  // AFC North
+  { teamId: 'baltimore-ravens', teamName: 'Baltimore Ravens', conference: 'AFC', division: 'AFC North', wins: 12, losses: 4, ties: 0, winPct: 0.750, gamesBack: 0, homeRecord: '6-2', awayRecord: '6-2', confRecord: '8-3', divRecord: '4-2', streak: 'W2', last10: '7-3' },
+  { teamId: 'pittsburgh-steelers', teamName: 'Pittsburgh Steelers', conference: 'AFC', division: 'AFC North', wins: 10, losses: 6, ties: 0, winPct: 0.625, gamesBack: 2, homeRecord: '6-2', awayRecord: '4-4', confRecord: '7-4', divRecord: '3-3', streak: 'W1', last10: '6-4' },
+  { teamId: 'cincinnati-bengals', teamName: 'Cincinnati Bengals', conference: 'AFC', division: 'AFC North', wins: 9, losses: 7, ties: 0, winPct: 0.563, gamesBack: 3, homeRecord: '5-3', awayRecord: '4-4', confRecord: '6-5', divRecord: '3-3', streak: 'L1', last10: '5-5' },
+  { teamId: 'cleveland-browns', teamName: 'Cleveland Browns', conference: 'AFC', division: 'AFC North', wins: 5, losses: 11, ties: 0, winPct: 0.313, gamesBack: 7, homeRecord: '3-5', awayRecord: '2-6', confRecord: '4-7', divRecord: '2-4', streak: 'L3', last10: '3-7' },
 
-  // Eastern Conference - Southeast
-  { teamId: 'orlando-magic', teamName: 'Orlando Magic', conference: 'Eastern', division: 'Southeast', wins: 10, losses: 5, winPct: 0.667, gamesBack: 2, homeRecord: '6-2', awayRecord: '4-3', confRecord: '7-3', divRecord: '3-1', streak: 'W2', last10: '7-3' },
-  { teamId: 'miami-heat', teamName: 'Miami Heat', conference: 'Eastern', division: 'Southeast', wins: 9, losses: 6, winPct: 0.600, gamesBack: 3, homeRecord: '5-3', awayRecord: '4-3', confRecord: '6-4', divRecord: '2-2', streak: 'W1', last10: '6-4' },
-  { teamId: 'atlanta-hawks', teamName: 'Atlanta Hawks', conference: 'Eastern', division: 'Southeast', wins: 7, losses: 8, winPct: 0.467, gamesBack: 5, homeRecord: '4-4', awayRecord: '3-4', confRecord: '5-5', divRecord: '2-2', streak: 'L1', last10: '5-5' },
-  { teamId: 'charlotte-hornets', teamName: 'Charlotte Hornets', conference: 'Eastern', division: 'Southeast', wins: 6, losses: 9, winPct: 0.400, gamesBack: 6, homeRecord: '4-4', awayRecord: '2-5', confRecord: '4-6', divRecord: '1-3', streak: 'L2', last10: '4-6' },
-  { teamId: 'washington-wizards', teamName: 'Washington Wizards', conference: 'Eastern', division: 'Southeast', wins: 3, losses: 12, winPct: 0.200, gamesBack: 9, homeRecord: '2-6', awayRecord: '1-6', confRecord: '2-8', divRecord: '0-4', streak: 'L4', last10: '2-8' },
+  // AFC South
+  { teamId: 'houston-texans', teamName: 'Houston Texans', conference: 'AFC', division: 'AFC South', wins: 11, losses: 5, ties: 0, winPct: 0.688, gamesBack: 0, homeRecord: '6-2', awayRecord: '5-3', confRecord: '8-3', divRecord: '4-2', streak: 'W1', last10: '7-3' },
+  { teamId: 'jacksonville-jaguars', teamName: 'Jacksonville Jaguars', conference: 'AFC', division: 'AFC South', wins: 8, losses: 8, ties: 0, winPct: 0.500, gamesBack: 3, homeRecord: '5-3', awayRecord: '3-5', confRecord: '6-5', divRecord: '3-3', streak: 'L1', last10: '5-5' },
+  { teamId: 'indianapolis-colts', teamName: 'Indianapolis Colts', conference: 'AFC', division: 'AFC South', wins: 8, losses: 8, ties: 0, winPct: 0.500, gamesBack: 3, homeRecord: '4-4', awayRecord: '4-4', confRecord: '5-6', divRecord: '2-4', streak: 'W2', last10: '6-4' },
+  { teamId: 'tennessee-titans', teamName: 'Tennessee Titans', conference: 'AFC', division: 'AFC South', wins: 6, losses: 10, ties: 0, winPct: 0.375, gamesBack: 5, homeRecord: '4-4', awayRecord: '2-6', confRecord: '4-7', divRecord: '2-4', streak: 'L2', last10: '4-6' },
 
-  // Western Conference - Northwest
-  { teamId: 'oklahoma-city-thunder', teamName: 'Oklahoma City Thunder', conference: 'Western', division: 'Northwest', wins: 13, losses: 2, winPct: 0.867, gamesBack: 0, homeRecord: '7-1', awayRecord: '6-1', confRecord: '9-1', divRecord: '4-0', streak: 'W4', last10: '9-1' },
-  { teamId: 'denver-nuggets', teamName: 'Denver Nuggets', conference: 'Western', division: 'Northwest', wins: 10, losses: 5, winPct: 0.667, gamesBack: 3, homeRecord: '6-2', awayRecord: '4-3', confRecord: '7-3', divRecord: '3-1', streak: 'W2', last10: '7-3' },
-  { teamId: 'minnesota-timberwolves', teamName: 'Minnesota Timberwolves', conference: 'Western', division: 'Northwest', wins: 9, losses: 6, winPct: 0.600, gamesBack: 4, homeRecord: '5-3', awayRecord: '4-3', confRecord: '6-4', divRecord: '2-2', streak: 'W1', last10: '6-4' },
-  { teamId: 'portland-trail-blazers', teamName: 'Portland Trail Blazers', conference: 'Western', division: 'Northwest', wins: 6, losses: 9, winPct: 0.400, gamesBack: 7, homeRecord: '4-4', awayRecord: '2-5', confRecord: '4-6', divRecord: '1-3', streak: 'L2', last10: '4-6' },
-  { teamId: 'utah-jazz', teamName: 'Utah Jazz', conference: 'Western', division: 'Northwest', wins: 4, losses: 11, winPct: 0.267, gamesBack: 9, homeRecord: '3-5', awayRecord: '1-6', confRecord: '3-7', divRecord: '1-3', streak: 'L3', last10: '3-7' },
+  // AFC West
+  { teamId: 'kansas-city-chiefs', teamName: 'Kansas City Chiefs', conference: 'AFC', division: 'AFC West', wins: 14, losses: 2, ties: 0, winPct: 0.875, gamesBack: 0, homeRecord: '7-1', awayRecord: '7-1', confRecord: '10-1', divRecord: '5-1', streak: 'W4', last10: '9-1' },
+  { teamId: 'los-angeles-chargers', teamName: 'Los Angeles Chargers', conference: 'AFC', division: 'AFC West', wins: 10, losses: 6, ties: 0, winPct: 0.625, gamesBack: 4, homeRecord: '6-2', awayRecord: '4-4', confRecord: '7-4', divRecord: '3-3', streak: 'W1', last10: '6-4' },
+  { teamId: 'denver-broncos', teamName: 'Denver Broncos', conference: 'AFC', division: 'AFC West', wins: 9, losses: 7, ties: 0, winPct: 0.563, gamesBack: 5, homeRecord: '5-3', awayRecord: '4-4', confRecord: '6-5', divRecord: '2-4', streak: 'L1', last10: '5-5' },
+  { teamId: 'las-vegas-raiders', teamName: 'Las Vegas Raiders', conference: 'AFC', division: 'AFC West', wins: 3, losses: 13, ties: 0, winPct: 0.188, gamesBack: 11, homeRecord: '2-6', awayRecord: '1-7', confRecord: '2-9', divRecord: '1-5', streak: 'L5', last10: '1-9' },
 
-  // Western Conference - Pacific
-  { teamId: 'golden-state-warriors', teamName: 'Golden State Warriors', conference: 'Western', division: 'Pacific', wins: 11, losses: 4, winPct: 0.733, gamesBack: 2, homeRecord: '6-2', awayRecord: '5-2', confRecord: '8-2', divRecord: '3-1', streak: 'W3', last10: '8-2' },
-  { teamId: 'los-angeles-lakers', teamName: 'Los Angeles Lakers', conference: 'Western', division: 'Pacific', wins: 10, losses: 5, winPct: 0.667, gamesBack: 3, homeRecord: '6-2', awayRecord: '4-3', confRecord: '7-3', divRecord: '3-1', streak: 'W2', last10: '7-3' },
-  { teamId: 'phoenix-suns', teamName: 'Phoenix Suns', conference: 'Western', division: 'Pacific', wins: 9, losses: 6, winPct: 0.600, gamesBack: 4, homeRecord: '5-3', awayRecord: '4-3', confRecord: '6-4', divRecord: '2-2', streak: 'W1', last10: '6-4' },
-  { teamId: 'los-angeles-clippers', teamName: 'Los Angeles Clippers', conference: 'Western', division: 'Pacific', wins: 8, losses: 7, winPct: 0.533, gamesBack: 5, homeRecord: '5-3', awayRecord: '3-4', confRecord: '5-5', divRecord: '2-2', streak: 'L1', last10: '5-5' },
-  { teamId: 'sacramento-kings', teamName: 'Sacramento Kings', conference: 'Western', division: 'Pacific', wins: 7, losses: 8, winPct: 0.467, gamesBack: 6, homeRecord: '4-4', awayRecord: '3-4', confRecord: '5-5', divRecord: '1-3', streak: 'L2', last10: '5-5' },
+  // NFC East
+  { teamId: 'philadelphia-eagles', teamName: 'Philadelphia Eagles', conference: 'NFC', division: 'NFC East', wins: 13, losses: 3, ties: 0, winPct: 0.813, gamesBack: 0, homeRecord: '7-1', awayRecord: '6-2', confRecord: '9-2', divRecord: '5-1', streak: 'W3', last10: '8-2' },
+  { teamId: 'washington-commanders', teamName: 'Washington Commanders', conference: 'NFC', division: 'NFC East', wins: 11, losses: 5, ties: 0, winPct: 0.688, gamesBack: 2, homeRecord: '6-2', awayRecord: '5-3', confRecord: '7-4', divRecord: '4-2', streak: 'W2', last10: '7-3' },
+  { teamId: 'dallas-cowboys', teamName: 'Dallas Cowboys', conference: 'NFC', division: 'NFC East', wins: 7, losses: 9, ties: 0, winPct: 0.438, gamesBack: 6, homeRecord: '4-4', awayRecord: '3-5', confRecord: '5-6', divRecord: '2-4', streak: 'L2', last10: '4-6' },
+  { teamId: 'new-york-giants', teamName: 'New York Giants', conference: 'NFC', division: 'NFC East', wins: 3, losses: 13, ties: 0, winPct: 0.188, gamesBack: 10, homeRecord: '2-6', awayRecord: '1-7', confRecord: '2-9', divRecord: '1-5', streak: 'L6', last10: '1-9' },
 
-  // Western Conference - Southwest
-  { teamId: 'houston-rockets', teamName: 'Houston Rockets', conference: 'Western', division: 'Southwest', wins: 11, losses: 4, winPct: 0.733, gamesBack: 2, homeRecord: '6-2', awayRecord: '5-2', confRecord: '8-2', divRecord: '3-1', streak: 'W2', last10: '8-2' },
-  { teamId: 'dallas-mavericks', teamName: 'Dallas Mavericks', conference: 'Western', division: 'Southwest', wins: 10, losses: 5, winPct: 0.667, gamesBack: 3, homeRecord: '6-2', awayRecord: '4-3', confRecord: '7-3', divRecord: '3-1', streak: 'W1', last10: '7-3' },
-  { teamId: 'memphis-grizzlies', teamName: 'Memphis Grizzlies', conference: 'Western', division: 'Southwest', wins: 9, losses: 6, winPct: 0.600, gamesBack: 4, homeRecord: '5-3', awayRecord: '4-3', confRecord: '6-4', divRecord: '2-2', streak: 'W1', last10: '6-4' },
-  { teamId: 'san-antonio-spurs', teamName: 'San Antonio Spurs', conference: 'Western', division: 'Southwest', wins: 7, losses: 8, winPct: 0.467, gamesBack: 6, homeRecord: '4-4', awayRecord: '3-4', confRecord: '5-5', divRecord: '2-2', streak: 'L1', last10: '5-5' },
-  { teamId: 'new-orleans-pelicans', teamName: 'New Orleans Pelicans', conference: 'Western', division: 'Southwest', wins: 5, losses: 10, winPct: 0.333, gamesBack: 8, homeRecord: '3-5', awayRecord: '2-5', confRecord: '4-6', divRecord: '1-3', streak: 'L3', last10: '4-6' },
+  // NFC North
+  { teamId: 'detroit-lions', teamName: 'Detroit Lions', conference: 'NFC', division: 'NFC North', wins: 14, losses: 2, ties: 0, winPct: 0.875, gamesBack: 0, homeRecord: '8-0', awayRecord: '6-2', confRecord: '10-1', divRecord: '5-1', streak: 'W5', last10: '9-1' },
+  { teamId: 'minnesota-vikings', teamName: 'Minnesota Vikings', conference: 'NFC', division: 'NFC North', wins: 13, losses: 3, ties: 0, winPct: 0.813, gamesBack: 1, homeRecord: '7-1', awayRecord: '6-2', confRecord: '9-2', divRecord: '4-2', streak: 'W3', last10: '8-2' },
+  { teamId: 'green-bay-packers', teamName: 'Green Bay Packers', conference: 'NFC', division: 'NFC North', wins: 11, losses: 5, ties: 0, winPct: 0.688, gamesBack: 3, homeRecord: '6-2', awayRecord: '5-3', confRecord: '8-3', divRecord: '3-3', streak: 'W2', last10: '7-3' },
+  { teamId: 'chicago-bears', teamName: 'Chicago Bears', conference: 'NFC', division: 'NFC North', wins: 4, losses: 12, ties: 0, winPct: 0.250, gamesBack: 10, homeRecord: '3-5', awayRecord: '1-7', confRecord: '3-8', divRecord: '1-5', streak: 'L4', last10: '2-8' },
+
+  // NFC South
+  { teamId: 'tampa-bay-buccaneers', teamName: 'Tampa Bay Buccaneers', conference: 'NFC', division: 'NFC South', wins: 9, losses: 7, ties: 0, winPct: 0.563, gamesBack: 0, homeRecord: '5-3', awayRecord: '4-4', confRecord: '7-4', divRecord: '4-2', streak: 'W1', last10: '6-4' },
+  { teamId: 'atlanta-falcons', teamName: 'Atlanta Falcons', conference: 'NFC', division: 'NFC South', wins: 8, losses: 8, ties: 0, winPct: 0.500, gamesBack: 1, homeRecord: '5-3', awayRecord: '3-5', confRecord: '6-5', divRecord: '3-3', streak: 'L1', last10: '5-5' },
+  { teamId: 'new-orleans-saints', teamName: 'New Orleans Saints', conference: 'NFC', division: 'NFC South', wins: 5, losses: 11, ties: 0, winPct: 0.313, gamesBack: 4, homeRecord: '3-5', awayRecord: '2-6', confRecord: '4-7', divRecord: '2-4', streak: 'L3', last10: '3-7' },
+  { teamId: 'carolina-panthers', teamName: 'Carolina Panthers', conference: 'NFC', division: 'NFC South', wins: 4, losses: 12, ties: 0, winPct: 0.250, gamesBack: 5, homeRecord: '2-6', awayRecord: '2-6', confRecord: '3-8', divRecord: '1-5', streak: 'L2', last10: '3-7' },
+
+  // NFC West
+  { teamId: 'los-angeles-rams', teamName: 'Los Angeles Rams', conference: 'NFC', division: 'NFC West', wins: 10, losses: 6, ties: 0, winPct: 0.625, gamesBack: 0, homeRecord: '6-2', awayRecord: '4-4', confRecord: '7-4', divRecord: '4-2', streak: 'W2', last10: '6-4' },
+  { teamId: 'seattle-seahawks', teamName: 'Seattle Seahawks', conference: 'NFC', division: 'NFC West', wins: 9, losses: 7, ties: 0, winPct: 0.563, gamesBack: 1, homeRecord: '5-3', awayRecord: '4-4', confRecord: '6-5', divRecord: '3-3', streak: 'W1', last10: '6-4' },
+  { teamId: 'arizona-cardinals', teamName: 'Arizona Cardinals', conference: 'NFC', division: 'NFC West', wins: 7, losses: 9, ties: 0, winPct: 0.438, gamesBack: 3, homeRecord: '4-4', awayRecord: '3-5', confRecord: '5-6', divRecord: '2-4', streak: 'L2', last10: '4-6' },
+  { teamId: 'san-francisco-49ers', teamName: 'San Francisco 49ers', conference: 'NFC', division: 'NFC West', wins: 6, losses: 10, ties: 0, winPct: 0.375, gamesBack: 4, homeRecord: '3-5', awayRecord: '3-5', confRecord: '4-7', divRecord: '2-4', streak: 'L1', last10: '4-6' },
 ];
 
 type SortKey = 'wins' | 'losses' | 'winPct' | 'gamesBack' | 'confRecord' | 'divRecord' | 'streak' | 'last10';
 
 export default function StandingsClient() {
-  const [conferenceView, setConferenceView] = useState<'all' | 'conference' | 'Eastern' | 'Western'>('all');
+  const [conferenceView, setConferenceView] = useState<'all' | 'conference' | 'AFC' | 'NFC'>('all');
   const [sortKey, setSortKey] = useState<SortKey>('wins');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
   const [standingsData, setStandingsData] = useState<StandingData[]>(sampleStandingsData);
@@ -127,7 +134,9 @@ export default function StandingsClient() {
         setIsLoading(true);
         setError(null);
 
-        const response = await fetch('/nfl-hq/api/nfl/standings?season=2025&level=conference');
+        // Use getApiPath for proper basePath handling
+        const { getApiPath } = await import('@/utils/api');
+        const response = await fetch(getApiPath('nfl/teams/api/standings?season=2025'));
 
         if (!response.ok) {
           throw new Error('Failed to fetch standings');
@@ -136,41 +145,28 @@ export default function StandingsClient() {
         const data = await response.json();
 
         // Transform API data to our format
-        // API returns { data: { standings: { conferences: [...] } } }
         const transformedData: StandingData[] = [];
-        const conferences = data.data?.standings?.conferences;
         const teams = getAllTeams();
 
-        if (conferences) {
-          for (const conf of conferences) {
-            const conferenceName = conf.name.includes('Eastern') ? 'Eastern' : 'Western';
-
-            for (const team of conf.teams) {
-              // Map API slug to our team ID
-              const teamId = teamSlugMapping[team.sk_slug] || team.sk_slug;
-
-              // Find our team data to get division
-              const ourTeam = teams.find(t => t.id === teamId);
-
-              if (ourTeam) {
-                transformedData.push({
-                  teamId,
-                  teamName: ourTeam.fullName,
-                  conference: conferenceName,
-                  division: ourTeam.division,
-                  wins: team.wins || 0,
-                  losses: team.losses || 0,
-                  winPct: parseFloat(team.percentage || '0'),
-                  gamesBack: team.conference_rank?.games_behind || 0,
-                  homeRecord: `${team.home_wins || 0}-${team.home_losses || 0}`,
-                  awayRecord: `${team.away_wins || 0}-${team.away_losses || 0}`,
-                  confRecord: `${team.conf_wins || 0}-${team.conf_losses || 0}`,
-                  divRecord: `${team.div_wins || 0}-${team.div_losses || 0}`,
-                  streak: team.streak || '-',
-                  last10: `${team.last_10_wins || 0}-${team.last_10_losses || 0}`,
-                });
-              }
-            }
+        if (data.standings && Array.isArray(data.standings)) {
+          for (const team of data.standings) {
+            transformedData.push({
+              teamId: team.teamId,
+              teamName: team.fullName,
+              conference: team.conference as 'AFC' | 'NFC',
+              division: team.division,
+              wins: team.record.wins,
+              losses: team.record.losses,
+              ties: team.record.ties,
+              winPct: team.winPercentage,
+              gamesBack: 0, // Calculate this if needed
+              homeRecord: '0-0', // Not provided by current API
+              awayRecord: '0-0', // Not provided by current API
+              confRecord: '0-0', // Not provided by current API
+              divRecord: '0-0', // Not provided by current API
+              streak: '-',
+              last10: '0-0',
+            });
           }
         }
 
@@ -220,8 +216,8 @@ export default function StandingsClient() {
     let filtered = standingsData;
 
     // For 'all', show all teams. For 'conference', show all teams but grouped by conference
-    // For 'Eastern' or 'Western', filter to that conference only
-    if (conferenceView === 'Eastern' || conferenceView === 'Western') {
+    // For 'AFC' or 'NFC', filter to that conference only
+    if (conferenceView === 'AFC' || conferenceView === 'NFC') {
       filtered = filtered.filter(team => team.conference === conferenceView);
     }
 
@@ -245,17 +241,19 @@ export default function StandingsClient() {
     return sorted;
   }, [standingsData, conferenceView, sortKey, sortDirection]);
 
-  const easternTeams = filteredAndSortedData.filter(team => team.conference === 'Eastern');
-  const westernTeams = filteredAndSortedData.filter(team => team.conference === 'Western');
+  const afcTeams = filteredAndSortedData.filter(team => team.conference === 'AFC');
+  const nfcTeams = filteredAndSortedData.filter(team => team.conference === 'NFC');
 
   // Group teams by division
-  const atlanticTeams = easternTeams.filter(team => team.division === 'Atlantic');
-  const centralTeams = easternTeams.filter(team => team.division === 'Central');
-  const southeastTeams = easternTeams.filter(team => team.division === 'Southeast');
+  const afcEastTeams = afcTeams.filter(team => team.division === 'AFC East');
+  const afcNorthTeams = afcTeams.filter(team => team.division === 'AFC North');
+  const afcSouthTeams = afcTeams.filter(team => team.division === 'AFC South');
+  const afcWestTeams = afcTeams.filter(team => team.division === 'AFC West');
 
-  const northwestTeams = westernTeams.filter(team => team.division === 'Northwest');
-  const pacificTeams = westernTeams.filter(team => team.division === 'Pacific');
-  const southwestTeams = westernTeams.filter(team => team.division === 'Southwest');
+  const nfcEastTeams = nfcTeams.filter(team => team.division === 'NFC East');
+  const nfcNorthTeams = nfcTeams.filter(team => team.division === 'NFC North');
+  const nfcSouthTeams = nfcTeams.filter(team => team.division === 'NFC South');
+  const nfcWestTeams = nfcTeams.filter(team => team.division === 'NFC West');
 
   const SortIndicator = ({ column }: { column: SortKey }) => {
     if (sortKey !== column) {
@@ -304,6 +302,7 @@ export default function StandingsClient() {
                   <SortIndicator column="losses" />
                 </div>
               </th>
+              <th className="px-4 py-3 text-center text-sm font-bold text-white">T</th>
               <th
                 className="px-4 py-3 text-center text-sm font-bold text-white cursor-pointer hover:bg-[#003d7a] transition-colors"
                 onClick={() => handleSort('winPct')}
@@ -381,6 +380,7 @@ export default function StandingsClient() {
                   </td>
                   <td className="px-4 py-4 text-center text-sm text-gray-900 font-semibold">{team.wins}</td>
                   <td className="px-4 py-4 text-center text-sm text-gray-900">{team.losses}</td>
+                  <td className="px-4 py-4 text-center text-sm text-gray-900">{team.ties}</td>
                   <td className="px-4 py-4 text-center text-sm text-gray-900">{team.winPct.toFixed(3)}</td>
                   <td className="px-4 py-4 text-center text-sm text-gray-900">
                     {team.gamesBack === 0 ? '-' : team.gamesBack.toFixed(1)}
@@ -425,7 +425,7 @@ export default function StandingsClient() {
               NFL Standings
             </h1>
             <p className="text-base sm:text-lg lg:text-xl opacity-90">
-              Live standings and playoff race for all 30 teams
+              Live standings and playoff race for all 32 teams
             </p>
           </div>
         </div>
@@ -477,69 +477,75 @@ export default function StandingsClient() {
                 Conference
               </button>
               <button
-                onClick={() => setConferenceView('Eastern')}
+                onClick={() => setConferenceView('AFC')}
                 className={`px-6 py-2 rounded-md text-sm font-semibold transition-colors ${
-                  conferenceView === 'Eastern'
+                  conferenceView === 'AFC'
                     ? 'bg-[#0050A0] text-white'
                     : 'text-gray-700 hover:bg-gray-100'
                 }`}
               >
-                Eastern
+                AFC
               </button>
               <button
-                onClick={() => setConferenceView('Western')}
+                onClick={() => setConferenceView('NFC')}
                 className={`px-6 py-2 rounded-md text-sm font-semibold transition-colors ${
-                  conferenceView === 'Western'
+                  conferenceView === 'NFC'
                     ? 'bg-[#0050A0] text-white'
                     : 'text-gray-700 hover:bg-gray-100'
                 }`}
               >
-                Western
+                NFC
               </button>
             </div>
           </div>
 
           {/* Standings Tables */}
-          <>
+          {isLoading ? (
+            <SkeletonLoader type="table" rows={32} />
+          ) : (
+            <>
               {conferenceView === 'all' ? (
                 // All Teams - Single combined table sorted by record
                 <StandingsTable teams={filteredAndSortedData} />
               ) : conferenceView === 'conference' ? (
-                // Conference - Split by Eastern and Western
+                // Conference - Split by AFC and NFC
                 <>
-                  <StandingsTable teams={easternTeams} conferenceName="Eastern Conference" />
-                  <StandingsTable teams={westernTeams} conferenceName="Western Conference" />
+                  <StandingsTable teams={afcTeams} conferenceName="AFC" />
+                  <StandingsTable teams={nfcTeams} conferenceName="NFC" />
                 </>
-              ) : conferenceView === 'Eastern' ? (
-                // Eastern - Split by divisions
+              ) : conferenceView === 'AFC' ? (
+                // AFC - Split by divisions
                 <>
-                  <StandingsTable teams={atlanticTeams} conferenceName="Atlantic Division" />
-                  <StandingsTable teams={centralTeams} conferenceName="Central Division" />
-                  <StandingsTable teams={southeastTeams} conferenceName="Southeast Division" />
+                  <StandingsTable teams={afcEastTeams} conferenceName="AFC East" />
+                  <StandingsTable teams={afcNorthTeams} conferenceName="AFC North" />
+                  <StandingsTable teams={afcSouthTeams} conferenceName="AFC South" />
+                  <StandingsTable teams={afcWestTeams} conferenceName="AFC West" />
                 </>
               ) : (
-                // Western - Split by divisions
+                // NFC - Split by divisions
                 <>
-                  <StandingsTable teams={northwestTeams} conferenceName="Northwest Division" />
-                  <StandingsTable teams={pacificTeams} conferenceName="Pacific Division" />
-                  <StandingsTable teams={southwestTeams} conferenceName="Southwest Division" />
+                  <StandingsTable teams={nfcEastTeams} conferenceName="NFC East" />
+                  <StandingsTable teams={nfcNorthTeams} conferenceName="NFC North" />
+                  <StandingsTable teams={nfcSouthTeams} conferenceName="NFC South" />
+                  <StandingsTable teams={nfcWestTeams} conferenceName="NFC West" />
                 </>
               )}
-          </>
+            </>
+          )}
 
           {/* Information Section */}
           <div className="mt-12 space-y-8">
-            {/* What Are the NBA League Standings? */}
+            {/* What Are the NFL Standings? */}
             <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
               <h2 className="text-2xl font-bold text-gray-900 mb-4">
-                What Are the NBA League Standings?
+                What Are the NFL Standings?
               </h2>
               <div className="prose prose-gray max-w-none">
                 <p className="text-gray-700 leading-relaxed">
-                  The NBA league standings combine the teams from both NBA conferences in one combined table. You're able to see how each team stacks up against every other team in the NBA. The table contains information on wins, losses, win percentage, games back, home and away records, conference records, division records, current streaks, and last 10 games performance.
+                  The NFL standings combine all 32 teams from both conferences into one comprehensive table. You can see how each team stacks up against every other team in the league. The table contains information on wins, losses, ties, win percentage, games back, home and away records, conference records, division records, current streaks, and last 10 games performance.
                 </p>
                 <p className="text-gray-700 leading-relaxed mt-4">
-                  The tables are updated throughout the season, so you can see which teams are in playoff contention and have already clinched a spot in the postseason. They also show the teams that have been eliminated from playoff contention and are now looking ahead to the NBA Draft. The top six teams in each conference earn automatic playoff berths, while teams ranked 7-10 compete in the Play-In Tournament for the final two playoff spots.
+                  The standings are updated throughout the season, so you can track which teams are in playoff contention and which have clinched a playoff berth. The NFL playoff format includes seven teams from each conference: the four division winners are seeded 1-4 based on their record, while the remaining three spots go to the teams with the best records that didn't win their division (wild card teams).
                 </p>
               </div>
             </div>
@@ -547,48 +553,54 @@ export default function StandingsClient() {
             {/* What Are the 2 Conferences? */}
             <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
               <h2 className="text-2xl font-bold text-gray-900 mb-4">
-                What Are the 2 Conferences?
+                What Are the 2 NFL Conferences?
               </h2>
               <div className="prose prose-gray max-w-none">
                 <p className="text-gray-700 leading-relaxed">
-                  The two conferences in the NBA are the Eastern Conference and the Western Conference. The conferences split the 30 NBA teams in half, with each conference containing 15 teams split across three divisions.
+                  The two conferences in the NFL are the American Football Conference (AFC) and the National Football Conference (NFC). The conferences split the 32 NFL teams evenly, with each conference containing 16 teams split across four divisions. Each conference sends seven teams to the playoffs, with the conference champions meeting in the Super Bowl.
                 </p>
               </div>
             </div>
 
-            {/* What Are the 6 Divisions? */}
+            {/* What Are the 8 Divisions? */}
             <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
               <h2 className="text-2xl font-bold text-gray-900 mb-4">
-                What Are the 6 Divisions?
+                What Are the 8 NFL Divisions?
               </h2>
               <div className="prose prose-gray max-w-none">
                 <p className="text-gray-700 leading-relaxed mb-4">
-                  There are six divisions in the NBA, with three in each conference. Each division is decided geographically. In the Eastern Conference, they are the Atlantic Division, Central Division, and Southeast Division. The divisions in the Western Conference are the Northwest Division, Pacific Division, and Southwest Division.
+                  There are eight divisions in the NFL, with four in each conference. Each division is organized geographically. In the AFC, the divisions are AFC East, AFC North, AFC South, and AFC West. In the NFC, the divisions are NFC East, NFC North, NFC South, and NFC West.
                 </p>
                 <p className="text-gray-700 leading-relaxed mb-4">
-                  Each division consists of five teams and involves some history and bitter rivalries. Teams play teams in their division multiple times a year, leading to epic matchups and some of the most anticipated fixtures on each team's schedule, given their fierce rivalries. Division standings play a role in tiebreakers for playoff seeding.
+                  Each division consists of four teams and features historic rivalries. Teams play division opponents twice per year (home and away), making divisional matchups some of the most important and intense games of the season. Winning your division guarantees a playoff spot and a home game in the wild card round.
                 </p>
                 <p className="text-gray-700 leading-relaxed mb-4">
-                  <strong>Those divisions are:</strong>
+                  <strong>The eight NFL divisions are:</strong>
                 </p>
                 <div className="space-y-3">
                   <p className="text-gray-700">
-                    <strong>Atlantic Division:</strong> Boston Celtics, Brooklyn Nets, New York Knicks, Philadelphia 76ers, Toronto Raptors
+                    <strong>AFC East:</strong> Buffalo Bills, Miami Dolphins, New England Patriots, New York Jets
                   </p>
                   <p className="text-gray-700">
-                    <strong>Central Division:</strong> Chicago Bulls, Cleveland Cavaliers, Detroit Pistons, Indiana Pacers, Milwaukee Bucks
+                    <strong>AFC North:</strong> Baltimore Ravens, Cincinnati Bengals, Cleveland Browns, Pittsburgh Steelers
                   </p>
                   <p className="text-gray-700">
-                    <strong>Southeast Division:</strong> Atlanta Hawks, Charlotte Hornets, Miami Heat, Orlando Magic, Washington Wizards
+                    <strong>AFC South:</strong> Houston Texans, Indianapolis Colts, Jacksonville Jaguars, Tennessee Titans
                   </p>
                   <p className="text-gray-700">
-                    <strong>Northwest Division:</strong> Denver Nuggets, Minnesota Timberwolves, Oklahoma City Thunder, Portland Trail Blazers, Utah Jazz
+                    <strong>AFC West:</strong> Denver Broncos, Kansas City Chiefs, Las Vegas Raiders, Los Angeles Chargers
                   </p>
                   <p className="text-gray-700">
-                    <strong>Pacific Division:</strong> Golden State Warriors, LA Clippers, Los Angeles Lakers, Phoenix Suns, Sacramento Kings
+                    <strong>NFC East:</strong> Dallas Cowboys, New York Giants, Philadelphia Eagles, Washington Commanders
                   </p>
                   <p className="text-gray-700">
-                    <strong>Southwest Division:</strong> Dallas Mavericks, Houston Rockets, Memphis Grizzlies, New Orleans Pelicans, San Antonio Spurs
+                    <strong>NFC North:</strong> Chicago Bears, Detroit Lions, Green Bay Packers, Minnesota Vikings
+                  </p>
+                  <p className="text-gray-700">
+                    <strong>NFC South:</strong> Atlanta Falcons, Carolina Panthers, New Orleans Saints, Tampa Bay Buccaneers
+                  </p>
+                  <p className="text-gray-700">
+                    <strong>NFC West:</strong> Arizona Cardinals, Los Angeles Rams, San Francisco 49ers, Seattle Seahawks
                   </p>
                 </div>
               </div>

@@ -165,13 +165,19 @@ interface TransformedGame {
     name: string;
     call_letters: string;
   }>;
-  winner_high?: {
+  hi_pass?: {
     player_id: number;
     player_name: string;
     player_slug: string;
     value: number;
   };
-  loser_high?: {
+  hi_rush?: {
+    player_id: number;
+    player_name: string;
+    player_slug: string;
+    value: number;
+  };
+  hi_rec?: {
     player_id: number;
     player_name: string;
     player_slug: string;
@@ -294,23 +300,6 @@ export async function GET(request: NextRequest) {
         return null;
       }
 
-      // Determine high scorers
-      let winner_high;
-      let loser_high;
-
-      if (game.status === 'Final') {
-        // Use rushing, passing, or receiving stats - prioritize total yards
-        const topStat = game.hi_rush || game.hi_pass || game.hi_rec;
-
-        if (topStat && awayTeam.is_winner !== undefined) {
-          if (awayTeam.is_winner) {
-            winner_high = topStat;
-          } else {
-            loser_high = topStat;
-          }
-        }
-      }
-
       return {
         event_id: String(game.event_id),
         start_date: game.start_date.full,
@@ -346,8 +335,9 @@ export async function GET(request: NextRequest) {
           name: station,
           call_letters: station,
         })),
-        winner_high,
-        loser_high,
+        hi_pass: game.hi_pass,
+        hi_rush: game.hi_rush,
+        hi_rec: game.hi_rec,
       };
     }).filter(Boolean) as TransformedGame[];
 

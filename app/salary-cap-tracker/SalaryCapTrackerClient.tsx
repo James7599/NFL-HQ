@@ -5,6 +5,7 @@ import { useState, useMemo, useEffect } from 'react';
 import NFLTeamsSidebar from '@/components/NFLTeamsSidebar';
 import { getAllTeams } from '@/data/teams';
 import { getApiPath } from '@/utils/api';
+import SkeletonLoader from '@/components/SkeletonLoader';
 
 interface SalaryCapData {
   teamId: string;
@@ -211,10 +212,8 @@ export default function SalaryCapTrackerClient() {
 
           {/* Table */}
           <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-            {loading ? (
-              <div className="flex items-center justify-center py-12">
-                <div className="w-12 h-12 border-4 border-gray-200 border-t-[#0050A0] rounded-full animate-spin"></div>
-              </div>
+            {loading && salaryCapData.length === 0 ? (
+              <SkeletonLoader type="table" rows={32} />
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full">

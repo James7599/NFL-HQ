@@ -5,6 +5,8 @@ import Link from 'next/link';
 
 import { getAllTeams } from '@/data/teams';
 import NFLTeamsSidebar from '@/components/NFLTeamsSidebar';
+import { getApiPath } from '@/utils/api';
+import SkeletonLoader from '@/components/SkeletonLoader';
 
 interface StatLeader {
   playerId: number;
@@ -21,45 +23,54 @@ interface PlayerFullStats {
   name: string;
   teamId: string;
   gamesPlayed: number;
-  minutesPerGame: string;
-  pointsPerGame: string;
-  reboundsPerGame: string;
-  offensiveReboundsPerGame: string;
-  defensiveReboundsPerGame: string;
-  assistsPerGame: string;
-  stealsPerGame: string;
-  blocksPerGame: string;
-  turnoversPerGame: string;
-  fieldGoalPct: string;
-  freeThrowPct: string;
-  threePointersMade: number;
   position: string;
+  // Passing
+  passingYards: string;
+  passingTDs: string;
+  interceptions: string;
+  completionPct: string;
+  passerRating: string;
+  // Rushing
+  rushingYards: string;
+  rushingTDs: string;
+  yardsPerCarry: string;
+  rushingAttempts: string;
+  // Receiving
+  receivingYards: string;
+  receptions: string;
+  receivingTDs: string;
+  yardsPerReception: string;
+  // Defense
+  tackles: string;
+  sacks: string;
+  defensiveInterceptions: string;
+  forcedFumbles: string;
 }
 
 interface StatLeaders {
-  points: StatLeader[];
-  rebounds: StatLeader[];
-  assists: StatLeader[];
-  steals: StatLeader[];
-  blocks: StatLeader[];
-  minutes: StatLeader[];
-  fieldGoalPct: StatLeader[];
-  freeThrowPct: StatLeader[];
-  threePointers: StatLeader[];
+  passingYards: StatLeader[];
+  passingTDs: StatLeader[];
+  rushingYards: StatLeader[];
+  rushingTDs: StatLeader[];
+  receivingYards: StatLeader[];
+  receptions: StatLeader[];
+  tackles: StatLeader[];
+  sacks: StatLeader[];
+  interceptions: StatLeader[];
 }
 
-type StatCategory = 'points' | 'rebounds' | 'assists' | 'steals' | 'blocks' | 'minutes' | 'fieldGoalPct' | 'freeThrowPct' | 'threePointers';
+type StatCategory = 'passingYards' | 'passingTDs' | 'rushingYards' | 'rushingTDs' | 'receivingYards' | 'receptions' | 'tackles' | 'sacks' | 'interceptions';
 
 const STAT_CATEGORIES: { key: StatCategory; label: string; abbr: string; format?: (val: string) => string }[] = [
-  { key: 'points', label: 'Points Per Game', abbr: 'PPG' },
-  { key: 'rebounds', label: 'Rebounds Per Game', abbr: 'RPG' },
-  { key: 'assists', label: 'Assists Per Game', abbr: 'APG' },
-  { key: 'steals', label: 'Steals Per Game', abbr: 'SPG' },
-  { key: 'blocks', label: 'Blocks Per Game', abbr: 'BPG' },
-  { key: 'minutes', label: 'Minutes Per Game', abbr: 'MPG' },
-  { key: 'fieldGoalPct', label: 'Field Goal Percentage', abbr: 'FG%', format: (val) => `${(parseFloat(val) * 100).toFixed(1)}%` },
-  { key: 'freeThrowPct', label: 'Free Throw Percentage', abbr: 'FT%', format: (val) => `${(parseFloat(val) * 100).toFixed(1)}%` },
-  { key: 'threePointers', label: 'Three Pointers Made', abbr: '3PM' },
+  { key: 'passingYards', label: 'Passing Yards', abbr: 'PASS YDS' },
+  { key: 'passingTDs', label: 'Passing Touchdowns', abbr: 'PASS TD' },
+  { key: 'rushingYards', label: 'Rushing Yards', abbr: 'RUSH YDS' },
+  { key: 'rushingTDs', label: 'Rushing Touchdowns', abbr: 'RUSH TD' },
+  { key: 'receivingYards', label: 'Receiving Yards', abbr: 'REC YDS' },
+  { key: 'receptions', label: 'Receptions', abbr: 'REC' },
+  { key: 'tackles', label: 'Tackles', abbr: 'TACK' },
+  { key: 'sacks', label: 'Sacks', abbr: 'SACK' },
+  { key: 'interceptions', label: 'Interceptions', abbr: 'INT' },
 ];
 
 export default function StatsPage() {
@@ -68,7 +79,7 @@ export default function StatsPage() {
   const [allPlayerStats, setAllPlayerStats] = useState<PlayerFullStats[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [activeCategory, setActiveCategory] = useState<StatCategory>('points');
+  const [activeCategory, setActiveCategory] = useState<StatCategory>('passingYards');
 
   // Filter state
   const [selectedTeam, setSelectedTeam] = useState<string>('all');
@@ -90,7 +101,7 @@ export default function StatsPage() {
       setError(null);
 
       try {
-        const response = await fetch('/nfl-hq/api/nfl/stat-leaders?season=2025&event=regular&limit=100&includeAllStats=true');
+        const response = await fetch(getApiPath('api/nfl/stat-leaders?season=2025&limit=100&includeAllStats=true'));
 
         if (!response.ok) {
           throw new Error('Failed to fetch stat leaders');
@@ -119,18 +130,37 @@ export default function StatsPage() {
   // Get color for position badge
   const getPositionColor = (position: string) => {
     const pos = position.toUpperCase();
-    if (pos.includes('PG') || pos === 'G') {
-      return 'bg-blue-100 text-blue-700 border-blue-200';
-    } else if (pos.includes('SG')) {
-      return 'bg-cyan-100 text-cyan-700 border-cyan-200';
-    } else if (pos.includes('SF')) {
-      return 'bg-green-100 text-green-700 border-green-200';
-    } else if (pos.includes('PF')) {
-      return 'bg-amber-100 text-amber-700 border-amber-200';
-    } else if (pos.includes('C')) {
+    // Quarterbacks
+    if (pos === 'QB') {
       return 'bg-purple-100 text-purple-700 border-purple-200';
-    } else if (pos.includes('F')) {
+    }
+    // Running Backs
+    else if (pos === 'RB' || pos === 'FB') {
+      return 'bg-green-100 text-green-700 border-green-200';
+    }
+    // Wide Receivers / Tight Ends
+    else if (pos === 'WR' || pos === 'TE') {
+      return 'bg-blue-100 text-blue-700 border-blue-200';
+    }
+    // Offensive Line
+    else if (pos === 'OT' || pos === 'OG' || pos === 'C' || pos === 'OL') {
+      return 'bg-amber-100 text-amber-700 border-amber-200';
+    }
+    // Defensive Line
+    else if (pos === 'DE' || pos === 'DT' || pos === 'NT' || pos === 'DL') {
+      return 'bg-red-100 text-red-700 border-red-200';
+    }
+    // Linebackers
+    else if (pos === 'LB' || pos === 'ILB' || pos === 'OLB' || pos === 'MLB') {
       return 'bg-orange-100 text-orange-700 border-orange-200';
+    }
+    // Defensive Backs
+    else if (pos === 'CB' || pos === 'S' || pos === 'FS' || pos === 'SS' || pos === 'DB') {
+      return 'bg-cyan-100 text-cyan-700 border-cyan-200';
+    }
+    // Special Teams
+    else if (pos === 'K' || pos === 'P' || pos === 'LS') {
+      return 'bg-pink-100 text-pink-700 border-pink-200';
     }
     return 'bg-gray-100 text-gray-700 border-gray-200';
   };
@@ -146,15 +176,15 @@ export default function StatsPage() {
       // Helper to sort players by a specific stat
       const sortByCategory = (category: StatCategory): StatLeader[] => {
         const statKey = {
-          'points': 'pointsPerGame',
-          'rebounds': 'reboundsPerGame',
-          'assists': 'assistsPerGame',
-          'steals': 'stealsPerGame',
-          'blocks': 'blocksPerGame',
-          'minutes': 'minutesPerGame',
-          'fieldGoalPct': 'fieldGoalPct',
-          'freeThrowPct': 'freeThrowPct',
-          'threePointers': 'threePointersMade',
+          'passingYards': 'passingYards',
+          'passingTDs': 'passingTDs',
+          'rushingYards': 'rushingYards',
+          'rushingTDs': 'rushingTDs',
+          'receivingYards': 'receivingYards',
+          'receptions': 'receptions',
+          'tackles': 'tackles',
+          'sacks': 'sacks',
+          'interceptions': 'defensiveInterceptions',
         }[category] as keyof PlayerFullStats;
 
         return [...teamPlayers]
@@ -175,15 +205,15 @@ export default function StatsPage() {
       };
 
       return {
-        points: sortByCategory('points'),
-        rebounds: sortByCategory('rebounds'),
-        assists: sortByCategory('assists'),
-        steals: sortByCategory('steals'),
-        blocks: sortByCategory('blocks'),
-        minutes: sortByCategory('minutes'),
-        fieldGoalPct: sortByCategory('fieldGoalPct'),
-        freeThrowPct: sortByCategory('freeThrowPct'),
-        threePointers: sortByCategory('threePointers'),
+        passingYards: sortByCategory('passingYards'),
+        passingTDs: sortByCategory('passingTDs'),
+        rushingYards: sortByCategory('rushingYards'),
+        rushingTDs: sortByCategory('rushingTDs'),
+        receivingYards: sortByCategory('receivingYards'),
+        receptions: sortByCategory('receptions'),
+        tackles: sortByCategory('tackles'),
+        sacks: sortByCategory('sacks'),
+        interceptions: sortByCategory('interceptions'),
       };
     }
 
@@ -193,15 +223,15 @@ export default function StatsPage() {
     };
 
     return {
-      points: limitPlayers(statLeaders.points),
-      rebounds: limitPlayers(statLeaders.rebounds),
-      assists: limitPlayers(statLeaders.assists),
-      steals: limitPlayers(statLeaders.steals),
-      blocks: limitPlayers(statLeaders.blocks),
-      minutes: limitPlayers(statLeaders.minutes),
-      fieldGoalPct: limitPlayers(statLeaders.fieldGoalPct),
-      freeThrowPct: limitPlayers(statLeaders.freeThrowPct),
-      threePointers: limitPlayers(statLeaders.threePointers),
+      passingYards: limitPlayers(statLeaders.passingYards),
+      passingTDs: limitPlayers(statLeaders.passingTDs),
+      rushingYards: limitPlayers(statLeaders.rushingYards),
+      rushingTDs: limitPlayers(statLeaders.rushingTDs),
+      receivingYards: limitPlayers(statLeaders.receivingYards),
+      receptions: limitPlayers(statLeaders.receptions),
+      tackles: limitPlayers(statLeaders.tackles),
+      sacks: limitPlayers(statLeaders.sacks),
+      interceptions: limitPlayers(statLeaders.interceptions),
     };
   }, [statLeaders, allPlayerStats, selectedTeam, displayLimit]);
 
@@ -245,7 +275,7 @@ export default function StatsPage() {
               NFL Stat Leaders
             </h1>
             <p className="text-base md:text-lg text-white/95 max-w-2xl">
-              2025-26 Regular Season Statistical Leaders
+              2025 NFL Season Statistical Leaders
             </p>
           </div>
         </div>
@@ -278,10 +308,7 @@ export default function StatsPage() {
 
           {/* Stats Table */}
           {loading ? (
-            <div className="flex flex-col items-center justify-center py-20">
-              <div className="w-12 h-12 border-4 border-gray-200 border-t-[#0050A0] rounded-full animate-spin"></div>
-              <p className="mt-4 text-gray-600">Loading stat leaders...</p>
-            </div>
+            <SkeletonLoader type="table" rows={10} />
           ) : error ? (
             <div className="bg-red-50 border border-red-200 rounded-xl p-6 text-center">
               <p className="text-red-600">{error}</p>
@@ -578,70 +605,99 @@ export default function StatsPage() {
 
               {/* Stats Grid */}
               <div className="p-6">
-                <div className="text-sm text-gray-500 mb-4">
-                  {selectedPlayer.gamesPlayed} Games Played
+                <div className="flex items-center justify-between mb-4">
+                  <div className="text-sm text-gray-500">
+                    {selectedPlayer.gamesPlayed} Games Played
+                  </div>
+                  <span className={`inline-flex items-center px-3 py-1 rounded-md border text-sm font-semibold ${getPositionColor(selectedPlayer.position)}`}>
+                    {selectedPlayer.position}
+                  </span>
                 </div>
 
-                <div className="grid grid-cols-3 gap-4">
-                  {/* Primary Stats */}
-                  <div className="bg-gray-50 rounded-lg p-3 text-center border border-gray-200">
-                    <div className="text-2xl font-bold text-[#0050A0]">{selectedPlayer.pointsPerGame}</div>
-                    <div className="text-xs font-medium text-gray-600">PPG</div>
-                  </div>
-                  <div className="bg-gray-50 rounded-lg p-3 text-center border border-gray-200">
-                    <div className="text-2xl font-bold text-[#0050A0]">{selectedPlayer.reboundsPerGame}</div>
-                    <div className="text-xs font-medium text-gray-600">RPG</div>
-                  </div>
-                  <div className="bg-gray-50 rounded-lg p-3 text-center border border-gray-200">
-                    <div className="text-2xl font-bold text-[#0050A0]">{selectedPlayer.assistsPerGame}</div>
-                    <div className="text-xs font-medium text-gray-600">APG</div>
-                  </div>
-
-                  {/* Secondary Stats */}
-                  <div className="bg-gray-50 rounded-lg p-3 text-center border border-gray-200">
-                    <div className="text-2xl font-bold text-gray-900">{selectedPlayer.stealsPerGame}</div>
-                    <div className="text-xs font-medium text-gray-600">SPG</div>
-                  </div>
-                  <div className="bg-gray-50 rounded-lg p-3 text-center border border-gray-200">
-                    <div className="text-2xl font-bold text-gray-900">{selectedPlayer.blocksPerGame}</div>
-                    <div className="text-xs font-medium text-gray-600">BPG</div>
-                  </div>
-                  <div className="bg-gray-50 rounded-lg p-3 text-center border border-gray-200">
-                    <div className="text-2xl font-bold text-gray-900">{selectedPlayer.minutesPerGame}</div>
-                    <div className="text-xs font-medium text-gray-600">MPG</div>
-                  </div>
-
-                  {/* Shooting Stats */}
-                  <div className="bg-gray-50 rounded-lg p-3 text-center border border-gray-200">
-                    <div className="text-2xl font-bold text-gray-900">
-                      {(parseFloat(selectedPlayer.fieldGoalPct) * 100).toFixed(1)}%
+                <div className="space-y-4">
+                  {/* Passing Stats */}
+                  {(selectedPlayer.passingYards && parseInt(selectedPlayer.passingYards) > 0) && (
+                    <div>
+                      <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">Passing</h4>
+                      <div className="grid grid-cols-3 gap-3">
+                        <div className="bg-gray-50 rounded-lg p-3 text-center border border-gray-200">
+                          <div className="text-2xl font-bold text-[#0050A0]">{selectedPlayer.passingYards}</div>
+                          <div className="text-xs font-medium text-gray-600">YDS</div>
+                        </div>
+                        <div className="bg-gray-50 rounded-lg p-3 text-center border border-gray-200">
+                          <div className="text-2xl font-bold text-[#0050A0]">{selectedPlayer.passingTDs}</div>
+                          <div className="text-xs font-medium text-gray-600">TD</div>
+                        </div>
+                        <div className="bg-gray-50 rounded-lg p-3 text-center border border-gray-200">
+                          <div className="text-2xl font-bold text-gray-900">{selectedPlayer.interceptions}</div>
+                          <div className="text-xs font-medium text-gray-600">INT</div>
+                        </div>
+                      </div>
                     </div>
-                    <div className="text-xs font-medium text-gray-600">FG%</div>
-                  </div>
-                  <div className="bg-gray-50 rounded-lg p-3 text-center border border-gray-200">
-                    <div className="text-2xl font-bold text-gray-900">
-                      {(parseFloat(selectedPlayer.freeThrowPct) * 100).toFixed(1)}%
-                    </div>
-                    <div className="text-xs font-medium text-gray-600">FT%</div>
-                  </div>
-                  <div className="bg-gray-50 rounded-lg p-3 text-center border border-gray-200">
-                    <div className="text-2xl font-bold text-gray-900">{selectedPlayer.threePointersMade}</div>
-                    <div className="text-xs font-medium text-gray-600">3PM</div>
-                  </div>
+                  )}
 
-                  {/* Additional Stats Row */}
-                  <div className="bg-gray-50 rounded-lg p-3 text-center border border-gray-200">
-                    <div className="text-2xl font-bold text-gray-900">{selectedPlayer.offensiveReboundsPerGame}</div>
-                    <div className="text-xs font-medium text-gray-600">ORPG</div>
-                  </div>
-                  <div className="bg-gray-50 rounded-lg p-3 text-center border border-gray-200">
-                    <div className="text-2xl font-bold text-gray-900">{selectedPlayer.defensiveReboundsPerGame}</div>
-                    <div className="text-xs font-medium text-gray-600">DRPG</div>
-                  </div>
-                  <div className="bg-gray-50 rounded-lg p-3 text-center border border-gray-200">
-                    <div className="text-2xl font-bold text-gray-900">{selectedPlayer.turnoversPerGame}</div>
-                    <div className="text-xs font-medium text-gray-600">TPG</div>
-                  </div>
+                  {/* Rushing Stats */}
+                  {(selectedPlayer.rushingYards && parseInt(selectedPlayer.rushingYards) > 0) && (
+                    <div>
+                      <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">Rushing</h4>
+                      <div className="grid grid-cols-3 gap-3">
+                        <div className="bg-gray-50 rounded-lg p-3 text-center border border-gray-200">
+                          <div className="text-2xl font-bold text-[#0050A0]">{selectedPlayer.rushingYards}</div>
+                          <div className="text-xs font-medium text-gray-600">YDS</div>
+                        </div>
+                        <div className="bg-gray-50 rounded-lg p-3 text-center border border-gray-200">
+                          <div className="text-2xl font-bold text-[#0050A0]">{selectedPlayer.rushingTDs}</div>
+                          <div className="text-xs font-medium text-gray-600">TD</div>
+                        </div>
+                        <div className="bg-gray-50 rounded-lg p-3 text-center border border-gray-200">
+                          <div className="text-2xl font-bold text-gray-900">{selectedPlayer.yardsPerCarry}</div>
+                          <div className="text-xs font-medium text-gray-600">YPC</div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Receiving Stats */}
+                  {(selectedPlayer.receivingYards && parseInt(selectedPlayer.receivingYards) > 0) && (
+                    <div>
+                      <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">Receiving</h4>
+                      <div className="grid grid-cols-3 gap-3">
+                        <div className="bg-gray-50 rounded-lg p-3 text-center border border-gray-200">
+                          <div className="text-2xl font-bold text-[#0050A0]">{selectedPlayer.receivingYards}</div>
+                          <div className="text-xs font-medium text-gray-600">YDS</div>
+                        </div>
+                        <div className="bg-gray-50 rounded-lg p-3 text-center border border-gray-200">
+                          <div className="text-2xl font-bold text-[#0050A0]">{selectedPlayer.receptions}</div>
+                          <div className="text-xs font-medium text-gray-600">REC</div>
+                        </div>
+                        <div className="bg-gray-50 rounded-lg p-3 text-center border border-gray-200">
+                          <div className="text-2xl font-bold text-gray-900">{selectedPlayer.receivingTDs}</div>
+                          <div className="text-xs font-medium text-gray-600">TD</div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Defensive Stats */}
+                  {(selectedPlayer.tackles && parseInt(selectedPlayer.tackles) > 0) && (
+                    <div>
+                      <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">Defense</h4>
+                      <div className="grid grid-cols-3 gap-3">
+                        <div className="bg-gray-50 rounded-lg p-3 text-center border border-gray-200">
+                          <div className="text-2xl font-bold text-[#0050A0]">{selectedPlayer.tackles}</div>
+                          <div className="text-xs font-medium text-gray-600">TACK</div>
+                        </div>
+                        <div className="bg-gray-50 rounded-lg p-3 text-center border border-gray-200">
+                          <div className="text-2xl font-bold text-[#0050A0]">{selectedPlayer.sacks}</div>
+                          <div className="text-xs font-medium text-gray-600">SACK</div>
+                        </div>
+                        <div className="bg-gray-50 rounded-lg p-3 text-center border border-gray-200">
+                          <div className="text-2xl font-bold text-gray-900">{selectedPlayer.defensiveInterceptions}</div>
+                          <div className="text-xs font-medium text-gray-600">INT</div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* Team Link */}
