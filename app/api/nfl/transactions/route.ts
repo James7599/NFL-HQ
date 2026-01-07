@@ -187,10 +187,15 @@ export async function GET(request: NextRequest) {
     // Limit results
     transactions = transactions.slice(0, limit);
 
+    // Extract just the month strings from the months array
+    const availableMonths = Array.isArray(responseData.months)
+      ? responseData.months.map((m: any) => m.month_of_transaction_full || m)
+      : [];
+
     return NextResponse.json({
       transactions,
       totalTransactions: transactions.length,
-      availableMonths: responseData.months || [],
+      availableMonths,
       lastUpdated: new Date().toISOString(),
       season: 2025
     });
