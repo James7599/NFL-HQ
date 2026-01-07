@@ -231,7 +231,8 @@ function TeamPageContent({ team, initialTab }: TeamPageProps) {
   const [activeTab, setActiveTab] = useState(initialTab || 'overview');
   const [standings, setStandings] = useState<TeamStanding | null>(null);
   const [, setLiveRecord] = useState<TeamRecord | null>(null);
-  const [, setDivisionStandings] = useState<any[]>([]);
+  const [teamSchedule, setTeamSchedule] = useState<ScheduleGame[]>([]);
+  const [divisionStandings, setDivisionStandings] = useState<any[]>([]);
   const [teamStats, setTeamStats] = useState<TeamStats | null>(null);
 
   // Update SEO metadata based on active tab
@@ -274,6 +275,9 @@ function TeamPageContent({ team, initialTab }: TeamPageProps) {
           const data = await response.json();
           const schedule: ScheduleGame[] = data.schedule || [];
 
+          // Store the full schedule for passing to OverviewTab
+          setTeamSchedule(schedule);
+
           // Calculate current team's record
           const teamRecord = calculateTeamRecord(schedule);
           setLiveRecord(teamRecord);
@@ -289,19 +293,25 @@ function TeamPageContent({ team, initialTab }: TeamPageProps) {
                 const record = calculateTeamRecord(divisionSchedule);
                 return {
                   ...divisionTeam,
-                  record,
+                  wins: record.wins,
+                  losses: record.losses,
+                  ties: record.ties,
                   winPercentage: record.winPercentage
                 };
               }
               return {
                 ...divisionTeam,
-                record: { wins: 0, losses: 0, ties: 0, winPercentage: 0 },
+                wins: 0,
+                losses: 0,
+                ties: 0,
                 winPercentage: 0
               };
             } catch {
               return {
                 ...divisionTeam,
-                record: { wins: 0, losses: 0, ties: 0, winPercentage: 0 },
+                wins: 0,
+                losses: 0,
+                ties: 0,
                 winPercentage: 0
               };
             }
@@ -314,7 +324,7 @@ function TeamPageContent({ team, initialTab }: TeamPageProps) {
             if (b.winPercentage !== a.winPercentage) {
               return b.winPercentage - a.winPercentage;
             }
-            return b.record.wins - a.record.wins;
+            return b.wins - a.wins;
           });
 
           setDivisionStandings(divisionStandingsData);
@@ -413,7 +423,7 @@ function TeamPageContent({ team, initialTab }: TeamPageProps) {
   const renderActiveTab = () => {
     switch (activeTab) {
       case 'overview':
-        return <OverviewTab team={team} onTabChange={handleTabChange} />;
+        return <OverviewTab team={team} onTabChange={handleTabChange} schedule={teamSchedule} divisionStandings={divisionStandings} />;
       case 'team-info':
         return <TeamInfoTab team={team} />;
       case 'draft-picks':

@@ -5,41 +5,48 @@ import { getAllTeams } from '@/data/teams';
 import NFLTeamsSidebar from '@/components/NFLTeamsSidebar';
 import { useState, useEffect } from 'react';
 
-// Map API team slugs to our team IDs
+// Map API team slugs to our team IDs (NFL teams)
 const teamSlugMapping: Record<string, string> = {
-  'atlanta-hawks': 'atlanta-hawks',
-  'boston-celtics': 'boston-celtics',
-  'brooklyn-nets': 'brooklyn-nets',
-  'charlotte-hornets': 'charlotte-hornets',
-  'chicago-bulls': 'chicago-bulls',
-  'cleveland-cavaliers': 'cleveland-cavaliers',
-  'dallas-mavericks': 'dallas-mavericks',
-  'denver-nuggets': 'denver-nuggets',
-  'detroit-pistons': 'detroit-pistons',
-  'golden-state-warriors': 'golden-state-warriors',
-  'houston-rockets': 'houston-rockets',
-  'indiana-pacers': 'indiana-pacers',
-  'la-clippers': 'los-angeles-clippers',
-  'los-angeles-clippers': 'los-angeles-clippers',
-  'lakers': 'los-angeles-lakers',
-  'los-angeles-lakers': 'los-angeles-lakers',
-  'memphis-grizzlies': 'memphis-grizzlies',
-  'miami-heat': 'miami-heat',
-  'milwaukee-bucks': 'milwaukee-bucks',
-  'minnesota-timberwolves': 'minnesota-timberwolves',
-  'new-orleans-pelicans': 'new-orleans-pelicans',
-  'new-york-knicks': 'new-york-knicks',
-  'oklahoma-city-thunder': 'oklahoma-city-thunder',
-  'orlando-magic': 'orlando-magic',
-  'philadelphia-76ers': 'philadelphia-76ers',
-  'phoenix-suns': 'phoenix-suns',
-  'portland-trail-blazers': 'portland-trail-blazers',
-  'portland-trailblazers': 'portland-trail-blazers',
-  'sacramento-kings': 'sacramento-kings',
-  'san-antonio-spurs': 'san-antonio-spurs',
-  'toronto-raptors': 'toronto-raptors',
-  'utah-jazz': 'utah-jazz',
-  'washington-wizards': 'washington-wizards',
+  // AFC East
+  'buffalo-bills': 'buffalo-bills',
+  'miami-dolphins': 'miami-dolphins',
+  'new-england-patriots': 'new-england-patriots',
+  'new-york-jets': 'new-york-jets',
+  // AFC North
+  'baltimore-ravens': 'baltimore-ravens',
+  'cincinnati-bengals': 'cincinnati-bengals',
+  'cleveland-browns': 'cleveland-browns',
+  'pittsburgh-steelers': 'pittsburgh-steelers',
+  // AFC South
+  'houston-texans': 'houston-texans',
+  'indianapolis-colts': 'indianapolis-colts',
+  'jacksonville-jaguars': 'jacksonville-jaguars',
+  'tennessee-titans': 'tennessee-titans',
+  // AFC West
+  'denver-broncos': 'denver-broncos',
+  'kansas-city-chiefs': 'kansas-city-chiefs',
+  'las-vegas-raiders': 'las-vegas-raiders',
+  'los-angeles-chargers': 'los-angeles-chargers',
+  // NFC East
+  'dallas-cowboys': 'dallas-cowboys',
+  'new-york-giants': 'new-york-giants',
+  'philadelphia-eagles': 'philadelphia-eagles',
+  'washington-commanders': 'washington-commanders',
+  // NFC North
+  'chicago-bears': 'chicago-bears',
+  'detroit-lions': 'detroit-lions',
+  'green-bay-packers': 'green-bay-packers',
+  'minnesota-vikings': 'minnesota-vikings',
+  // NFC South
+  'atlanta-falcons': 'atlanta-falcons',
+  'carolina-panthers': 'carolina-panthers',
+  'new-orleans-saints': 'new-orleans-saints',
+  'tampa-bay-buccaneers': 'tampa-bay-buccaneers',
+  // NFC West
+  'arizona-cardinals': 'arizona-cardinals',
+  'los-angeles-rams': 'los-angeles-rams',
+  'san-francisco-49ers': 'san-francisco-49ers',
+  'seattle-seahawks': 'seattle-seahawks',
 };
 
 export default function HomePage() {
@@ -131,22 +138,23 @@ export default function HomePage() {
   const [todaysGames, setTodaysGames] = useState<any[]>([]);
   const [gamesLoading, setGamesLoading] = useState(true);
 
-  // Stat leaders
+  // Stat leaders - NFL stats
   interface StatLeader {
     playerId: number;
-    playerSlug: string;
+    playerSlug?: string;
     name: string;
-    value: string;
+    value: string | number;
     teamId: string;
-    gamesPlayed: number;
+    position?: string;
+    gamesPlayed?: number;
   }
 
   interface StatLeaders {
-    points: StatLeader[];
-    rebounds: StatLeader[];
-    assists: StatLeader[];
-    steals: StatLeader[];
-    blocks: StatLeader[];
+    passingYards: StatLeader[];
+    rushingYards: StatLeader[];
+    receivingYards: StatLeader[];
+    sacks: StatLeader[];
+    interceptions: StatLeader[];
   }
 
   const [statLeaders, setStatLeaders] = useState<StatLeaders | null>(null);
@@ -230,24 +238,29 @@ export default function HomePage() {
     fetchDraftOrder();
   }, [allTeams]);
 
-  // Fetch stat leaders
+  // Fetch stat leaders - using fallback data for now
   useEffect(() => {
     async function fetchStatLeaders() {
       try {
-        const response = await fetch('/nfl-hq/api/nfl/stat-leaders?season=2025&event=regular');
+        // Try to fetch from API (if endpoint exists)
+        const response = await fetch('/nfl-hq/app/api/nfl/stat-leaders/route');
 
-        if (!response.ok) return;
-
-        const data = await response.json();
-
-        if (data.data) {
-          setStatLeaders(data.data);
+        if (response.ok) {
+          const data = await response.json();
+          if (data.data) {
+            setStatLeaders(data.data);
+            setStatLeadersLoading(false);
+            return;
+          }
         }
       } catch (err) {
-        console.error('Error fetching stat leaders:', err);
-      } finally {
-        setStatLeadersLoading(false);
+        console.error('Error fetching stat leaders, using fallback:', err);
       }
+
+      // Fallback: Use placeholder data showing it's unavailable
+      // In production, this would fetch from the actual stat leaders API
+      setStatLeaders(null);
+      setStatLeadersLoading(false);
     }
 
     fetchStatLeaders();
@@ -433,9 +446,9 @@ export default function HomePage() {
             {statLeadersLoading ? (
               /* Loading Skeleton */
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-                {['Points', 'Rebounds', 'Assists', 'Steals', 'Blocks'].map((stat) => (
+                {['Passing Yards', 'Rushing Yards', 'Receiving Yards', 'Sacks', 'Interceptions'].map((stat) => (
                   <div key={stat} className="bg-gray-50 rounded-lg p-4 animate-pulse">
-                    <div className="h-4 bg-gray-200 rounded w-20 mb-3"></div>
+                    <div className="h-4 bg-gray-200 rounded w-24 mb-3"></div>
                     <div className="space-y-2">
                       {[1, 2, 3].map((i) => (
                         <div key={i} className="flex items-center justify-between">
@@ -451,141 +464,10 @@ export default function HomePage() {
                   </div>
                 ))}
               </div>
-            ) : statLeaders ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-                {/* Points Leaders */}
-                <div className="bg-gray-50 rounded-lg p-4">
-                  <h3 className="text-sm font-bold text-gray-500 mb-3 uppercase tracking-wide">Points</h3>
-                  <div className="space-y-2">
-                    {statLeaders.points.map((player, idx) => {
-                      const team = allTeams.find(t => t.id === player.teamId);
-                      return (
-                        <div key={player.playerId} className="flex items-center justify-between text-sm">
-                          <div className="flex items-center gap-2 flex-1 min-w-0">
-                            <span className="text-gray-400 font-semibold w-4">{idx + 1}</span>
-                            {team && (
-                              <img
-                                src={team.logoUrl}
-                                alt={team.abbreviation}
-                                className="w-4 h-4 flex-shrink-0"
-                              />
-                            )}
-                            <span className="font-medium text-gray-900 truncate text-xs">{player.name}</span>
-                          </div>
-                          <span className="font-bold text-[#0050A0] ml-2">{player.value}</span>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                {/* Rebounds Leaders */}
-                <div className="bg-gray-50 rounded-lg p-4">
-                  <h3 className="text-sm font-bold text-gray-500 mb-3 uppercase tracking-wide">Rebounds</h3>
-                  <div className="space-y-2">
-                    {statLeaders.rebounds.map((player, idx) => {
-                      const team = allTeams.find(t => t.id === player.teamId);
-                      return (
-                        <div key={player.playerId} className="flex items-center justify-between text-sm">
-                          <div className="flex items-center gap-2 flex-1 min-w-0">
-                            <span className="text-gray-400 font-semibold w-4">{idx + 1}</span>
-                            {team && (
-                              <img
-                                src={team.logoUrl}
-                                alt={team.abbreviation}
-                                className="w-4 h-4 flex-shrink-0"
-                              />
-                            )}
-                            <span className="font-medium text-gray-900 truncate text-xs">{player.name}</span>
-                          </div>
-                          <span className="font-bold text-[#0050A0] ml-2">{player.value}</span>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                {/* Assists Leaders */}
-                <div className="bg-gray-50 rounded-lg p-4">
-                  <h3 className="text-sm font-bold text-gray-500 mb-3 uppercase tracking-wide">Assists</h3>
-                  <div className="space-y-2">
-                    {statLeaders.assists.map((player, idx) => {
-                      const team = allTeams.find(t => t.id === player.teamId);
-                      return (
-                        <div key={player.playerId} className="flex items-center justify-between text-sm">
-                          <div className="flex items-center gap-2 flex-1 min-w-0">
-                            <span className="text-gray-400 font-semibold w-4">{idx + 1}</span>
-                            {team && (
-                              <img
-                                src={team.logoUrl}
-                                alt={team.abbreviation}
-                                className="w-4 h-4 flex-shrink-0"
-                              />
-                            )}
-                            <span className="font-medium text-gray-900 truncate text-xs">{player.name}</span>
-                          </div>
-                          <span className="font-bold text-[#0050A0] ml-2">{player.value}</span>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                {/* Steals Leaders */}
-                <div className="bg-gray-50 rounded-lg p-4">
-                  <h3 className="text-sm font-bold text-gray-500 mb-3 uppercase tracking-wide">Steals</h3>
-                  <div className="space-y-2">
-                    {statLeaders.steals.map((player, idx) => {
-                      const team = allTeams.find(t => t.id === player.teamId);
-                      return (
-                        <div key={player.playerId} className="flex items-center justify-between text-sm">
-                          <div className="flex items-center gap-2 flex-1 min-w-0">
-                            <span className="text-gray-400 font-semibold w-4">{idx + 1}</span>
-                            {team && (
-                              <img
-                                src={team.logoUrl}
-                                alt={team.abbreviation}
-                                className="w-4 h-4 flex-shrink-0"
-                              />
-                            )}
-                            <span className="font-medium text-gray-900 truncate text-xs">{player.name}</span>
-                          </div>
-                          <span className="font-bold text-[#0050A0] ml-2">{player.value}</span>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                {/* Blocks Leaders */}
-                <div className="bg-gray-50 rounded-lg p-4">
-                  <h3 className="text-sm font-bold text-gray-500 mb-3 uppercase tracking-wide">Blocks</h3>
-                  <div className="space-y-2">
-                    {statLeaders.blocks.map((player, idx) => {
-                      const team = allTeams.find(t => t.id === player.teamId);
-                      return (
-                        <div key={player.playerId} className="flex items-center justify-between text-sm">
-                          <div className="flex items-center gap-2 flex-1 min-w-0">
-                            <span className="text-gray-400 font-semibold w-4">{idx + 1}</span>
-                            {team && (
-                              <img
-                                src={team.logoUrl}
-                                alt={team.abbreviation}
-                                className="w-4 h-4 flex-shrink-0"
-                              />
-                            )}
-                            <span className="font-medium text-gray-900 truncate text-xs">{player.name}</span>
-                          </div>
-                          <span className="font-bold text-[#0050A0] ml-2">{player.value}</span>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              </div>
             ) : (
               <div className="text-center py-8 text-gray-500">
                 <p>Stat leaders data unavailable</p>
+                <p className="text-xs mt-2">Check the <Link href="/stats" className="text-[#0050A0] hover:underline">Stat Leaders page</Link> for current NFL stats</p>
               </div>
             )}
           </div>
@@ -794,7 +676,7 @@ export default function HomePage() {
                 </h3>
               </div>
               <p className="text-gray-600 text-sm mb-4">
-                Comprehensive pages for all 30 NFL teams
+                Comprehensive pages for all 32 NFL teams
               </p>
 
               <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg p-4 text-center">

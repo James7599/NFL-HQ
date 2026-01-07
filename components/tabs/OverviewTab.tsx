@@ -94,9 +94,23 @@ const getTeamUrl = (opponent: string, opponentAbbr?: string): string => {
   return '#';
 };
 
+interface DivisionStanding {
+  id: string;
+  city: string;
+  name: string;
+  abbreviation: string;
+  logoUrl: string;
+  wins: number;
+  losses: number;
+  ties: number;
+  winPercentage: number;
+}
+
 interface OverviewTabProps {
   team: TeamData;
   onTabChange?: (tab: string) => void;
+  schedule?: ScheduleGame[];
+  divisionStandings?: DivisionStanding[];
 }
 
 interface Article {
@@ -126,15 +140,15 @@ interface ScheduleGame {
 }
 
 
-export default function OverviewTab({ team, onTabChange }: OverviewTabProps) {
+export default function OverviewTab({ team, onTabChange, schedule: passedSchedule, divisionStandings: passedStandings }: OverviewTabProps) {
   const [articles, setArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [visibleArticles, setVisibleArticles] = useState(3);
 
-  // Schedule state
-  const [schedule, setSchedule] = useState<ScheduleGame[]>([]);
-  const [scheduleLoading, setScheduleLoading] = useState(true);
+  // Schedule state - use passed data if available
+  const [schedule, setSchedule] = useState<ScheduleGame[]>(passedSchedule || []);
+  const [scheduleLoading, setScheduleLoading] = useState(!passedSchedule);
   const [scheduleError, setScheduleError] = useState<string | null>(null);
 
   // Stats state
@@ -142,9 +156,9 @@ export default function OverviewTab({ team, onTabChange }: OverviewTabProps) {
   const [statsLoading, setStatsLoading] = useState(true);
   const [statsError, setStatsError] = useState<string | null>(null);
 
-  // Division standings state
-  const [divisionStandings, setDivisionStandings] = useState<any[]>([]);
-  const [standingsLoading, setStandingsLoading] = useState(true);
+  // Division standings state - use passed data if available
+  const [divisionStandings, setDivisionStandings] = useState<DivisionStanding[]>(passedStandings || []);
+  const [standingsLoading, setStandingsLoading] = useState(!passedStandings);
   const [standingsError, setStandingsError] = useState<string | null>(null);
 
 
@@ -327,16 +341,62 @@ export default function OverviewTab({ team, onTabChange }: OverviewTabProps) {
     }
   }, [team]);
 
+  // Update state when props change
+  useEffect(() => {
+    if (passedSchedule && passedSchedule.length > 0) {
+      // Filter to regular season games and get relevant 5 games
+      const regularSeasonGames = passedSchedule.filter(
+        (game: ScheduleGame) => game.eventType === 'Regular Season'
+      );
+
+      const now = new Date();
+      const currentWeekIndex = regularSeasonGames.findIndex((game: ScheduleGame) => {
+        if (game.opponentAbbr === 'BYE') return false;
+        const gameDate = new Date(game.date);
+        return gameDate >= now && !game.result;
+      });
+
+      let relevantGames: ScheduleGame[];
+
+      if (currentWeekIndex === -1) {
+        relevantGames = regularSeasonGames.slice(-5);
+      } else {
+        const startIndex = Math.max(0, currentWeekIndex - 2);
+        const endIndex = Math.min(regularSeasonGames.length, startIndex + 5);
+        const actualStartIndex = endIndex - startIndex < 5
+          ? Math.max(0, regularSeasonGames.length - 5)
+          : startIndex;
+        relevantGames = regularSeasonGames.slice(actualStartIndex, actualStartIndex + 5);
+      }
+
+      setSchedule(relevantGames);
+      setScheduleLoading(false);
+    }
+  }, [passedSchedule]);
+
+  useEffect(() => {
+    if (passedStandings && passedStandings.length > 0) {
+      setDivisionStandings(passedStandings);
+      setStandingsLoading(false);
+    }
+  }, [passedStandings]);
+
   useEffect(() => {
     // Track overview tab view
     trackScheduleView(team.id, '2025');
     trackStandingsView(team.division);
 
     fetchOverviewArticles();
-    fetchTeamSchedule();
     fetchTeamStats();
-    fetchDivisionStandings();
-  }, [fetchOverviewArticles, fetchTeamSchedule, fetchTeamStats, fetchDivisionStandings, team.id, team.division]);
+
+    // Only fetch if data wasn't passed via props
+    if (!passedSchedule) {
+      fetchTeamSchedule();
+    }
+    if (!passedStandings) {
+      fetchDivisionStandings();
+    }
+  }, [fetchOverviewArticles, fetchTeamSchedule, fetchTeamStats, fetchDivisionStandings, team.id, team.division, passedSchedule, passedStandings]);
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -421,12 +481,9 @@ export default function OverviewTab({ team, onTabChange }: OverviewTabProps) {
                         </div>
                         <div className="text-right">
                           {game.result && game.score ? (
-                            <>
-                              <span className={`font-bold text-xs ${game.result === 'W' ? 'text-green-600' : 'text-red-600'}`}>
-                                {game.result}
-                              </span>
-                              <div className="text-xs text-gray-500">{game.score.home}-{game.score.away}</div>
-                            </>
+                            <span className={`font-bold text-xs ${game.result === 'W' ? 'text-green-600' : 'text-red-600'}`}>
+                              {game.result} {game.score.home}-{game.score.away}
+                            </span>
                           ) : (
                             <div className="text-xs text-gray-600">{game.time || 'TBD'}</div>
                           )}
