@@ -668,33 +668,6 @@ export default function HomePage() {
               </div>
             </Link>
 
-            {/* Player Rankings Builder Card */}
-            <Link
-              href="/player-rankings-builder"
-              className="group relative bg-gray-50 rounded-xl p-6 border border-gray-200 hover:border-[#0050A0] hover:bg-white transition-all duration-300 hover:shadow-lg"
-            >
-              <div className="flex items-center gap-3 mb-4">
-                <h3 className="text-xl font-bold text-gray-900 group-hover:text-[#0050A0] transition-colors">
-                  Player Rankings Builder
-                </h3>
-              </div>
-              <p className="text-gray-600 text-sm mb-4">
-                Build custom player rankings from NFL legends and stars
-              </p>
-
-              <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg p-4 text-center">
-                <p className="text-sm font-semibold text-gray-700">Rank the Greats</p>
-                <p className="text-xs text-gray-600 mt-1">Your all-time list</p>
-              </div>
-
-              <div className="mt-4 flex items-center text-[#0050A0] opacity-0 group-hover:opacity-100 transition-opacity">
-                <span className="text-sm font-medium">Start Ranking</span>
-                <svg className="w-4 h-4 ml-2 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-              </div>
-            </Link>
-
             {/* Salary Cap Tracker Card */}
             <Link
               href="/salary-cap-tracker"
@@ -770,33 +743,6 @@ export default function HomePage() {
 
               <div className="mt-4 flex items-center text-[#0050A0] opacity-0 group-hover:opacity-100 transition-opacity">
                 <span className="text-sm font-medium">View Transactions</span>
-                <svg className="w-4 h-4 ml-2 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-              </div>
-            </Link>
-
-            {/* NFL Teams Card */}
-            <Link
-              href="/teams"
-              className="group relative bg-gray-50 rounded-xl p-6 border border-gray-200 hover:border-[#0050A0] hover:bg-white transition-all duration-300 hover:shadow-lg"
-            >
-              <div className="flex items-center gap-3 mb-4">
-                <h3 className="text-xl font-bold text-gray-900 group-hover:text-[#0050A0] transition-colors">
-                  NFL Teams
-                </h3>
-              </div>
-              <p className="text-gray-600 text-sm mb-4">
-                Comprehensive pages for all 32 NFL teams
-              </p>
-
-              <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg p-4 text-center">
-                <p className="text-sm font-semibold text-gray-700">All 32 Teams</p>
-                <p className="text-xs text-gray-600 mt-1">Rosters, stats & history</p>
-              </div>
-
-              <div className="mt-4 flex items-center text-[#0050A0] opacity-0 group-hover:opacity-100 transition-opacity">
-                <span className="text-sm font-medium">Browse Teams</span>
                 <svg className="w-4 h-4 ml-2 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>
