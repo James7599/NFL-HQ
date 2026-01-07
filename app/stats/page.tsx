@@ -114,7 +114,7 @@ export default function StatsPage() {
         // Check if API returned an error but with empty data
         if (data.error) {
           console.warn('API returned with error:', data.error);
-          setError('Stat leaders data is temporarily unavailable. The external data source may be down. Please try again later.');
+          setError('Stat leaders data is temporarily unavailable. Please try again later.');
         } else {
           setStatLeaders(data.data);
           if (data.allPlayerStats) {
