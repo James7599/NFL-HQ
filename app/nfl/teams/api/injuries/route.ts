@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { getAllTeams } from '@/data/teams';
 
 // Cache the data for 5 minutes
 const CACHE_DURATION = 5 * 60 * 1000
@@ -23,40 +24,109 @@ export interface InjuryApiResponse {
   warning?: string;
 }
 
+interface RosterPlayer {
+  name: string;
+  position: string;
+  status: string;
+}
+
+interface TeamRosterResponse {
+  teamId: string;
+  roster: {
+    activeRoster: RosterPlayer[];
+    practiceSquad: RosterPlayer[];
+    injuredReserve: RosterPlayer[];
+    physicallyUnableToPerform: RosterPlayer[];
+    nonFootballInjuryReserve: RosterPlayer[];
+    suspended: RosterPlayer[];
+    exempt: RosterPlayer[];
+  };
+}
+
+// Function to normalize name for matching
+function normalizePlayerName(name: string): string {
+  return name
+    .toLowerCase()
+    .replace(/[^\w\s]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
 
 async function fetchRotoballerInjuries(): Promise<Record<string, InjuryData[]>> {
   try {
-    // Fetch from Rotoballer API
-    const url = 'https://www.rotoballer.com/api/rbapps/nfl-injuries.php?partner=prosportsnetwork&key=x63sLHVNR4a37LvBetiiBXvmEs6XKpVQS1scgVoYf3kxXZ4Kl8bC2BahiSsP'
+    const allTeams = getAllTeams();
 
-    const response = await fetch(url, {
-      next: { revalidate: 300 }, // 5 minutes
-      headers: {
-        'Accept': 'application/json',
-      }
-    })
+    // Fetch both injury data and all team rosters in parallel
+    const [injuryResponse, ...rosterResponses] = await Promise.all([
+      fetch(
+        'https://www.rotoballer.com/api/rbapps/nfl-injuries.php?partner=prosportsnetwork&key=x63sLHVNR4a37LvBetiiBXvmEs6XKpVQS1scgVoYf3kxXZ4Kl8bC2BahiSsP',
+        {
+          headers: {
+            'Accept': 'application/json',
+          },
+          next: { revalidate: 300 }
+        }
+      ),
+      ...allTeams.map(team =>
+        fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3003'}/nfl/teams/api/roster/${team.id}`, {
+          next: { revalidate: 3600 }
+        }).catch(() => null)
+      )
+    ]);
 
-    if (!response.ok) {
-      throw new Error(`Failed to fetch injury data: ${response.statusText}`)
+    if (!injuryResponse.ok) {
+      throw new Error(`Failed to fetch injury data: ${injuryResponse.statusText}`)
     }
 
-    const data = await response.json()
+    const injuryData = await injuryResponse.json();
+
+    // Build a map of player names to teams from all rosters
+    const playerToTeamMap = new Map<string, string>();
+
+    for (let i = 0; i < rosterResponses.length; i++) {
+      const response = rosterResponses[i];
+      if (response && response.ok) {
+        try {
+          const rosterData: TeamRosterResponse = await response.json();
+          const team = allTeams[i];
+
+          const allPlayers = [
+            ...rosterData.roster.activeRoster,
+            ...rosterData.roster.practiceSquad,
+            ...rosterData.roster.injuredReserve,
+            ...rosterData.roster.physicallyUnableToPerform,
+            ...rosterData.roster.nonFootballInjuryReserve,
+          ];
+
+          allPlayers.forEach(player => {
+            const normalizedName = normalizePlayerName(player.name);
+            playerToTeamMap.set(normalizedName, team.abbreviation);
+          });
+        } catch (e) {
+          console.error(`Error processing roster for team ${allTeams[i].id}:`, e);
+        }
+      }
+    }
 
     // Process and organize injury data by team
     const injuries: Record<string, InjuryData[]> = {}
 
     // Process each player from the API response
-    Object.entries(data).forEach(([playerID, playerData]: [string, any]) => {
+    Object.entries(injuryData).forEach(([playerID, playerData]: [string, any]) => {
+      // Match player to team using roster data
+      const normalizedInjuryName = normalizePlayerName(playerData.Name || '');
+      const teamAbbr = playerToTeamMap.get(normalizedInjuryName) || 'N/A';
+
       const injury: InjuryData = {
         player: playerData.Name || 'Unknown Player',
         position: playerData.Position || 'N/A',
-        team: playerData.Team || 'N/A', // Extract team abbreviation from API
+        team: teamAbbr,
         status: playerData.Status || 'Unknown',
         injury: playerData.Part || 'Undisclosed',
         playerID: playerID
       }
 
-      // Add to ALL injuries list - we'll filter by team in the component
+      // Add to ALL injuries list
       if (!injuries['ALL']) {
         injuries['ALL'] = []
       }
