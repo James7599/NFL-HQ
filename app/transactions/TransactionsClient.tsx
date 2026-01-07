@@ -10,6 +10,7 @@ interface Transaction {
   id: number;
   date: string;
   dateTimestamp: string;
+  month: string;
   player: string;
   playerSlug: string;
   position: string;
@@ -28,23 +29,24 @@ interface GroupedTransactions {
 export default function TransactionsClient() {
   const allTeams = getAllTeams();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [allTransactions, setAllTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedTeam, setSelectedTeam] = useState('all');
+  const [selectedMonth, setSelectedMonth] = useState('all');
+  const [availableMonths, setAvailableMonths] = useState<string[]>([]);
   const [lastUpdated, setLastUpdated] = useState('');
 
+  // Fetch all transactions once
   useEffect(() => {
     async function fetchTransactions() {
       setLoading(true);
       try {
-        const url = selectedTeam === 'all'
-          ? getApiPath('api/nfl/transactions?limit=200')
-          : getApiPath(`api/nfl/transactions?team=${selectedTeam}&limit=200`);
-
-        const response = await fetch(url);
+        const response = await fetch(getApiPath('api/nfl/transactions?limit=500'));
         if (!response.ok) throw new Error('Failed to fetch transactions');
 
         const data = await response.json();
-        setTransactions(data.transactions || []);
+        setAllTransactions(data.transactions || []);
+        setAvailableMonths(data.availableMonths || []);
         setLastUpdated(new Date(data.lastUpdated).toLocaleString('en-US', {
           month: 'short',
           day: 'numeric',
@@ -61,7 +63,28 @@ export default function TransactionsClient() {
     }
 
     fetchTransactions();
-  }, [selectedTeam]);
+  }, []);
+
+  // Filter transactions client-side when team or month changes
+  useEffect(() => {
+    let filtered = allTransactions;
+
+    // Filter by team
+    if (selectedTeam !== 'all') {
+      filtered = filtered.filter(t =>
+        t.teamId === selectedTeam ||
+        t.fromTeam?.toLowerCase().includes(selectedTeam.toLowerCase()) ||
+        t.toTeam?.toLowerCase().includes(selectedTeam.toLowerCase())
+      );
+    }
+
+    // Filter by month
+    if (selectedMonth !== 'all') {
+      filtered = filtered.filter(t => t.month === selectedMonth);
+    }
+
+    setTransactions(filtered);
+  }, [selectedTeam, selectedMonth, allTransactions]);
 
   // Group transactions by date
   const groupedTransactions: GroupedTransactions = {};
@@ -77,6 +100,29 @@ export default function TransactionsClient() {
 
   const getTeamInfo = (teamId: string) => {
     return allTeams.find(t => t.id === teamId);
+  };
+
+  // Get position badge color
+  const getPositionColor = (position: string) => {
+    const pos = position.toUpperCase();
+    // Quarterbacks
+    if (pos === 'QB') return 'bg-purple-100 text-purple-700 border-purple-200';
+    // Running Backs
+    if (pos === 'RB' || pos === 'FB') return 'bg-green-100 text-green-700 border-green-200';
+    // Wide Receivers / Tight Ends
+    if (pos === 'WR' || pos === 'TE') return 'bg-blue-100 text-blue-700 border-blue-200';
+    // Offensive Line
+    if (pos === 'OT' || pos === 'OG' || pos === 'C' || pos === 'OL') return 'bg-amber-100 text-amber-700 border-amber-200';
+    // Defensive Line
+    if (pos === 'DE' || pos === 'DT' || pos === 'NT' || pos === 'DL' || pos === 'EDGE') return 'bg-red-100 text-red-700 border-red-200';
+    // Linebackers
+    if (pos === 'LB' || pos === 'ILB' || pos === 'OLB' || pos === 'MLB') return 'bg-orange-100 text-orange-700 border-orange-200';
+    // Defensive Backs
+    if (pos === 'CB' || pos === 'S' || pos === 'FS' || pos === 'SS' || pos === 'DB') return 'bg-cyan-100 text-cyan-700 border-cyan-200';
+    // Special Teams
+    if (pos === 'K' || pos === 'P' || pos === 'LS') return 'bg-pink-100 text-pink-700 border-pink-200';
+    // Default
+    return 'bg-gray-100 text-gray-700 border-gray-200';
   };
 
   return (
@@ -112,18 +158,19 @@ export default function TransactionsClient() {
 
         {/* Content */}
         <div className="mx-auto px-4 sm:px-6 lg:px-8 py-6 max-w-7xl">
-          {/* Filter and Last Updated */}
+          {/* Filters and Last Updated */}
           <div className="bg-white rounded-lg shadow-sm p-4 mb-6">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-              <div className="flex items-center gap-3">
-                <label htmlFor="team-filter" className="text-sm font-semibold text-gray-700">
-                  Filter by Team:
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              {/* Team Filter */}
+              <div>
+                <label htmlFor="team-filter" className="block text-sm font-semibold text-gray-700 mb-2">
+                  Team:
                 </label>
                 <select
                   id="team-filter"
                   value={selectedTeam}
                   onChange={(e) => setSelectedTeam(e.target.value)}
-                  className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0050A0] bg-white text-sm"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0050A0] bg-white text-sm"
                 >
                   <option value="all">All Teams</option>
                   {allTeams.map(team => (
@@ -133,6 +180,29 @@ export default function TransactionsClient() {
                   ))}
                 </select>
               </div>
+
+              {/* Month Filter */}
+              <div>
+                <label htmlFor="month-filter" className="block text-sm font-semibold text-gray-700 mb-2">
+                  Month:
+                </label>
+                <select
+                  id="month-filter"
+                  value={selectedMonth}
+                  onChange={(e) => setSelectedMonth(e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0050A0] bg-white text-sm"
+                >
+                  <option value="all">All Months</option>
+                  {availableMonths.map(month => (
+                    <option key={month} value={month}>
+                      {month}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <div className="pt-4 border-t border-gray-200">
               <div className="text-sm text-gray-600">
                 <strong>Last Updated:</strong> {lastUpdated || 'Loading...'}
               </div>
@@ -205,7 +275,7 @@ export default function TransactionsClient() {
 
                               {/* Position */}
                               <td className="px-4 py-3">
-                                <span className="inline-block px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs font-semibold">
+                                <span className={`inline-block px-2 py-1 rounded text-xs font-semibold border ${getPositionColor(transaction.position)}`}>
                                   {transaction.position}
                                 </span>
                               </td>

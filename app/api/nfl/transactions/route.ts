@@ -49,6 +49,7 @@ export interface Transaction {
   id: number;
   date: string;
   dateTimestamp: string;
+  month: string;
   player: string;
   playerSlug: string;
   position: string;
@@ -156,6 +157,7 @@ export async function GET(request: NextRequest) {
           year: 'numeric'
         }),
         dateTimestamp: transaction.date_of_transaction,
+        month: transaction.month_of_transaction_full,
         player: transaction.player.name,
         playerSlug: transaction.player.slug || '',
         position,
@@ -188,6 +190,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       transactions,
       totalTransactions: transactions.length,
+      availableMonths: responseData.months || [],
       lastUpdated: new Date().toISOString(),
       season: 2025
     });
@@ -198,6 +201,7 @@ export async function GET(request: NextRequest) {
       {
         transactions: [],
         totalTransactions: 0,
+        availableMonths: [],
         lastUpdated: new Date().toISOString(),
         season: 2025,
         error: 'Failed to fetch transactions data'
