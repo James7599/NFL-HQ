@@ -526,7 +526,10 @@ export default function StatsPage() {
                       <div
                         key={category.key}
                         className="bg-gray-50 rounded-lg border border-gray-200 p-4 cursor-pointer hover:border-[#0050A0] hover:bg-white transition-all group"
-                        onClick={() => setActiveCategory(category.key)}
+                        onClick={() => {
+                          setActiveCategory(category.key);
+                          window.scrollTo({ top: 0, behavior: 'smooth' });
+                        }}
                       >
                         <div className="flex items-center justify-between mb-4">
                           <h3 className="font-bold text-sm text-gray-900 group-hover:text-[#0050A0] transition-colors">{category.label}</h3>
