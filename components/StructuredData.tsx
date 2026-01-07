@@ -60,7 +60,7 @@ export default function StructuredData() {
         "@id": "https://www.profootballnetwork.com/nfl-hq/#webpage",
         "url": "https://www.profootballnetwork.com/nfl-hq",
         "name": "NFL HQ - NFL Team Pages, Standings, Stats & News",
-        "description": "Your complete NFL resource featuring all 32 team pages, live standings, stats, rosters, schedules, and the latest news from Pro Football Network.",
+        "description": "Your complete NFL resource featuring all 32 team pages, live standings, stats, rosters, schedules, and the latest news from PFSN.",
         "inLanguage": "en-US",
         "isPartOf": {
           "@id": "https://www.profootballnetwork.com/#website"
