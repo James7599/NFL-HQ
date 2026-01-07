@@ -1,9 +1,18 @@
 // Utility to get the correct API base path
-// API routes are NOT affected by basePath in Next.js - they're always at root
+// In production with basePath, we need to include it in fetch URLs
 export function getApiPath(path: string): string {
   // Remove leading slash if present
   const cleanPath = path.startsWith('/') ? path.slice(1) : path;
 
-  // API routes are always at the root, regardless of basePath
+  // In production, include the basePath
+  if (typeof window !== 'undefined') {
+    // Client-side: use window.location to detect basePath
+    const pathParts = window.location.pathname.split('/').filter(Boolean);
+    if (pathParts[0] === 'nfl-hq') {
+      return `/nfl-hq/${cleanPath}`;
+    }
+  }
+
+  // Development or server-side without basePath
   return `/${cleanPath}`;
 }
