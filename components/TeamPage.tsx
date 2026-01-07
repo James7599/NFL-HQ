@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, Suspense } from 'react';
+import { useState, useEffect, Suspense, useTransition } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { TeamData, getAllTeams } from '@/data/teams';
 import { useSEO } from '@/hooks/useSEO';
@@ -228,6 +228,7 @@ const getDivisionTeams = (currentTeam: TeamData): TeamData[] => {
 function TeamPageContent({ team, initialTab }: TeamPageProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const [isPending, startTransition] = useTransition();
   const [activeTab, setActiveTab] = useState(initialTab || 'overview');
   const [standings, setStandings] = useState<TeamStanding | null>(null);
   const [, setLiveRecord] = useState<TeamRecord | null>(null);
@@ -405,18 +406,23 @@ function TeamPageContent({ team, initialTab }: TeamPageProps) {
   }, [team.id]);
 
   const handleTabChange = (tab: string) => {
+    // Don't do anything if clicking the already active tab
+    if (tab === activeTab) return;
+
     // Track tab change for analytics
     trackTabChange(tab, team.id);
 
-    // Update state immediately (not in requestAnimationFrame)
-    setActiveTab(tab);
+    // Wrap state and navigation updates in transition to prevent race conditions
+    startTransition(() => {
+      setActiveTab(tab);
 
-    // Navigate to path-based URL
-    if (tab === 'overview') {
-      router.replace(`/teams/${team.id}`, { scroll: false });
-    } else {
-      router.replace(`/teams/${team.id}/${tab}`, { scroll: false });
-    }
+      // Navigate to path-based URL
+      if (tab === 'overview') {
+        router.replace(`/teams/${team.id}`, { scroll: false });
+      } else {
+        router.replace(`/teams/${team.id}/${tab}`, { scroll: false });
+      }
+    });
   };
 
   const renderActiveTab = () => {
