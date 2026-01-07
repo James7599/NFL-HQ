@@ -126,14 +126,6 @@ export default function HomePage() {
     fetchTopStandings();
   }, [allTeams]);
 
-  // Top 5 draft picks (worst records) - fetch from API
-  const [topDraftPicks, setTopDraftPicks] = useState([
-    { pick: 1, teamId: 'new-york-giants', teamName: 'New York Giants', record: '2-14' },
-    { pick: 2, teamId: 'cleveland-browns', teamName: 'Cleveland Browns', record: '3-13' },
-    { pick: 3, teamId: 'new-england-patriots', teamName: 'New England Patriots', record: '3-13' },
-    { pick: 4, teamId: 'tennessee-titans', teamName: 'Tennessee Titans', record: '3-13' },
-    { pick: 5, teamId: 'las-vegas-raiders', teamName: 'Las Vegas Raiders', record: '4-12' }
-  ]);
 
   // Upcoming games - fetch from schedule API
   const [upcomingGames, setUpcomingGames] = useState<any[]>([]);
@@ -207,59 +199,6 @@ export default function HomePage() {
     fetchUpcomingGames();
   }, []);
 
-  // Fetch draft order (worst records)
-  useEffect(() => {
-    async function fetchDraftOrder() {
-      try {
-        const response = await fetch('/nfl-hq/api/nfl/standings?season=2025&level=conference');
-
-        if (!response.ok) return;
-
-        const data = await response.json();
-
-        // Collect all teams from both conferences
-        const allTeamsData: Array<{ teamId: string; teamName: string; wins: number; losses: number; winPct: number }> = [];
-
-        if (data.standings?.conferences) {
-          for (const conf of data.standings.conferences) {
-            for (const team of conf.teams) {
-              const teamId = teamSlugMapping[team.sk_slug] || team.sk_slug;
-              const ourTeam = allTeams.find(t => t.id === teamId);
-
-              if (ourTeam) {
-                allTeamsData.push({
-                  teamId,
-                  teamName: ourTeam.fullName,
-                  wins: team.wins || 0,
-                  losses: team.losses || 0,
-                  winPct: parseFloat(team.percentage || '0')
-                });
-              }
-            }
-          }
-        }
-
-        // Sort by win percentage (ascending) and take bottom 5
-        const bottom5 = allTeamsData
-          .sort((a, b) => a.winPct - b.winPct)
-          .slice(0, 5)
-          .map((team, index) => ({
-            pick: index + 1,
-            teamId: team.teamId,
-            teamName: team.teamName,
-            record: `${team.wins}-${team.losses}`
-          }));
-
-        if (bottom5.length > 0) {
-          setTopDraftPicks(bottom5);
-        }
-      } catch (err) {
-        console.error('Error fetching draft order:', err);
-      }
-    }
-
-    fetchDraftOrder();
-  }, [allTeams]);
 
   // Fetch stat leaders
   useEffect(() => {
@@ -505,7 +444,7 @@ export default function HomePage() {
                 <div className="bg-gray-50 rounded-lg p-4">
                   <h3 className="text-xs font-bold text-gray-600 uppercase mb-3">Passing Yards</h3>
                   <div className="space-y-2">
-                    {statLeaders.passingYards.slice(0, 5).map((leader, idx) => {
+                    {statLeaders.passingYards.slice(0, 3).map((leader, idx) => {
                       const team = allTeams.find(t => t.id === leader.teamId);
                       return (
                         <div key={leader.playerId} className="flex items-center justify-between text-sm">
@@ -531,7 +470,7 @@ export default function HomePage() {
                 <div className="bg-gray-50 rounded-lg p-4">
                   <h3 className="text-xs font-bold text-gray-600 uppercase mb-3">Rushing Yards</h3>
                   <div className="space-y-2">
-                    {statLeaders.rushingYards.slice(0, 5).map((leader, idx) => {
+                    {statLeaders.rushingYards.slice(0, 3).map((leader, idx) => {
                       const team = allTeams.find(t => t.id === leader.teamId);
                       return (
                         <div key={leader.playerId} className="flex items-center justify-between text-sm">
@@ -557,7 +496,7 @@ export default function HomePage() {
                 <div className="bg-gray-50 rounded-lg p-4">
                   <h3 className="text-xs font-bold text-gray-600 uppercase mb-3">Receiving Yards</h3>
                   <div className="space-y-2">
-                    {statLeaders.receivingYards.slice(0, 5).map((leader, idx) => {
+                    {statLeaders.receivingYards.slice(0, 3).map((leader, idx) => {
                       const team = allTeams.find(t => t.id === leader.teamId);
                       return (
                         <div key={leader.playerId} className="flex items-center justify-between text-sm">
@@ -583,7 +522,7 @@ export default function HomePage() {
                 <div className="bg-gray-50 rounded-lg p-4">
                   <h3 className="text-xs font-bold text-gray-600 uppercase mb-3">Tackles</h3>
                   <div className="space-y-2">
-                    {statLeaders.tackles.slice(0, 5).map((leader, idx) => {
+                    {statLeaders.tackles.slice(0, 3).map((leader, idx) => {
                       const team = allTeams.find(t => t.id === leader.teamId);
                       return (
                         <div key={leader.playerId} className="flex items-center justify-between text-sm">
@@ -675,50 +614,27 @@ export default function HomePage() {
               </div>
             </Link>
 
-            {/* Draft Order Card with Preview */}
+            {/* Schedule Card */}
             <Link
-              href="/draft-order"
+              href="/schedule"
               className="group relative bg-gray-50 rounded-xl p-6 border border-gray-200 hover:border-[#0050A0] hover:bg-white transition-all duration-300 hover:shadow-lg"
             >
               <div className="flex items-center gap-3 mb-4">
                 <h3 className="text-xl font-bold text-gray-900 group-hover:text-[#0050A0] transition-colors">
-                  Draft Order
+                  NFL Schedule
                 </h3>
               </div>
               <p className="text-gray-600 text-sm mb-4">
-                Latest NFL draft order and lottery results
+                View complete NFL schedule by day, week, or month
               </p>
 
-              {/* Top 5 Draft Picks Preview */}
-              <div className="space-y-2 bg-gray-50 rounded-lg p-3">
-                <div className="text-xs font-semibold text-gray-500 mb-2">TOP 5 PICKS</div>
-                {topDraftPicks.map((pick) => {
-                  const teamInfo = allTeams.find(t => t.id === pick.teamId);
-                  return (
-                    <div key={pick.teamId} className="flex items-center justify-between text-sm">
-                      <div className="flex items-center gap-2 flex-1 min-w-0">
-                        <span className="text-white bg-[#0050A0] font-bold w-6 h-6 rounded flex items-center justify-center text-xs flex-shrink-0">
-                          {pick.pick}
-                        </span>
-                        {teamInfo && (
-                          <>
-                            <img
-                              src={teamInfo.logoUrl}
-                              alt={teamInfo.abbreviation}
-                              className="w-5 h-5 flex-shrink-0"
-                            />
-                            <span className="font-medium text-gray-900 truncate">{teamInfo.abbreviation}</span>
-                          </>
-                        )}
-                      </div>
-                      <span className="text-gray-600 text-xs ml-2">{pick.record}</span>
-                    </div>
-                  );
-                })}
+              <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg p-4 text-center">
+                <p className="text-sm font-semibold text-gray-700">Full Season Schedule</p>
+                <p className="text-xs text-gray-600 mt-1">Daily, weekly & monthly views</p>
               </div>
 
               <div className="mt-4 flex items-center text-[#0050A0] opacity-0 group-hover:opacity-100 transition-opacity">
-                <span className="text-sm font-medium">View Full Draft Order</span>
+                <span className="text-sm font-medium">View Schedule</span>
                 <svg className="w-4 h-4 ml-2 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>
@@ -800,6 +716,60 @@ export default function HomePage() {
 
               <div className="mt-4 flex items-center text-[#0050A0] opacity-0 group-hover:opacity-100 transition-opacity">
                 <span className="text-sm font-medium">View Salaries</span>
+                <svg className="w-4 h-4 ml-2 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </div>
+            </Link>
+
+            {/* Injury Report Card */}
+            <Link
+              href="/injuries"
+              className="group relative bg-gray-50 rounded-xl p-6 border border-gray-200 hover:border-[#0050A0] hover:bg-white transition-all duration-300 hover:shadow-lg"
+            >
+              <div className="flex items-center gap-3 mb-4">
+                <h3 className="text-xl font-bold text-gray-900 group-hover:text-[#0050A0] transition-colors">
+                  NFL Injury Report
+                </h3>
+              </div>
+              <p className="text-gray-600 text-sm mb-4">
+                Real-time injury updates and player status across all teams
+              </p>
+
+              <div className="bg-gradient-to-br from-red-50 to-orange-50 rounded-lg p-4 text-center">
+                <p className="text-sm font-semibold text-gray-700">Live Injury Updates</p>
+                <p className="text-xs text-gray-600 mt-1">Player availability</p>
+              </div>
+
+              <div className="mt-4 flex items-center text-[#0050A0] opacity-0 group-hover:opacity-100 transition-opacity">
+                <span className="text-sm font-medium">View Injury Report</span>
+                <svg className="w-4 h-4 ml-2 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </div>
+            </Link>
+
+            {/* Transactions Card */}
+            <Link
+              href="/transactions"
+              className="group relative bg-gray-50 rounded-xl p-6 border border-gray-200 hover:border-[#0050A0] hover:bg-white transition-all duration-300 hover:shadow-lg"
+            >
+              <div className="flex items-center gap-3 mb-4">
+                <h3 className="text-xl font-bold text-gray-900 group-hover:text-[#0050A0] transition-colors">
+                  NFL Transactions
+                </h3>
+              </div>
+              <p className="text-gray-600 text-sm mb-4">
+                Latest trades, signings, and roster moves across the league
+              </p>
+
+              <div className="bg-gradient-to-br from-yellow-50 to-amber-50 rounded-lg p-4 text-center">
+                <p className="text-sm font-semibold text-gray-700">Recent Moves</p>
+                <p className="text-xs text-gray-600 mt-1">Trades & signings</p>
+              </div>
+
+              <div className="mt-4 flex items-center text-[#0050A0] opacity-0 group-hover:opacity-100 transition-opacity">
+                <span className="text-sm font-medium">View Transactions</span>
                 <svg className="w-4 h-4 ml-2 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>
