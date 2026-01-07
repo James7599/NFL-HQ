@@ -53,13 +53,14 @@ interface StatLeaders {
   rushingYards: StatLeader[];
   rushingTDs: StatLeader[];
   receivingYards: StatLeader[];
+  receivingTDs: StatLeader[];
   receptions: StatLeader[];
   tackles: StatLeader[];
   sacks: StatLeader[];
   interceptions: StatLeader[];
 }
 
-type StatCategory = 'passingYards' | 'passingTDs' | 'rushingYards' | 'rushingTDs' | 'receivingYards' | 'receptions' | 'tackles' | 'sacks' | 'interceptions';
+type StatCategory = 'passingYards' | 'passingTDs' | 'rushingYards' | 'rushingTDs' | 'receivingYards' | 'receivingTDs' | 'receptions' | 'tackles' | 'sacks' | 'interceptions';
 
 const STAT_CATEGORIES: { key: StatCategory; label: string; abbr: string; format?: (val: string) => string }[] = [
   { key: 'passingYards', label: 'Passing Yards', abbr: 'PASS YDS' },
@@ -67,6 +68,7 @@ const STAT_CATEGORIES: { key: StatCategory; label: string; abbr: string; format?
   { key: 'rushingYards', label: 'Rushing Yards', abbr: 'RUSH YDS' },
   { key: 'rushingTDs', label: 'Rushing Touchdowns', abbr: 'RUSH TD' },
   { key: 'receivingYards', label: 'Receiving Yards', abbr: 'REC YDS' },
+  { key: 'receivingTDs', label: 'Receiving Touchdowns', abbr: 'REC TD' },
   { key: 'receptions', label: 'Receptions', abbr: 'REC' },
   { key: 'tackles', label: 'Tackles', abbr: 'TACK' },
   { key: 'sacks', label: 'Sacks', abbr: 'SACK' },

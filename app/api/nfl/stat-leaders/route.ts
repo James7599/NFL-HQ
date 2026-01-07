@@ -45,6 +45,7 @@ interface StatLeaders {
   rushingYards: StatLeader[];
   rushingTDs: StatLeader[];
   receivingYards: StatLeader[];
+  receivingTDs: StatLeader[];
   receptions: StatLeader[];
   tackles: StatLeader[];
   sacks: StatLeader[];
@@ -427,6 +428,7 @@ export async function GET(request: NextRequest) {
       rushingYards: createStatLeaders('rushing_yards', 'rushingYards'),
       rushingTDs: createStatLeaders('rushing_touchdowns', 'rushingTDs'),
       receivingYards: createStatLeaders('receiving_yards', 'receivingYards'),
+      receivingTDs: createStatLeaders('receiving_touchdowns', 'receivingTDs'),
       receptions: createStatLeaders('receptions', 'receptions'),
       tackles: createStatLeaders('total_tackles', 'tackles'),
       sacks: createStatLeaders('sacks', 'sacks'),
@@ -450,6 +452,7 @@ export async function GET(request: NextRequest) {
       rushingYards: [],
       rushingTDs: [],
       receivingYards: [],
+      receivingTDs: [],
       receptions: [],
       tackles: [],
       sacks: [],
