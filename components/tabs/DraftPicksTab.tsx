@@ -5,7 +5,7 @@ import LayoutStabilizer from '@/components/LayoutStabilizer';
 import { TeamData } from '@/data/teams';
 import futureDraftPicksData from '@/data/futureDraftPicks.json';
 
-// Helper function to generate Pro Football Network URL
+// Helper function to generate PFSN URL
 const getPFNUrl = (playerName: string) => {
   return `https://www.profootballnetwork.com/players/${playerName.toLowerCase().replace(/[.\s]+/g, '-').replace(/[^\w-]/g, '').replace(/-+/g, '-')}/`;
 };

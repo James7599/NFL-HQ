@@ -8,7 +8,7 @@ export async function GET(
   try {
     const { teamId } = await params;
 
-    // Map team IDs to Pro Football Network RSS feed tags
+    // Map team IDs to PFSN RSS feed tags
     const teamRssMap: { [key: string]: string } = {
       'arizona-cardinals': 'arizona-cardinals',
       'atlanta-falcons': 'atlanta-falcons',
@@ -119,7 +119,7 @@ export async function GET(
           description: cleanDescription,
           link: link.trim(),
           pubDate: pubDate.trim(),
-          author: author.trim() || 'Pro Football Network',
+          author: author.trim() || 'PFSN',
           category: category.trim() || 'NFL News',
           readTime,
           featuredImage: featuredImage.trim(),
@@ -176,7 +176,7 @@ export async function GET(
       success: true,
       articles: articles,
       count: articles.length,
-      source: 'Pro Football Network RSS Feed',
+      source: 'PFSN RSS Feed',
       teamId
     });
 

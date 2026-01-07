@@ -1,6 +1,6 @@
 # NFL HQ
 
-A comprehensive NFL resource featuring all 32 team pages, live standings, stats, rosters, schedules, and the latest news from Pro Football Network.
+A comprehensive NFL resource featuring all 32 team pages, live standings, stats, rosters, schedules, and the latest news from PFSN.
 
 ## Features
 
@@ -112,8 +112,8 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## License
 
-© 2025 Pro Football Network. All rights reserved.
+© 2025 PFSN. All rights reserved.
 
 ## Contact
 
-For questions or support, visit [Pro Football Network](https://profootballnetwork.com)
+For questions or support, visit [PFSN](https://profootballnetwork.com)

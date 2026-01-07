@@ -14,7 +14,7 @@ export const metadata: Metadata = {
     default: "NFL HQ - Team Pages, Standings, Stats & News",
     template: "%s | NFL HQ"
   },
-  description: "Your complete NFL resource featuring all 32 team pages, live standings, stats, rosters, schedules, and the latest news from Pro Football Network.",
+  description: "Your complete NFL resource featuring all 32 team pages, live standings, stats, rosters, schedules, and the latest news from PFSN.",
   keywords: [
     "NFL",
     "NFL Teams",
@@ -24,11 +24,11 @@ export const metadata: Metadata = {
     "NFL Rosters",
     "NFL Schedules",
     "Football",
-    "Pro Football Network"
+    "PFSN"
   ],
-  authors: [{ name: "Pro Football Network" }],
-  creator: "Pro Football Network",
-  publisher: "Pro Football Network",
+  authors: [{ name: "PFSN" }],
+  creator: "PFSN",
+  publisher: "PFSN",
   robots: {
     index: true,
     follow: true,

@@ -75,7 +75,7 @@ const teamIdToPFNName: Record<string, string> = {
   'seattle-seahawks': 'Seattle Seahawks',
 };
 
-// Function to scrape salary cap data from Pro Football Network as fallback
+// Function to scrape salary cap data from PFSN as fallback
 async function scrapePFNSalaryCapData(teamId: string): Promise<{
   capSpace: number;
   salaryCap: number;
@@ -229,7 +229,7 @@ export async function GET(
           totalPlayers: 0,
           lastUpdated: new Date().toISOString(),
           season: 2025,
-          source: 'pfn', // Indicate this is from Pro Football Network
+          source: 'pfn', // Indicate this is from PFSN
         });
       }
     }

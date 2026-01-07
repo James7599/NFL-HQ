@@ -4,12 +4,12 @@ import { useState, useMemo, useEffect, useCallback } from 'react';
 import LayoutStabilizer from '@/components/LayoutStabilizer';
 import { TeamData } from '@/data/teams';
 
-// Helper function to generate Pro Football Network URL
+// Helper function to generate PFSN URL
 const getPFNUrl = (playerName: string) => {
   return `https://www.profootballnetwork.com/players/${playerName.toLowerCase().replace(/[.\s]+/g, '-').replace(/[^\w-]/g, '').replace(/-+/g, '-')}/`;
 };
 
-// Helper function to generate team URL (using Pro Football Network team pages)
+// Helper function to generate team URL (using PFSN team pages)
 const getTeamUrl = (teamName: string) => {
   const teamSlug = teamName.toLowerCase()
     .replace(/arizona cardinals/g, 'arizona-cardinals')

@@ -4,7 +4,7 @@ import { useState, useMemo, useEffect, useCallback } from 'react';
 import { TeamData } from '@/data/teams';
 import LayoutStabilizer from '@/components/LayoutStabilizer';
 
-// Helper function to generate Pro Football Network URL
+// Helper function to generate PFSN URL
 const getPFNUrl = (playerName: string | undefined | null) => {
   if (!playerName || typeof playerName !== 'string') {
     return '#';

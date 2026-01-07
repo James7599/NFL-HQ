@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-// Team ID to Pro Football Network team abbreviation mapping
+// Team ID to PFSN team abbreviation mapping
 const teamIdToPFNMap: Record<string, string> = {
   'arizona-cardinals': 'ARI',
   'atlanta-falcons': 'ATL',
@@ -43,7 +43,7 @@ export async function GET(
   try {
     const { teamId } = await params;
 
-    // Get Pro Football Network team abbreviation
+    // Get PFSN team abbreviation
     const pfnTeamAbbr = teamIdToPFNMap[teamId];
 
     if (!pfnTeamAbbr) {
@@ -53,7 +53,7 @@ export async function GET(
       );
     }
 
-    // Use the new Pro Football Network API endpoint with dynamic team
+    // Use the new PFSN API endpoint with dynamic team
     const apiUrl = `https://gotham.profootballnetwork.com/taxonomy/nfl/news-feeds?pageStart=1&newsType=Fantasy&team=${pfnTeamAbbr}`;
 
     const response = await fetch(apiUrl, {
