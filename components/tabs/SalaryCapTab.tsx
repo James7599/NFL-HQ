@@ -214,7 +214,7 @@ export default function SalaryCapTab({ team }: SalaryCapTabProps) {
             <div className="bg-white rounded-lg p-4 shadow-sm border-l-4" style={{ borderLeftColor: team.primaryColor }}>
               <div className="text-center">
                 <h4 className="text-sm font-semibold text-gray-700 mb-2 uppercase tracking-wide">Salary Cap</h4>
-                <div className="text-2xl font-bold text-gray-900 mb-1">${salaryCapData.teamSummary.salaryCap.toFixed(1)}M</div>
+                <div className="text-2xl font-bold text-gray-900 mb-1">${(salaryCapData.teamSummary.salaryCap / 1000000).toFixed(1)}M</div>
                 <div className="text-sm text-gray-500">2025 Season</div>
               </div>
             </div>
@@ -223,7 +223,7 @@ export default function SalaryCapTab({ team }: SalaryCapTabProps) {
               <div className="text-center">
                 <h4 className="text-sm font-semibold text-gray-700 mb-2 uppercase tracking-wide">Available Cap Space</h4>
                 <div className={`text-2xl font-bold mb-1 ${salaryCapData.teamSummary.capSpace > 0 ? 'text-green-600' : 'text-red-600'}`}>
-                  ${salaryCapData.teamSummary.capSpace.toFixed(1)}M
+                  ${(salaryCapData.teamSummary.capSpace / 1000000).toFixed(1)}M
                 </div>
                 <div className="text-sm text-gray-500">
                   {salaryCapData.teamSummary.capSpace > 0 ? 'Over Cap' : 'Under Cap'}
@@ -234,7 +234,7 @@ export default function SalaryCapTab({ team }: SalaryCapTabProps) {
             <div className="bg-white rounded-lg p-4 shadow-sm border-l-4" style={{ borderLeftColor: team.primaryColor }}>
               <div className="text-center">
                 <h4 className="text-sm font-semibold text-gray-700 mb-2 uppercase tracking-wide">Active Cap Spend</h4>
-                <div className="text-2xl font-bold text-gray-900 mb-1">${salaryCapData.teamSummary.activeCapSpend.toFixed(1)}M</div>
+                <div className="text-2xl font-bold text-gray-900 mb-1">${(salaryCapData.teamSummary.activeCapSpend / 1000000).toFixed(1)}M</div>
                 <div className="text-sm text-gray-500">
                   {((salaryCapData.teamSummary.activeCapSpend / salaryCapData.teamSummary.salaryCap) * 100).toFixed(1)}% of cap
                 </div>
@@ -244,7 +244,7 @@ export default function SalaryCapTab({ team }: SalaryCapTabProps) {
             <div className="bg-white rounded-lg p-4 shadow-sm border-l-4" style={{ borderLeftColor: team.primaryColor }}>
               <div className="text-center">
                 <h4 className="text-sm font-semibold text-gray-700 mb-2 uppercase tracking-wide">Dead Money</h4>
-                <div className="text-2xl font-bold text-gray-900 mb-1">${salaryCapData.teamSummary.deadMoney.toFixed(1)}M</div>
+                <div className="text-2xl font-bold text-gray-900 mb-1">${(salaryCapData.teamSummary.deadMoney / 1000000).toFixed(1)}M</div>
                 <div className="text-sm text-gray-500">
                   {((salaryCapData.teamSummary.deadMoney / salaryCapData.teamSummary.salaryCap) * 100).toFixed(1)}% of cap
                 </div>
@@ -343,13 +343,13 @@ export default function SalaryCapTab({ team }: SalaryCapTabProps) {
                       </a>
                     </td>
                     <td className="p-3 text-gray-900 font-medium whitespace-nowrap">
-                      {player.capHit >= 1 ? `$${player.capHit.toFixed(1)}M` : `$${(player.capHit * 1000000).toLocaleString()}`}
+                      ${(player.capHit / 1000000).toFixed(1)}M
                     </td>
                     <td className="p-3 text-gray-700 whitespace-nowrap">
-                      {player.baseSalary >= 1 ? `$${player.baseSalary.toFixed(1)}M` : `$${(player.baseSalary * 1000000).toLocaleString()}`}
+                      ${(player.baseSalary / 1000000).toFixed(1)}M
                     </td>
                     <td className="p-3 text-gray-700 whitespace-nowrap">
-                      {player.guaranteed >= 1 ? `$${player.guaranteed.toFixed(1)}M` : `$${(player.guaranteed * 1000000).toLocaleString()}`}
+                      ${(player.guaranteed / 1000000).toFixed(1)}M
                     </td>
 
                     {showPotentialSavings ? (
@@ -358,28 +358,22 @@ export default function SalaryCapTab({ team }: SalaryCapTabProps) {
                           player.restructureCapSaving > 0 ? 'text-green-600' :
                           player.restructureCapSaving < 0 ? 'text-red-600' : 'text-gray-700'
                         }`}>
-                          {player.restructureCapSaving >= 1 ? `$${player.restructureCapSaving.toFixed(1)}M` :
-                           player.restructureCapSaving <= -1 ? `-$${Math.abs(player.restructureCapSaving).toFixed(1)}M` :
-                           `$${(player.restructureCapSaving * 1000000).toLocaleString()}`}
+                          {player.restructureCapSaving < 0 ? `-$${Math.abs(player.restructureCapSaving / 1000000).toFixed(1)}M` : `$${(player.restructureCapSaving / 1000000).toFixed(1)}M`}
                         </td>
                         <td className={`p-3 whitespace-nowrap font-medium ${
                           player.extensionCapSaving > 0 ? 'text-green-600' :
                           player.extensionCapSaving < 0 ? 'text-red-600' : 'text-gray-700'
                         }`}>
-                          {player.extensionCapSaving >= 1 ? `$${player.extensionCapSaving.toFixed(1)}M` :
-                           player.extensionCapSaving <= -1 ? `-$${Math.abs(player.extensionCapSaving).toFixed(1)}M` :
-                           `$${(player.extensionCapSaving * 1000000).toLocaleString()}`}
+                          {player.extensionCapSaving < 0 ? `-$${Math.abs(player.extensionCapSaving / 1000000).toFixed(1)}M` : `$${(player.extensionCapSaving / 1000000).toFixed(1)}M`}
                         </td>
                         <td className={`p-3 whitespace-nowrap font-medium ${
                           player.cutSaving > 0 ? 'text-green-600' :
                           player.cutSaving < 0 ? 'text-red-600' : 'text-gray-700'
                         }`}>
-                          {player.cutSaving >= 1 ? `$${player.cutSaving.toFixed(1)}M` :
-                           player.cutSaving <= -1 ? `-$${Math.abs(player.cutSaving).toFixed(1)}M` :
-                           `$${(player.cutSaving * 1000000).toLocaleString()}`}
+                          {player.cutSaving < 0 ? `-$${Math.abs(player.cutSaving / 1000000).toFixed(1)}M` : `$${(player.cutSaving / 1000000).toFixed(1)}M`}
                         </td>
                         <td className="p-3 text-red-600 whitespace-nowrap font-medium">
-                          {player.cutDeadMoney >= 1 ? `$${player.cutDeadMoney.toFixed(1)}M` : `$${(player.cutDeadMoney * 1000000).toLocaleString()}`}
+                          ${(player.cutDeadMoney / 1000000).toFixed(1)}M
                         </td>
                       </>
                     ) : null}
