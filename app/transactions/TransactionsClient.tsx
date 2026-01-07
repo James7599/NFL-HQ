@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import NFLTeamsSidebar from '@/components/NFLTeamsSidebar';
 import { getAllTeams } from '@/data/teams';
 import { getApiPath } from '@/utils/api';
@@ -112,7 +113,7 @@ export default function TransactionsClient() {
     // Wide Receivers / Tight Ends
     if (pos === 'WR' || pos === 'TE') return 'bg-blue-100 text-blue-700 border-blue-200';
     // Offensive Line
-    if (pos === 'OT' || pos === 'OG' || pos === 'C' || pos === 'OL') return 'bg-amber-100 text-amber-700 border-amber-200';
+    if (pos === 'OT' || pos === 'OG' || pos === 'C' || pos === 'OL' || pos === 'G' || pos === 'T') return 'bg-amber-100 text-amber-700 border-amber-200';
     // Defensive Line
     if (pos === 'DE' || pos === 'DT' || pos === 'NT' || pos === 'DL' || pos === 'EDGE') return 'bg-red-100 text-red-700 border-red-200';
     // Linebackers
@@ -252,18 +253,27 @@ export default function TransactionsClient() {
                             >
                               {/* Team */}
                               <td className="px-4 py-3">
-                                <div className="flex items-center gap-2">
-                                  {team && (
+                                {team ? (
+                                  <Link
+                                    href={`/teams/${team.id}`}
+                                    className="flex items-center gap-2 hover:opacity-75 transition-opacity"
+                                  >
                                     <img
                                       src={team.logoUrl}
                                       alt={team.abbreviation}
                                       className="w-6 h-6 sm:w-8 sm:h-8 object-contain"
                                     />
-                                  )}
-                                  <span className="font-semibold text-[#0050A0] text-xs sm:text-sm">
-                                    {transaction.teamAbbr}
-                                  </span>
-                                </div>
+                                    <span className="font-semibold text-[#0050A0] text-xs sm:text-sm">
+                                      {transaction.teamAbbr}
+                                    </span>
+                                  </Link>
+                                ) : (
+                                  <div className="flex items-center gap-2">
+                                    <span className="font-semibold text-[#0050A0] text-xs sm:text-sm">
+                                      {transaction.teamAbbr}
+                                    </span>
+                                  </div>
+                                )}
                               </td>
 
                               {/* Player */}
