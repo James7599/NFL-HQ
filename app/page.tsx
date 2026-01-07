@@ -301,7 +301,8 @@ export default function HomePage() {
 
         if (response.ok) {
           const data = await response.json();
-          if (data.data) {
+          // Only set data if there's no error
+          if (data.data && !data.error) {
             // Extract only the 4 categories we want
             setStatLeaders({
               passingYards: data.data.passingYards || [],
@@ -309,6 +310,9 @@ export default function HomePage() {
               receivingYards: data.data.receivingYards || [],
               tackles: data.data.tackles || [],
             });
+          } else if (data.error) {
+            console.warn('Stat leaders API returned error:', data.error);
+            // Keep statLeaders as null to show unavailable message
           }
         }
       } catch (err) {

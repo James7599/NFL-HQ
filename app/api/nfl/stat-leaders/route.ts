@@ -127,22 +127,30 @@ export async function GET(request: NextRequest) {
     const includeAllStats = searchParams.get('includeAllStats') === 'true';
 
     // Fetch player stats from Sportskeeda
-    const response = await fetch(
-      `https://cf-gotham.sportskeeda.com/taxonomy/sport/nfl/player-stats/${season}`,
-      {
-        headers: {
-          'User-Agent': 'Mozilla/5.0 (compatible; NFL-Team-Pages/1.0)',
-        },
-        next: { revalidate: 3600 } // Cache for 1 hour
-      }
-    );
+    const apiUrl = `https://cf-gotham.sportskeeda.com/taxonomy/sport/nfl/player-stats/${season}`;
+    console.log('Fetching stat leaders from:', apiUrl);
+
+    const response = await fetch(apiUrl, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (compatible; NFL-Team-Pages/1.0)',
+      },
+      next: { revalidate: 3600 } // Cache for 1 hour
+    });
 
     if (!response.ok) {
+      const errorText = await response.text();
+      console.error(`Sportskeeda API error: ${response.status}`, errorText);
       throw new Error(`Sportskeeda API error: ${response.status}`);
     }
 
     const data = await response.json();
+    console.log('API response structure:', Object.keys(data));
+
     const players: SportsKeedaPlayerStat[] = data.players || [];
+
+    if (players.length === 0) {
+      console.warn('No players found in API response');
+    }
 
     // Transform and sort players by each category
     const allPlayerStats: PlayerFullStats[] = players.map(player => ({
@@ -218,9 +226,26 @@ export async function GET(request: NextRequest) {
 
   } catch (error) {
     console.error('Stat Leaders API error:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch stat leaders data' },
-      { status: 500 }
-    );
+
+    // Return empty stat leaders instead of error to prevent page from breaking
+    const emptyStatLeaders: StatLeaders = {
+      passingYards: [],
+      passingTDs: [],
+      rushingYards: [],
+      rushingTDs: [],
+      receivingYards: [],
+      receptions: [],
+      tackles: [],
+      sacks: [],
+      interceptions: [],
+    };
+
+    return NextResponse.json({
+      data: emptyStatLeaders,
+      allPlayerStats: [],
+      season: 2025,
+      lastUpdated: new Date().toISOString(),
+      error: 'Failed to fetch data from external API',
+    });
   }
 }

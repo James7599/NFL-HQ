@@ -758,14 +758,12 @@ export default function PowerRankingsClient() {
 
         {/* Content */}
         <div className="mx-auto px-4 sm:px-6 lg:px-8 py-6 max-w-7xl">
-          {/* Instructions */}
-          {standingsLoaded && (
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-              <p className="text-sm text-blue-900">
-                <strong>How to use:</strong> Drag and drop teams to reorder, or click the rank number to type a new position. Click team logos to compare teams.
-              </p>
-            </div>
-          )}
+          {/* Instructions - shown immediately for better LCP */}
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+            <p className="text-sm text-blue-900">
+              <strong>How to use:</strong> Drag and drop teams to reorder, or click the rank number to type a new position. Click team logos to compare teams.
+            </p>
+          </div>
 
           {/* Comparison Mode Banner */}
           {standingsLoaded && comparisonTeams.length > 0 && (

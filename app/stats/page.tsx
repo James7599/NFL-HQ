@@ -110,13 +110,20 @@ export default function StatsPage() {
 
         const data = await response.json();
         console.log('Stat Leaders Data:', data);
-        setStatLeaders(data.data);
-        if (data.allPlayerStats) {
-          setAllPlayerStats(data.allPlayerStats);
+
+        // Check if API returned an error but with empty data
+        if (data.error) {
+          console.warn('API returned with error:', data.error);
+          setError('Stat leaders data is temporarily unavailable. The external data source may be down. Please try again later.');
+        } else {
+          setStatLeaders(data.data);
+          if (data.allPlayerStats) {
+            setAllPlayerStats(data.allPlayerStats);
+          }
         }
       } catch (err) {
         console.error('Error fetching stat leaders:', err);
-        setError('Failed to load stat leaders. Please try again.');
+        setError('Failed to load stat leaders. Please try again later.');
       } finally {
         setLoading(false);
       }

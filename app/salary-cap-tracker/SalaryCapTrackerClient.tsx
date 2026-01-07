@@ -73,15 +73,14 @@ export default function SalaryCapTrackerClient() {
         const batchResults = await Promise.all(batchPromises);
         results.push(...batchResults);
 
-        // Update UI with current results (progressive loading)
-        setSalaryCapData([...results]);
-
         // Add delay between batches to avoid rate limiting (except for last batch)
         if (i + batchSize < allTeams.length) {
           await new Promise(resolve => setTimeout(resolve, 500)); // 500ms delay between batches
         }
       }
 
+      // Update UI only after all teams have loaded
+      setSalaryCapData(results);
       setLastUpdated(new Date().toLocaleString('en-US', {
         month: 'short',
         day: 'numeric',
@@ -212,7 +211,7 @@ export default function SalaryCapTrackerClient() {
 
           {/* Table */}
           <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-            {loading && salaryCapData.length === 0 ? (
+            {loading ? (
               <SkeletonLoader type="table" rows={32} />
             ) : (
               <div className="overflow-x-auto -mx-4 sm:mx-0">
