@@ -341,22 +341,24 @@ export async function GET(request: NextRequest) {
       };
     }).filter(Boolean) as TransformedGame[];
 
-    // Check if we should add static playoff games for this date
+    // Check if we should use static playoff games for this date
     const staticPlayoffGames = wildCardGames2026.filter(game => game.date === requestedDate);
 
-    // If we have static playoff games for this date, always add them
-    // They will be used until the API has actual playoff game results
+    // If we have static playoff games for this date, use them by default
+    // Only use API games if they have actual scores (meaning games have started)
     if (staticPlayoffGames.length > 0) {
-      // Only add static playoff games if there are no games with scores yet
-      // Once games have started/finished, the API data should take precedence
-      const hasLiveOrFinishedGames = transformedGames.some(game => game.has_score || game.status !== 'Pre-Game');
+      const hasGameWithScores = transformedGames.some(game =>
+        game.has_score &&
+        (game.away_team.score !== undefined && game.away_team.score !== null) &&
+        (game.home_team.score !== undefined && game.home_team.score !== null)
+      );
 
-      if (!hasLiveOrFinishedGames) {
-        // Clear any non-playoff API games and use our static playoff games instead
-        transformedGames = [];
+      // If no games have actual scores yet, use our hardcoded playoff games
+      if (!hasGameWithScores) {
         const staticGames = staticPlayoffGames.map(convertStaticGameToAPIFormat);
-        transformedGames.push(...staticGames);
+        transformedGames = staticGames;
       }
+      // Otherwise, keep the API games (they have actual scores)
     }
 
     return NextResponse.json({
