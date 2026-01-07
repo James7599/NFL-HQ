@@ -215,51 +215,51 @@ export default function SalaryCapTrackerClient() {
             {loading && salaryCapData.length === 0 ? (
               <SkeletonLoader type="table" rows={32} />
             ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full">
+              <div className="overflow-x-auto -mx-4 sm:mx-0">
+                <table className="w-full min-w-[800px]">
                   <thead className="bg-[#0050A0] text-white">
                     <tr>
                       <th
-                        className="px-4 py-3 text-left text-sm font-bold cursor-pointer hover:bg-[#003d7a] transition-colors"
+                        className="px-2 sm:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-bold cursor-pointer hover:bg-[#003d7a] transition-colors"
                         onClick={() => handleSort('teamName')}
                       >
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-1 sm:gap-2">
                           TEAM
                           <SortIndicator column="teamName" />
                         </div>
                       </th>
                       <th
-                        className="px-4 py-3 text-left text-sm font-bold cursor-pointer hover:bg-[#003d7a] transition-colors"
+                        className="px-2 sm:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-bold cursor-pointer hover:bg-[#003d7a] transition-colors"
                         onClick={() => handleSort('capSpace')}
                       >
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-1 sm:gap-2">
                           CAP SPACE
                           <SortIndicator column="capSpace" />
                         </div>
                       </th>
                       <th
-                        className="px-4 py-3 text-left text-sm font-bold cursor-pointer hover:bg-[#003d7a] transition-colors"
+                        className="px-2 sm:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-bold cursor-pointer hover:bg-[#003d7a] transition-colors"
                         onClick={() => handleSort('salaryCap')}
                       >
-                        <div className="flex items-center gap-2">
-                          2025 SALARY CAP
+                        <div className="flex items-center gap-1 sm:gap-2">
+                          <span className="hidden sm:inline">2025 </span>SALARY CAP
                           <SortIndicator column="salaryCap" />
                         </div>
                       </th>
                       <th
-                        className="px-4 py-3 text-left text-sm font-bold cursor-pointer hover:bg-[#003d7a] transition-colors"
+                        className="px-2 sm:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-bold cursor-pointer hover:bg-[#003d7a] transition-colors"
                         onClick={() => handleSort('activeCapSpend')}
                       >
-                        <div className="flex items-center gap-2">
-                          ACTIVE CAP SPEND
+                        <div className="flex items-center gap-1 sm:gap-2">
+                          ACTIVE<span className="hidden sm:inline"> CAP</span> SPEND
                           <SortIndicator column="activeCapSpend" />
                         </div>
                       </th>
                       <th
-                        className="px-4 py-3 text-left text-sm font-bold cursor-pointer hover:bg-[#003d7a] transition-colors"
+                        className="px-2 sm:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-bold cursor-pointer hover:bg-[#003d7a] transition-colors"
                         onClick={() => handleSort('deadMoney')}
                       >
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-1 sm:gap-2">
                           DEAD MONEY
                           <SortIndicator column="deadMoney" />
                         </div>
@@ -274,33 +274,33 @@ export default function SalaryCapTrackerClient() {
                           key={team.teamId}
                           className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}
                         >
-                          <td className="px-4 py-4">
+                          <td className="px-2 sm:px-4 py-3 sm:py-4">
                             <a
                               href={`/teams/${team.teamId}/salary-cap`}
-                              className="flex items-center gap-3 hover:opacity-80 transition-opacity"
+                              className="flex items-center gap-2 sm:gap-3 hover:opacity-80 transition-opacity"
                             >
                               {teamInfo && (
                                 <img
                                   src={teamInfo.logoUrl}
                                   alt={team.teamName}
-                                  className="w-8 h-8"
+                                  className="w-6 h-6 sm:w-8 sm:h-8"
                                 />
                               )}
-                              <span className="font-medium text-[#0050A0]">
+                              <span className="font-medium text-sm sm:text-base text-[#0050A0]">
                                 {team.teamName}
                               </span>
                             </a>
                           </td>
-                          <td className={`px-4 py-4 font-semibold ${isNaN(team.capSpace) ? 'text-gray-500' : team.capSpace >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                          <td className={`px-2 sm:px-4 py-3 sm:py-4 text-sm sm:text-base font-semibold ${isNaN(team.capSpace) ? 'text-gray-500' : team.capSpace >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                             {formatCurrency(team.capSpace)}
                           </td>
-                          <td className="px-4 py-4 text-gray-700">
+                          <td className="px-2 sm:px-4 py-3 sm:py-4 text-xs sm:text-sm text-gray-700">
                             {formatCurrency(team.salaryCap)}
                           </td>
-                          <td className="px-4 py-4 text-gray-700">
+                          <td className="px-2 sm:px-4 py-3 sm:py-4 text-xs sm:text-sm text-gray-700">
                             {formatCurrency(team.activeCapSpend)}
                           </td>
-                          <td className="px-4 py-4 text-gray-700">
+                          <td className="px-2 sm:px-4 py-3 sm:py-4 text-xs sm:text-sm text-gray-700">
                             {formatCurrency(team.deadMoney)}
                           </td>
                         </tr>

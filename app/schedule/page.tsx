@@ -515,13 +515,13 @@ export default function SchedulePage() {
 
           {/* Date Navigation */}
           {viewMode === 'daily' && (
-            <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 mb-6">
-              <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-3 sm:p-4 mb-6">
+              <div className="flex flex-col gap-3">
               {/* Date Controls */}
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2 justify-center">
                 <button
                   onClick={goToPreviousDay}
-                  className="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors"
+                  className="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors flex-shrink-0"
                   aria-label="Previous day"
                 >
                   <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -533,14 +533,14 @@ export default function SchedulePage() {
                   type="date"
                   value={selectedDate}
                   onChange={(e) => setSelectedDate(e.target.value)}
-                  className={`px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0050A0] text-gray-900 ${
+                  className={`px-3 sm:px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0050A0] text-gray-900 text-sm sm:text-base flex-1 max-w-[200px] ${
                     isToday ? 'border-[#0050A0] bg-blue-50 ring-2 ring-[#0050A0]' : 'border-gray-300'
                   }`}
                 />
 
                 <button
                   onClick={goToNextDay}
-                  className="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors"
+                  className="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors flex-shrink-0"
                   aria-label="Next day"
                 >
                   <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -550,9 +550,9 @@ export default function SchedulePage() {
               </div>
 
               {/* Display Date */}
-              <div className="text-center sm:text-right">
-                <div className="flex items-center justify-center sm:justify-end gap-2">
-                  <h2 className="text-xl font-bold text-gray-900">
+              <div className="text-center">
+                <div className="flex items-center justify-center gap-2">
+                  <h2 className="text-lg sm:text-xl font-bold text-gray-900">
                     {formatDisplayDate(selectedDate)}
                   </h2>
                   {isToday && (
@@ -562,7 +562,7 @@ export default function SchedulePage() {
                   )}
                 </div>
                 {!loading && !error && games.length > 0 && (
-                  <div className="mt-1 text-sm text-gray-500">
+                  <div className="mt-1 text-xs sm:text-sm text-gray-500">
                     {games.length} game{games.length !== 1 ? 's' : ''} scheduled
                   </div>
                 )}
@@ -573,21 +573,21 @@ export default function SchedulePage() {
 
           {/* Weekly Navigation */}
           {viewMode === 'weekly' && (
-            <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 mb-6">
-              <div className="flex items-center justify-between gap-4">
+            <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-3 sm:p-4 mb-6">
+              <div className="flex items-center justify-between gap-2 sm:gap-4">
                 <button
                   onClick={goToPreviousWeek}
-                  className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors"
+                  className="flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors flex-shrink-0"
                   aria-label="Previous week"
                 >
                   <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                   </svg>
-                  <span className="text-sm font-medium text-gray-700">Previous Week</span>
+                  <span className="hidden sm:inline text-sm font-medium text-gray-700">Previous</span>
                 </button>
 
-                <div className="text-center">
-                  <h2 className="text-lg font-bold text-gray-900">
+                <div className="text-center flex-1 min-w-0">
+                  <h2 className="text-sm sm:text-lg font-bold text-gray-900">
                     {(() => {
                       const weekRange = getWeekRange(selectedDate);
                       const startDate = new Date(weekRange.start + 'T12:00:00');
@@ -599,10 +599,10 @@ export default function SchedulePage() {
 
                 <button
                   onClick={goToNextWeek}
-                  className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors"
+                  className="flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors flex-shrink-0"
                   aria-label="Next week"
                 >
-                  <span className="text-sm font-medium text-gray-700">Next Week</span>
+                  <span className="hidden sm:inline text-sm font-medium text-gray-700">Next</span>
                   <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>
@@ -613,31 +613,31 @@ export default function SchedulePage() {
 
           {/* Monthly Navigation */}
           {viewMode === 'monthly' && (
-            <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 mb-6">
-              <div className="flex items-center justify-between gap-4">
+            <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-3 sm:p-4 mb-6">
+              <div className="flex items-center justify-between gap-2 sm:gap-4">
                 <button
                   onClick={goToPreviousMonth}
-                  className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors"
+                  className="flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors flex-shrink-0"
                   aria-label="Previous month"
                 >
                   <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                   </svg>
-                  <span className="text-sm font-medium text-gray-700">Previous Month</span>
+                  <span className="hidden sm:inline text-sm font-medium text-gray-700">Previous</span>
                 </button>
 
-                <div className="text-center">
-                  <h2 className="text-lg font-bold text-gray-900">
+                <div className="text-center flex-1 min-w-0">
+                  <h2 className="text-sm sm:text-lg font-bold text-gray-900">
                     {new Date(selectedDate + 'T12:00:00').toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
                   </h2>
                 </div>
 
                 <button
                   onClick={goToNextMonth}
-                  className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors"
+                  className="flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors flex-shrink-0"
                   aria-label="Next month"
                 >
-                  <span className="text-sm font-medium text-gray-700">Next Month</span>
+                  <span className="hidden sm:inline text-sm font-medium text-gray-700">Next</span>
                   <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>
@@ -961,7 +961,8 @@ export default function SchedulePage() {
                   <p className="text-red-600">{error}</p>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-7 gap-4">
+                <div className="overflow-x-auto -mx-4 sm:mx-0 px-4 sm:px-0">
+                  <div className="grid grid-flow-col auto-cols-[280px] md:grid-cols-7 md:auto-cols-auto gap-4 min-w-min md:min-w-0">
                   {getWeekRange(selectedDate).days.map((day) => {
                     const dayDate = new Date(day + 'T12:00:00');
                     const dayGames = weeklyGames[day] || [];
@@ -1091,6 +1092,7 @@ export default function SchedulePage() {
                       </div>
                     );
                   })}
+                  </div>
                 </div>
               )}
             </>
@@ -1123,7 +1125,7 @@ export default function SchedulePage() {
                   {/* Calendar Header */}
                   <div className="grid grid-cols-7 bg-gray-50 border-b border-gray-200">
                     {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
-                      <div key={day} className="p-3 text-center text-sm font-semibold text-gray-600 border-r border-gray-200 last:border-r-0">
+                      <div key={day} className="p-2 sm:p-3 text-center text-xs sm:text-sm font-semibold text-gray-600 border-r border-gray-200 last:border-r-0">
                         {day}
                       </div>
                     ))}
@@ -1170,13 +1172,13 @@ export default function SchedulePage() {
                               setSelectedDate(day);
                               setViewMode('daily');
                             }}
-                            className={`aspect-square border-r border-b p-3 hover:shadow-md transition-all group ${
+                            className={`aspect-square border-r border-b p-1 sm:p-2 md:p-3 hover:shadow-md transition-all group ${
                               gameCount > 0 ? 'bg-white hover:bg-gray-50' : 'bg-gray-50 hover:bg-gray-100'
                             } ${isToday ? 'ring-2 ring-[#0050A0] ring-inset' : 'border-gray-200'}`}
                           >
                             <div className="h-full flex flex-col">
                               {/* Date Number */}
-                              <div className={`text-lg font-bold mb-2 ${
+                              <div className={`text-sm sm:text-base md:text-lg font-bold mb-1 sm:mb-2 ${
                                 isToday ? 'text-[#0050A0]' :
                                 gameCount > 0 ? 'text-gray-900' : 'text-gray-400'
                               }`}>
@@ -1194,24 +1196,24 @@ export default function SchedulePage() {
                                         const homeTeam = allTeams.find(t => t.id === teamSlugMapping[game.home_team.team_slug] || t.id === game.home_team.team_slug);
 
                                         return (
-                                          <div key={game.event_id} className="flex items-center justify-center gap-1.5">
+                                          <div key={game.event_id} className="flex items-center justify-center gap-0.5 sm:gap-1">
                                             {awayTeam && (
                                               <img
                                                 src={awayTeam.logoUrl}
                                                 alt={awayTeam.abbreviation}
-                                                
-                                                
-                                                className="w-6 h-6"
+
+
+                                                className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6"
                                               />
                                             )}
-                                            <span className="text-xs text-gray-400 font-bold">@</span>
+                                            <span className="text-[10px] sm:text-xs text-gray-400 font-bold">@</span>
                                             {homeTeam && (
                                               <img
                                                 src={homeTeam.logoUrl}
                                                 alt={homeTeam.abbreviation}
-                                                
-                                                
-                                                className="w-6 h-6"
+
+
+                                                className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6"
                                               />
                                             )}
                                           </div>

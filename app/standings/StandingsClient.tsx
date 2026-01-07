@@ -277,76 +277,76 @@ export default function StandingsClient() {
 
   const StandingsTable = ({ teams, conferenceName }: { teams: StandingData[], conferenceName?: string }) => (
     <div className="mb-8">
-      {conferenceName && <h2 className="text-2xl font-bold text-gray-900 mb-4">{conferenceName}</h2>}
-      <div className="overflow-x-auto">
-        <table className="min-w-full bg-white rounded-lg overflow-hidden shadow-sm">
+      {conferenceName && <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-3 sm:mb-4">{conferenceName}</h2>}
+      <div className="overflow-x-auto -mx-4 sm:mx-0">
+        <table className="min-w-[900px] w-full bg-white rounded-lg overflow-hidden shadow-sm">
           <thead style={{ backgroundColor: '#0050A0' }}>
             <tr>
-              <th className="pl-6 pr-4 py-3 text-left text-sm font-bold text-white w-12">#</th>
-              <th className="px-4 py-3 text-left text-sm font-bold text-white">Team</th>
+              <th className="pl-4 sm:pl-6 pr-2 sm:pr-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-bold text-white w-10 sm:w-12">#</th>
+              <th className="px-2 sm:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-bold text-white">Team</th>
               <th
-                className="px-4 py-3 text-center text-sm font-bold text-white cursor-pointer hover:bg-[#003d7a] transition-colors"
+                className="px-2 sm:px-4 py-2 sm:py-3 text-center text-xs sm:text-sm font-bold text-white cursor-pointer hover:bg-[#003d7a] transition-colors"
                 onClick={() => handleSort('wins')}
               >
-                <div className="flex items-center justify-center gap-2">
+                <div className="flex items-center justify-center gap-1 sm:gap-2">
                   W
                   <SortIndicator column="wins" />
                 </div>
               </th>
               <th
-                className="px-4 py-3 text-center text-sm font-bold text-white cursor-pointer hover:bg-[#003d7a] transition-colors"
+                className="px-2 sm:px-4 py-2 sm:py-3 text-center text-xs sm:text-sm font-bold text-white cursor-pointer hover:bg-[#003d7a] transition-colors"
                 onClick={() => handleSort('losses')}
               >
-                <div className="flex items-center justify-center gap-2">
+                <div className="flex items-center justify-center gap-1 sm:gap-2">
                   L
                   <SortIndicator column="losses" />
                 </div>
               </th>
-              <th className="px-4 py-3 text-center text-sm font-bold text-white">T</th>
+              <th className="px-2 sm:px-4 py-2 sm:py-3 text-center text-xs sm:text-sm font-bold text-white">T</th>
               <th
-                className="px-4 py-3 text-center text-sm font-bold text-white cursor-pointer hover:bg-[#003d7a] transition-colors"
+                className="px-2 sm:px-4 py-2 sm:py-3 text-center text-xs sm:text-sm font-bold text-white cursor-pointer hover:bg-[#003d7a] transition-colors"
                 onClick={() => handleSort('winPct')}
               >
-                <div className="flex items-center justify-center gap-2">
+                <div className="flex items-center justify-center gap-1 sm:gap-2">
                   Win%
                   <SortIndicator column="winPct" />
                 </div>
               </th>
               <th
-                className="px-4 py-3 text-center text-sm font-bold text-white cursor-pointer hover:bg-[#003d7a] transition-colors"
+                className="px-2 sm:px-4 py-2 sm:py-3 text-center text-xs sm:text-sm font-bold text-white cursor-pointer hover:bg-[#003d7a] transition-colors"
                 onClick={() => handleSort('gamesBack')}
               >
-                <div className="flex items-center justify-center gap-2">
+                <div className="flex items-center justify-center gap-1 sm:gap-2">
                   GB
                   <SortIndicator column="gamesBack" />
                 </div>
               </th>
-              <th className="px-4 py-3 text-center text-sm font-bold text-white">Home</th>
-              <th className="px-4 py-3 text-center text-sm font-bold text-white">Away</th>
+              <th className="px-2 sm:px-4 py-2 sm:py-3 text-center text-xs sm:text-sm font-bold text-white">Home</th>
+              <th className="px-2 sm:px-4 py-2 sm:py-3 text-center text-xs sm:text-sm font-bold text-white">Away</th>
               <th
-                className="px-4 py-3 text-center text-sm font-bold text-white cursor-pointer hover:bg-[#003d7a] transition-colors"
+                className="px-2 sm:px-4 py-2 sm:py-3 text-center text-xs sm:text-sm font-bold text-white cursor-pointer hover:bg-[#003d7a] transition-colors"
                 onClick={() => handleSort('confRecord')}
               >
-                <div className="flex items-center justify-center gap-2">
+                <div className="flex items-center justify-center gap-1 sm:gap-2">
                   Conf
                   <SortIndicator column="confRecord" />
                 </div>
               </th>
               <th
-                className="px-4 py-3 text-center text-sm font-bold text-white cursor-pointer hover:bg-[#003d7a] transition-colors"
+                className="px-2 sm:px-4 py-2 sm:py-3 text-center text-xs sm:text-sm font-bold text-white cursor-pointer hover:bg-[#003d7a] transition-colors"
                 onClick={() => handleSort('divRecord')}
               >
-                <div className="flex items-center justify-center gap-2">
+                <div className="flex items-center justify-center gap-1 sm:gap-2">
                   Div
                   <SortIndicator column="divRecord" />
                 </div>
               </th>
-              <th className="px-4 py-3 text-center text-sm font-bold text-white">Streak</th>
+              <th className="px-2 sm:px-4 py-2 sm:py-3 text-center text-xs sm:text-sm font-bold text-white">Streak</th>
               <th
-                className="px-4 py-3 text-center text-sm font-bold text-white cursor-pointer hover:bg-[#003d7a] transition-colors"
+                className="px-2 sm:px-4 py-2 sm:py-3 text-center text-xs sm:text-sm font-bold text-white cursor-pointer hover:bg-[#003d7a] transition-colors"
                 onClick={() => handleSort('last10')}
               >
-                <div className="flex items-center justify-center gap-2">
+                <div className="flex items-center justify-center gap-1 sm:gap-2">
                   L10
                   <SortIndicator column="last10" />
                 </div>
@@ -358,9 +358,9 @@ export default function StandingsClient() {
               const teamInfo = getTeamInfo(team.teamName);
               return (
                 <tr key={team.teamId} className="hover:bg-gray-50 transition-colors">
-                  <td className="pl-6 pr-4 py-4 text-sm text-gray-900 font-semibold">{index + 1}</td>
-                  <td className="px-4 py-4">
-                    <Link href={`/teams/${team.teamId}`} className="flex items-center gap-3 hover:opacity-80 transition-opacity">
+                  <td className="pl-4 sm:pl-6 pr-2 sm:pr-4 py-3 sm:py-4 text-xs sm:text-sm text-gray-900 font-semibold">{index + 1}</td>
+                  <td className="px-2 sm:px-4 py-3 sm:py-4">
+                    <Link href={`/teams/${team.teamId}`} className="flex items-center gap-2 sm:gap-3 hover:opacity-80 transition-opacity">
                       {teamInfo && (
                         <>
                           <img
@@ -368,33 +368,33 @@ export default function StandingsClient() {
                             alt={teamInfo.abbreviation}
                             width={32}
                             height={32}
-                            className="w-8 h-8"
+                            className="w-6 h-6 sm:w-8 sm:h-8"
                           />
                           <div className="flex flex-col">
-                            <span className="text-sm font-bold text-gray-900 leading-tight">{teamInfo.abbreviation}</span>
-                            <span className="text-xs text-gray-600 leading-tight">{getAllTeams().find(t => t.id === team.teamId)?.name}</span>
+                            <span className="text-xs sm:text-sm font-bold text-gray-900 leading-tight">{teamInfo.abbreviation}</span>
+                            <span className="text-[10px] sm:text-xs text-gray-600 leading-tight">{getAllTeams().find(t => t.id === team.teamId)?.name}</span>
                           </div>
                         </>
                       )}
                     </Link>
                   </td>
-                  <td className="px-4 py-4 text-center text-sm text-gray-900 font-semibold">{team.wins}</td>
-                  <td className="px-4 py-4 text-center text-sm text-gray-900">{team.losses}</td>
-                  <td className="px-4 py-4 text-center text-sm text-gray-900">{team.ties}</td>
-                  <td className="px-4 py-4 text-center text-sm text-gray-900">{team.winPct.toFixed(3)}</td>
-                  <td className="px-4 py-4 text-center text-sm text-gray-900">
+                  <td className="px-2 sm:px-4 py-3 sm:py-4 text-center text-xs sm:text-sm text-gray-900 font-semibold">{team.wins}</td>
+                  <td className="px-2 sm:px-4 py-3 sm:py-4 text-center text-xs sm:text-sm text-gray-900">{team.losses}</td>
+                  <td className="px-2 sm:px-4 py-3 sm:py-4 text-center text-xs sm:text-sm text-gray-900">{team.ties}</td>
+                  <td className="px-2 sm:px-4 py-3 sm:py-4 text-center text-xs sm:text-sm text-gray-900">{team.winPct.toFixed(3)}</td>
+                  <td className="px-2 sm:px-4 py-3 sm:py-4 text-center text-xs sm:text-sm text-gray-900">
                     {team.gamesBack === 0 ? '-' : team.gamesBack.toFixed(1)}
                   </td>
-                  <td className="px-4 py-4 text-center text-sm text-gray-600">{team.homeRecord}</td>
-                  <td className="px-4 py-4 text-center text-sm text-gray-600">{team.awayRecord}</td>
-                  <td className="px-4 py-4 text-center text-sm text-gray-600">{team.confRecord}</td>
-                  <td className="px-4 py-4 text-center text-sm text-gray-600">{team.divRecord}</td>
-                  <td className="px-4 py-4 text-center text-sm">
+                  <td className="px-2 sm:px-4 py-3 sm:py-4 text-center text-xs sm:text-sm text-gray-600">{team.homeRecord}</td>
+                  <td className="px-2 sm:px-4 py-3 sm:py-4 text-center text-xs sm:text-sm text-gray-600">{team.awayRecord}</td>
+                  <td className="px-2 sm:px-4 py-3 sm:py-4 text-center text-xs sm:text-sm text-gray-600">{team.confRecord}</td>
+                  <td className="px-2 sm:px-4 py-3 sm:py-4 text-center text-xs sm:text-sm text-gray-600">{team.divRecord}</td>
+                  <td className="px-2 sm:px-4 py-3 sm:py-4 text-center text-xs sm:text-sm">
                     <span className={`font-semibold ${team.streak.startsWith('W') ? 'text-green-600' : 'text-red-600'}`}>
                       {team.streak}
                     </span>
                   </td>
-                  <td className="px-4 py-4 text-center text-sm text-gray-600">{team.last10}</td>
+                  <td className="px-2 sm:px-4 py-3 sm:py-4 text-center text-xs sm:text-sm text-gray-600">{team.last10}</td>
                 </tr>
               );
             })}

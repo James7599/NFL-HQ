@@ -361,16 +361,16 @@ export default function StatsPage() {
                   )}
                 </div>
               ) : (
-                <div className="overflow-x-auto">
-                  <table className="w-full">
+                <div className="overflow-x-auto -mx-6 sm:mx-0">
+                  <table className="w-full min-w-[640px]">
                     <thead className="bg-gray-50 border-b border-gray-200">
                       <tr>
-                        <th className="pl-6 pr-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider w-16">Rank</th>
-                        <th className="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Player</th>
-                        <th className="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider w-24">Position</th>
-                        <th className="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Team</th>
-                        <th className="px-4 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider w-20">GP</th>
-                        <th className="px-6 py-3 text-right text-xs font-bold text-gray-500 uppercase tracking-wider w-24">{activeCategoryInfo.abbr}</th>
+                        <th className="pl-4 sm:pl-6 pr-2 sm:pr-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider w-12 sm:w-16">Rank</th>
+                        <th className="px-2 sm:px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Player</th>
+                        <th className="px-2 sm:px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider w-20 sm:w-24">Position</th>
+                        <th className="px-2 sm:px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Team</th>
+                        <th className="px-2 sm:px-4 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider w-16 sm:w-20">GP</th>
+                        <th className="px-4 sm:px-6 py-3 text-right text-xs font-bold text-gray-500 uppercase tracking-wider w-20 sm:w-24">{activeCategoryInfo.abbr}</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200">
@@ -385,8 +385,8 @@ export default function StatsPage() {
                             className={`hover:bg-gray-50 transition-colors cursor-pointer ${isTop3 ? 'bg-blue-50/50' : ''}`}
                           >
                             {/* Rank */}
-                            <td className="pl-6 pr-4 py-4">
-                              <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm ${
+                            <td className="pl-4 sm:pl-6 pr-2 sm:pr-4 py-3 sm:py-4">
+                              <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center font-bold text-xs sm:text-sm ${
                                 index === 0 ? 'bg-yellow-400 text-yellow-900' :
                                 index === 1 ? 'bg-gray-300 text-gray-700' :
                                 index === 2 ? 'bg-blue-400 text-blue-900' :
@@ -397,47 +397,47 @@ export default function StatsPage() {
                             </td>
 
                             {/* Player */}
-                            <td className="px-4 py-4">
-                              <div className="font-semibold text-gray-900 group-hover:text-[#0050A0]">{player.name}</div>
+                            <td className="px-2 sm:px-4 py-3 sm:py-4">
+                              <div className="font-semibold text-sm sm:text-base text-gray-900 group-hover:text-[#0050A0]">{player.name}</div>
                             </td>
 
                             {/* Position */}
-                            <td className="px-4 py-4">
-                              <span className={`inline-flex items-center px-2 py-1 rounded-md border text-xs font-semibold ${getPositionColor(player.position)}`}>
+                            <td className="px-2 sm:px-4 py-3 sm:py-4">
+                              <span className={`inline-flex items-center px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-md border text-[10px] sm:text-xs font-semibold ${getPositionColor(player.position)}`}>
                                 {player.position}
                               </span>
                             </td>
 
                             {/* Team */}
-                            <td className="px-4 py-4">
+                            <td className="px-2 sm:px-4 py-3 sm:py-4">
                               {team ? (
                                 <Link
                                   href={`/teams/${team.id}`}
                                   onClick={(e) => e.stopPropagation()}
-                                  className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+                                  className="flex items-center gap-1 sm:gap-2 hover:opacity-80 transition-opacity"
                                 >
                                   <img
                                     src={team.logoUrl}
                                     alt={team.abbreviation}
-                                    
-                                    
-                                    className="w-6 h-6"
+
+
+                                    className="w-5 h-5 sm:w-6 sm:h-6"
                                   />
-                                  <span className="text-gray-700 font-medium">{team.abbreviation}</span>
+                                  <span className="text-gray-700 font-medium text-xs sm:text-sm">{team.abbreviation}</span>
                                 </Link>
                               ) : (
-                                <span className="text-gray-500">{player.teamId}</span>
+                                <span className="text-gray-500 text-xs sm:text-sm">{player.teamId}</span>
                               )}
                             </td>
 
                             {/* Games Played */}
-                            <td className="px-4 py-4 text-center text-gray-600">
+                            <td className="px-2 sm:px-4 py-3 sm:py-4 text-center text-gray-600 text-sm">
                               {player.gamesPlayed}
                             </td>
 
                             {/* Stat Value */}
-                            <td className="px-6 py-4 text-right">
-                              <span className="text-lg font-bold text-[#0050A0]">
+                            <td className="px-4 sm:px-6 py-3 sm:py-4 text-right">
+                              <span className="text-base sm:text-lg font-bold text-[#0050A0]">
                                 {activeCategoryInfo.format ? activeCategoryInfo.format(player.value) : player.value}
                               </span>
                             </td>
@@ -451,20 +451,20 @@ export default function StatsPage() {
 
               {/* Expand buttons for All Teams view */}
               {selectedTeam === 'all' && filteredLeaders[activeCategory].length > 0 && (
-                <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 flex items-center justify-center gap-3">
+                <div className="px-4 sm:px-6 py-4 bg-gray-50 border-t border-gray-200 flex items-center justify-center gap-2 sm:gap-3">
                   {displayLimit === 25 && (
                     <>
                       <button
                         onClick={() => setDisplayLimit(50)}
-                        className="px-4 py-2 bg-white border-2 border-gray-300 text-gray-700 font-semibold rounded-lg hover:border-[#0050A0] hover:text-[#0050A0] transition-all"
+                        className="px-3 sm:px-4 py-2 bg-white border-2 border-gray-300 text-gray-700 text-sm font-semibold rounded-lg hover:border-[#0050A0] hover:text-[#0050A0] transition-all"
                       >
-                        Show Top 50
+                        <span className="hidden sm:inline">Show </span>Top 50
                       </button>
                       <button
                         onClick={() => setDisplayLimit(100)}
-                        className="px-4 py-2 bg-white border-2 border-gray-300 text-gray-700 font-semibold rounded-lg hover:border-[#0050A0] hover:text-[#0050A0] transition-all"
+                        className="px-3 sm:px-4 py-2 bg-white border-2 border-gray-300 text-gray-700 text-sm font-semibold rounded-lg hover:border-[#0050A0] hover:text-[#0050A0] transition-all"
                       >
-                        Show Top 100
+                        <span className="hidden sm:inline">Show </span>Top 100
                       </button>
                     </>
                   )}
@@ -472,15 +472,15 @@ export default function StatsPage() {
                     <>
                       <button
                         onClick={() => setDisplayLimit(25)}
-                        className="px-4 py-2 bg-white border-2 border-gray-300 text-gray-700 font-semibold rounded-lg hover:border-[#0050A0] hover:text-[#0050A0] transition-all"
+                        className="px-3 sm:px-4 py-2 bg-white border-2 border-gray-300 text-gray-700 text-sm font-semibold rounded-lg hover:border-[#0050A0] hover:text-[#0050A0] transition-all"
                       >
-                        Show Top 25
+                        <span className="hidden sm:inline">Show </span>Top 25
                       </button>
                       <button
                         onClick={() => setDisplayLimit(100)}
-                        className="px-4 py-2 bg-white border-2 border-gray-300 text-gray-700 font-semibold rounded-lg hover:border-[#0050A0] hover:text-[#0050A0] transition-all"
+                        className="px-3 sm:px-4 py-2 bg-white border-2 border-gray-300 text-gray-700 text-sm font-semibold rounded-lg hover:border-[#0050A0] hover:text-[#0050A0] transition-all"
                       >
-                        Show Top 100
+                        <span className="hidden sm:inline">Show </span>Top 100
                       </button>
                     </>
                   )}
@@ -488,15 +488,15 @@ export default function StatsPage() {
                     <>
                       <button
                         onClick={() => setDisplayLimit(25)}
-                        className="px-4 py-2 bg-white border-2 border-gray-300 text-gray-700 font-semibold rounded-lg hover:border-[#0050A0] hover:text-[#0050A0] transition-all"
+                        className="px-3 sm:px-4 py-2 bg-white border-2 border-gray-300 text-gray-700 text-sm font-semibold rounded-lg hover:border-[#0050A0] hover:text-[#0050A0] transition-all"
                       >
-                        Show Top 25
+                        <span className="hidden sm:inline">Show </span>Top 25
                       </button>
                       <button
                         onClick={() => setDisplayLimit(50)}
-                        className="px-4 py-2 bg-white border-2 border-gray-300 text-gray-700 font-semibold rounded-lg hover:border-[#0050A0] hover:text-[#0050A0] transition-all"
+                        className="px-3 sm:px-4 py-2 bg-white border-2 border-gray-300 text-gray-700 text-sm font-semibold rounded-lg hover:border-[#0050A0] hover:text-[#0050A0] transition-all"
                       >
-                        Show Top 50
+                        <span className="hidden sm:inline">Show </span>Top 50
                       </button>
                     </>
                   )}
@@ -563,7 +563,7 @@ export default function StatsPage() {
       {/* Player Detail Modal */}
       {isModalOpen && selectedPlayer && (
         <div className="fixed inset-0 z-50 overflow-y-auto">
-          <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:p-0">
+          <div className="flex items-center justify-center min-h-screen px-3 sm:px-4 pt-4 pb-20 text-center sm:p-0">
             {/* Backdrop */}
             <div
               className="fixed inset-0 bg-black/60 transition-opacity"
@@ -571,7 +571,7 @@ export default function StatsPage() {
             />
 
             {/* Modal */}
-            <div className="relative bg-white rounded-2xl shadow-xl transform transition-all w-full max-w-lg mx-auto">
+            <div className="relative bg-white rounded-xl sm:rounded-2xl shadow-xl transform transition-all w-full max-w-lg mx-auto">
               {/* Header */}
               <div className="bg-[#0050A0] text-white px-6 py-4 rounded-t-2xl">
                 <div className="flex items-center justify-between">
