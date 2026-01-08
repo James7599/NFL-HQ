@@ -192,15 +192,15 @@ export default function TeamsPage() {
 
       {/* Main Content */}
       <main className="flex-1 lg:ml-64 min-w-0 lg:pt-0 pt-14">
-          {/* Hero Section */}
-          <div className="text-white" style={{ background: '#0050A0' }}>
-            <div className="container mx-auto px-4 py-6">
-              <div className="text-center">
-                <h1 className="text-4xl lg:text-5xl font-bold mb-3">NFL Teams</h1>
-                <p className="text-xl lg:text-2xl opacity-90">
-                  Select a team to view rosters, schedules, stats, and more
-                </p>
-              </div>
+          {/* Header */}
+          <div className="bg-[#0050A0] text-white pt-[57px] lg:pt-0 pb-8 lg:pb-10">
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8 pt-8 lg:pt-10">
+              <h1 className="text-3xl md:text-4xl lg:text-5xl font-black text-white mb-3 tracking-tight">
+                NFL Teams
+              </h1>
+              <p className="text-base md:text-lg text-white/95 max-w-2xl">
+                Select a team to view rosters, schedules, stats, and more
+              </p>
             </div>
           </div>
 
