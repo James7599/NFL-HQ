@@ -680,6 +680,40 @@ export default function OverviewTab({ team, onTabChange, schedule: passedSchedul
                     )}
                   </div>
                 </div>
+
+                {/* Sacks & Interceptions */}
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="text-center">
+                    <div className="text-center py-2 text-xs font-medium rounded mb-2 bg-gray-100 text-gray-700">
+                      SACKS
+                    </div>
+                    {stats?.sacks ? (
+                      <>
+                        <div className="font-medium text-xs truncate px-1" style={{ color: team.primaryColor }}>
+                          {getCleanPlayerName(stats.sacks.name)}
+                        </div>
+                        <div className="text-base font-bold">{stats.sacks.stat.toLocaleString()}</div>
+                      </>
+                    ) : (
+                      <div className="text-xs text-gray-600">No data</div>
+                    )}
+                  </div>
+                  <div className="text-center">
+                    <div className="text-center py-2 text-xs font-medium rounded mb-2 bg-gray-100 text-gray-700">
+                      INTERCEPTIONS
+                    </div>
+                    {stats?.interceptions ? (
+                      <>
+                        <div className="font-medium text-xs truncate px-1" style={{ color: team.primaryColor }}>
+                          {getCleanPlayerName(stats.interceptions.name)}
+                        </div>
+                        <div className="text-base font-bold">{stats.interceptions.stat.toLocaleString()}</div>
+                      </>
+                    ) : (
+                      <div className="text-xs text-gray-600">No data</div>
+                    )}
+                  </div>
+                </div>
               </div>
             )}
             {onTabChange && (

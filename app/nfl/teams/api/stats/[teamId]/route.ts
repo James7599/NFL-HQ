@@ -70,6 +70,8 @@ interface TransformedStatsData {
   rushingYards: TransformedStatLeader | null;
   receivingYards: TransformedStatLeader | null;
   tackles: TransformedStatLeader | null;
+  sacks: TransformedStatLeader | null;
+  interceptions: TransformedStatLeader | null;
 }
 
 interface TeamStat {
@@ -205,7 +207,9 @@ export async function GET(
       passingYards: findStatLeader(data.data.leaders, ['passing yards', 'pass yards', 'yards passing']),
       rushingYards: findStatLeader(data.data.leaders, ['rushing yards', 'rush yards', 'yards rushing']),
       receivingYards: findStatLeader(data.data.leaders, ['receiving yards', 'rec yards', 'yards receiving']),
-      tackles: findStatLeader(data.data.leaders, ['tackles', 'total tackles', 'combined tackles'])
+      tackles: findStatLeader(data.data.leaders, ['tackles', 'total tackles', 'combined tackles']),
+      sacks: findStatLeader(data.data.leaders, ['sacks', 'sack', 'quarterback sacks']),
+      interceptions: findStatLeader(data.data.leaders, ['interceptions', 'int', 'interception'])
     };
 
     // Extract team stats
