@@ -67,7 +67,27 @@ export default function TransactionsClient() {
   // Get unique positions from all transactions
   const availablePositions = useMemo(() => {
     const positions = new Set(allTransactions.map(t => t.position).filter(Boolean));
-    return Array.from(positions).sort();
+    const positionsArray = Array.from(positions);
+
+    // Custom position order
+    const positionOrder = ['QB', 'RB', 'WR', 'TE', 'T', 'G', 'C', 'NT', 'DT', 'DE', 'LB', 'CB', 'S', 'K', 'P'];
+
+    // Sort positions by custom order, then alphabetically for any not in the order list
+    return positionsArray.sort((a, b) => {
+      const aIndex = positionOrder.indexOf(a);
+      const bIndex = positionOrder.indexOf(b);
+
+      // If both are in the custom order, sort by their index
+      if (aIndex !== -1 && bIndex !== -1) {
+        return aIndex - bIndex;
+      }
+      // If only a is in the custom order, it comes first
+      if (aIndex !== -1) return -1;
+      // If only b is in the custom order, it comes first
+      if (bIndex !== -1) return 1;
+      // If neither is in the custom order, sort alphabetically
+      return a.localeCompare(b);
+    });
   }, [allTransactions]);
 
   // Filter transactions client-side when team, month, or position changes
