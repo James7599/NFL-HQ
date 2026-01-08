@@ -530,18 +530,20 @@ export default function StandingsClient() {
 
   return (
     <div className="flex min-h-screen bg-gray-50">
-      {/* Sidebar */}
-      <aside className="hidden lg:block lg:w-64 flex-shrink-0">
-        <NFLTeamsSidebar />
-      </aside>
+      {/* Desktop sidebar */}
+      <div className="hidden lg:block">
+        <div className="fixed top-0 left-0 w-64 h-screen z-10">
+          <NFLTeamsSidebar />
+        </div>
+      </div>
 
-      {/* Mobile Sidebar */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 z-50">
+      {/* Mobile sidebar */}
+      <div className="lg:hidden fixed top-0 left-0 right-0 z-20">
         <NFLTeamsSidebar isMobile={true} />
       </div>
 
       {/* Main Content */}
-      <main className="flex-1 lg:pt-0 pt-14">
+      <main className="flex-1 lg:ml-64 min-w-0 lg:pt-0 pt-14">
         {/* Header Section */}
         <div className="bg-[#0050A0] text-white py-8 px-4 sm:px-6 lg:px-8 w-full">
           <div className="mx-auto max-w-7xl">
