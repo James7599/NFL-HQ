@@ -399,7 +399,7 @@ const NFLTeamsSidebar: React.FC<NFLTeamsSidebarProps> = ({ currentTeam, currentT
           })}
 
           {/* NFL Teams Section */}
-          <li className="mb-2 pt-2">
+          <li className="mb-2 pt-6">
             <div className="px-3 mb-2">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
