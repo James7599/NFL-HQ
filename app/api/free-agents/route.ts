@@ -20,19 +20,33 @@ export async function GET() {
     const data = await response.json();
 
     console.log('Free agents API response structure:', {
-      hasOutput: !!data.output,
-      isOutputArray: Array.isArray(data.output),
-      outputLength: data.output?.length,
-      sampleKeys: data.output?.[0] ? Object.keys(data.output[0]) : []
+      hasCollections: !!data.collections,
+      isCollectionsArray: Array.isArray(data.collections),
+      firstCollection: data.collections?.[0]?.sheetName,
+      dataLength: data.collections?.[0]?.data?.length
     });
 
-    // Validate data structure
-    if (!data.output || !Array.isArray(data.output)) {
+    // Validate and transform data structure
+    if (!data.collections || !Array.isArray(data.collections) || !data.collections[0]?.data) {
       console.error('Invalid data structure from Sportskeeda API:', Object.keys(data));
       throw new Error('Invalid data structure from external API');
     }
 
-    return NextResponse.json(data, {
+    // Transform from collections format to output format
+    const rawData = data.collections[0].data;
+    const headers = rawData[0]; // First row is headers
+    const rows = rawData.slice(1); // Remaining rows are data
+
+    // Convert to array of objects
+    const output = rows.map((row: any[]) => {
+      const obj: any = {};
+      headers.forEach((header: string, index: number) => {
+        obj[header] = row[index];
+      });
+      return obj;
+    });
+
+    return NextResponse.json({ output }, {
       headers: {
         'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=7200',
       },
