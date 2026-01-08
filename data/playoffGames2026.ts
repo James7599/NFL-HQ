@@ -14,9 +14,9 @@ export interface StaticPlayoffGame {
 }
 
 export const wildCardGames2026: StaticPlayoffGame[] = [
-  // Saturday, January 11, 2026
+  // Saturday, January 10, 2026
   {
-    date: '2026-01-11',
+    date: '2026-01-10',
     time: '1:30 PM ET',
     awayTeam: 'los-angeles-rams', // "Los Angeles" from ESPN
     homeTeam: 'carolina-panthers', // "Carolina" from ESPN
@@ -27,7 +27,7 @@ export const wildCardGames2026: StaticPlayoffGame[] = [
     round: 'NFC Wild Card',
   },
   {
-    date: '2026-01-11',
+    date: '2026-01-10',
     time: '5:00 PM ET',
     awayTeam: 'green-bay-packers',
     homeTeam: 'chicago-bears',
@@ -37,9 +37,9 @@ export const wildCardGames2026: StaticPlayoffGame[] = [
     state: 'IL',
     round: 'NFC Wild Card',
   },
-  // Sunday, January 12, 2026
+  // Sunday, January 11, 2026
   {
-    date: '2026-01-12',
+    date: '2026-01-11',
     time: '10:00 AM ET',
     awayTeam: 'buffalo-bills',
     homeTeam: 'jacksonville-jaguars',
@@ -50,7 +50,7 @@ export const wildCardGames2026: StaticPlayoffGame[] = [
     round: 'AFC Wild Card',
   },
   {
-    date: '2026-01-12',
+    date: '2026-01-11',
     time: '1:30 PM ET',
     awayTeam: 'san-francisco-49ers',
     homeTeam: 'philadelphia-eagles',
@@ -61,7 +61,7 @@ export const wildCardGames2026: StaticPlayoffGame[] = [
     round: 'NFC Wild Card',
   },
   {
-    date: '2026-01-12',
+    date: '2026-01-11',
     time: '5:00 PM ET',
     awayTeam: 'los-angeles-chargers', // "Los Angeles" from ESPN
     homeTeam: 'new-england-patriots',
@@ -71,9 +71,9 @@ export const wildCardGames2026: StaticPlayoffGame[] = [
     state: 'MA',
     round: 'AFC Wild Card',
   },
-  // Monday, January 13, 2026
+  // Monday, January 12, 2026
   {
-    date: '2026-01-13',
+    date: '2026-01-12',
     time: '8:15 PM ET',
     awayTeam: 'houston-texans',
     homeTeam: 'pittsburgh-steelers',
