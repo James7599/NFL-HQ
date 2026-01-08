@@ -367,9 +367,9 @@ export default function StatsPage() {
                             <td className="pl-4 sm:pl-6 pr-2 sm:pr-4 py-3 sm:py-4">
                               <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center font-bold text-xs sm:text-sm ${
                                 index === 0 ? 'bg-yellow-400 text-yellow-900' :
-                                index === 1 ? 'bg-gray-300 text-gray-700' :
-                                index === 2 ? 'bg-blue-400 text-blue-900' :
-                                'bg-gray-100 text-gray-600'
+                                index === 1 ? 'bg-gray-500 text-white' :
+                                index === 2 ? 'bg-amber-600 text-white' :
+                                'bg-gray-200 text-gray-700'
                               }`}>
                                 {index + 1}
                               </div>
@@ -530,8 +530,8 @@ export default function StatsPage() {
                               <div key={player.playerId} className="flex items-center gap-2">
                                 <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 ${
                                   idx === 0 ? 'bg-yellow-400 text-yellow-900' :
-                                  idx === 1 ? 'bg-gray-300 text-gray-700' :
-                                  'bg-blue-400 text-blue-900'
+                                  idx === 1 ? 'bg-gray-500 text-white' :
+                                  'bg-amber-600 text-white'
                                 }`}>
                                   {idx + 1}
                                 </span>

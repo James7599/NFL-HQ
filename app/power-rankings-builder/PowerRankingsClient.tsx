@@ -882,7 +882,7 @@ export default function PowerRankingsClient() {
                 <button
                   onClick={undo}
                   disabled={historyIndex <= 0}
-                  className="px-3 py-1.5 text-sm bg-gray-200 hover:bg-gray-300 disabled:bg-gray-100 disabled:text-gray-400 text-gray-700 rounded-lg transition-colors font-medium flex items-center gap-1.5"
+                  className="px-3 py-1.5 text-sm bg-gray-200 hover:bg-gray-300 disabled:bg-gray-200 disabled:text-gray-600 text-gray-700 rounded-lg transition-colors font-medium flex items-center gap-1.5"
                   title="Undo (Ctrl/Cmd+Z)"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -893,7 +893,7 @@ export default function PowerRankingsClient() {
                 <button
                   onClick={redo}
                   disabled={historyIndex >= history.length - 1}
-                  className="px-3 py-1.5 text-sm bg-gray-200 hover:bg-gray-300 disabled:bg-gray-100 disabled:text-gray-400 text-gray-700 rounded-lg transition-colors font-medium flex items-center gap-1.5"
+                  className="px-3 py-1.5 text-sm bg-gray-200 hover:bg-gray-300 disabled:bg-gray-200 disabled:text-gray-600 text-gray-700 rounded-lg transition-colors font-medium flex items-center gap-1.5"
                   title="Redo (Ctrl/Cmd+Shift+Z)"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -341,7 +341,7 @@ export default function HomePage() {
                         {hasScore && (
                           <div className={`text-xl font-bold ${
                             isFinal && game.away_team.is_winner ? 'text-green-600' :
-                            isFinal ? 'text-gray-400' : 'text-gray-900'
+                            isFinal ? 'text-gray-600' : 'text-gray-900'
                           }`}>
                             {game.away_team.score}
                           </div>
@@ -366,7 +366,7 @@ export default function HomePage() {
                         {hasScore && (
                           <div className={`text-xl font-bold ${
                             isFinal && game.home_team.is_winner ? 'text-green-600' :
-                            isFinal ? 'text-gray-400' : 'text-gray-900'
+                            isFinal ? 'text-gray-600' : 'text-gray-900'
                           }`}>
                             {game.home_team.score}
                           </div>
@@ -442,7 +442,7 @@ export default function HomePage() {
                       return (
                         <div key={leader.playerId} className="flex items-center justify-between text-sm">
                           <div className="flex items-center gap-2 flex-1 min-w-0">
-                            <span className="text-gray-400 font-semibold w-4">{idx + 1}</span>
+                            <span className="text-gray-600 font-semibold w-4">{idx + 1}</span>
                             {team && (
                               <img
                                 src={team.logoUrl}
@@ -468,7 +468,7 @@ export default function HomePage() {
                       return (
                         <div key={leader.playerId} className="flex items-center justify-between text-sm">
                           <div className="flex items-center gap-2 flex-1 min-w-0">
-                            <span className="text-gray-400 font-semibold w-4">{idx + 1}</span>
+                            <span className="text-gray-600 font-semibold w-4">{idx + 1}</span>
                             {team && (
                               <img
                                 src={team.logoUrl}
@@ -494,7 +494,7 @@ export default function HomePage() {
                       return (
                         <div key={leader.playerId} className="flex items-center justify-between text-sm">
                           <div className="flex items-center gap-2 flex-1 min-w-0">
-                            <span className="text-gray-400 font-semibold w-4">{idx + 1}</span>
+                            <span className="text-gray-600 font-semibold w-4">{idx + 1}</span>
                             {team && (
                               <img
                                 src={team.logoUrl}
@@ -520,7 +520,7 @@ export default function HomePage() {
                       return (
                         <div key={leader.playerId} className="flex items-center justify-between text-sm">
                           <div className="flex items-center gap-2 flex-1 min-w-0">
-                            <span className="text-gray-400 font-semibold w-4">{idx + 1}</span>
+                            <span className="text-gray-600 font-semibold w-4">{idx + 1}</span>
                             {team && (
                               <img
                                 src={team.logoUrl}
@@ -580,7 +580,7 @@ export default function HomePage() {
                   return (
                     <div key={team.teamId} className="flex items-center justify-between text-sm">
                       <div className="flex items-center gap-2 flex-1 min-w-0">
-                        <span className="text-gray-400 font-semibold w-4">{idx + 1}</span>
+                        <span className="text-gray-600 font-semibold w-4">{idx + 1}</span>
                         {teamInfo && (
                           <>
                             <img
