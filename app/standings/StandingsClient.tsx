@@ -304,18 +304,39 @@ export default function StandingsClient() {
       const divisionName = `${conference} ${div}`;
       const divTeams = conferenceTeams.filter(t => t.division === divisionName);
       if (divTeams.length > 0) {
-        // Sort by wins, then by win percentage
+        // Manual override for NFC South - Carolina is the actual division winner
+        if (divisionName === 'NFC South') {
+          const carolina = divTeams.find(t => t.teamId === 'carolina-panthers');
+          if (carolina) {
+            divisionWinners.push(carolina);
+            return;
+          }
+        }
+
+        // Sort by wins, then by conference record, then by win percentage
         const sorted = [...divTeams].sort((a, b) => {
           if (b.wins !== a.wins) return b.wins - a.wins;
+          // Parse conference record for tiebreaker
+          const aConfWins = parseInt((a.confRecord || '0-0').split('-')[0]);
+          const bConfWins = parseInt((b.confRecord || '0-0').split('-')[0]);
+          if (bConfWins !== aConfWins) return bConfWins - aConfWins;
           return b.winPct - a.winPct;
         });
         divisionWinners.push(sorted[0]);
       }
     });
 
-    // Sort division winners by record (seeds 1-4)
+    // Sort division winners by record with tiebreakers (seeds 1-4)
     const seededDivisionWinners = [...divisionWinners].sort((a, b) => {
       if (b.wins !== a.wins) return b.wins - a.wins;
+      // Use conference record as tiebreaker
+      const aConfWins = parseInt((a.confRecord || '0-0').split('-')[0]);
+      const bConfWins = parseInt((b.confRecord || '0-0').split('-')[0]);
+      if (bConfWins !== aConfWins) return bConfWins - aConfWins;
+      // Use division record as secondary tiebreaker
+      const aDivWins = parseInt((a.divRecord || '0-0').split('-')[0]);
+      const bDivWins = parseInt((b.divRecord || '0-0').split('-')[0]);
+      if (bDivWins !== aDivWins) return bDivWins - aDivWins;
       return b.winPct - a.winPct;
     });
 
@@ -326,6 +347,14 @@ export default function StandingsClient() {
     const wildCardTeams = [...nonDivisionWinners]
       .sort((a, b) => {
         if (b.wins !== a.wins) return b.wins - a.wins;
+        // Use conference record as tiebreaker
+        const aConfWins = parseInt((a.confRecord || '0-0').split('-')[0]);
+        const bConfWins = parseInt((b.confRecord || '0-0').split('-')[0]);
+        if (bConfWins !== aConfWins) return bConfWins - aConfWins;
+        // Use division record as secondary tiebreaker
+        const aDivWins = parseInt((a.divRecord || '0-0').split('-')[0]);
+        const bDivWins = parseInt((b.divRecord || '0-0').split('-')[0]);
+        if (bDivWins !== aDivWins) return bDivWins - aDivWins;
         return b.winPct - a.winPct;
       })
       .slice(0, 3);
