@@ -263,7 +263,7 @@ export default function ScheduleTab({ team }: ScheduleTabProps) {
                         </span>
                         {game.score && (
                           <span className="text-xs sm:text-sm text-gray-600">
-                            {game.score.home}-{game.score.away}
+                            {Math.max(game.score.home, game.score.away)}-{Math.min(game.score.home, game.score.away)}
                           </span>
                         )}
                       </div>

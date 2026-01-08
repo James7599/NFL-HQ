@@ -482,7 +482,7 @@ export default function OverviewTab({ team, onTabChange, schedule: passedSchedul
                         <div className="text-right">
                           {game.result && game.score ? (
                             <span className={`font-bold text-xs ${game.result === 'W' ? 'text-green-600' : 'text-red-600'}`}>
-                              {game.result} {game.score.home}-{game.score.away}
+                              {game.result} {Math.max(game.score.home, game.score.away)}-{Math.min(game.score.home, game.score.away)}
                             </span>
                           ) : (
                             <div className="text-xs text-gray-600">{game.time || 'TBD'}</div>
