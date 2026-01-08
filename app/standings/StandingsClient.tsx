@@ -332,8 +332,7 @@ export default function StandingsClient() {
 
     return {
       divisionWinners: seededDivisionWinners,
-      wildCardTeams,
-      inTheHunt: nonDivisionWinners.slice(3, 6) // Next 3 teams in the hunt
+      wildCardTeams
     };
   };
 
@@ -652,26 +651,6 @@ export default function StandingsClient() {
                           );
                         })}
                       </div>
-                      {/* In the Hunt */}
-                      {afcPlayoffs.inTheHunt.length > 0 && (
-                        <div>
-                          <p className="text-xs font-bold text-gray-500 uppercase mb-2">In the Hunt</p>
-                          {afcPlayoffs.inTheHunt.map((team) => {
-                            const teamInfo = getTeamInfo(team.teamName);
-                            return (
-                              <div key={team.teamId} className="flex items-center gap-3 py-2 px-3 bg-gray-50 rounded-lg mb-2 border border-gray-200">
-                                {teamInfo && (
-                                  <img src={teamInfo.logoUrl} alt={teamInfo.abbreviation} className="w-6 h-6" />
-                                )}
-                                <div className="flex-1">
-                                  <span className="font-bold text-gray-900 text-sm">{teamInfo?.abbreviation}</span>
-                                  <span className="text-xs text-gray-600 ml-2">({team.wins}-{team.losses})</span>
-                                </div>
-                              </div>
-                            );
-                          })}
-                        </div>
-                      )}
                     </div>
                   </div>
 
@@ -726,26 +705,6 @@ export default function StandingsClient() {
                           );
                         })}
                       </div>
-                      {/* In the Hunt */}
-                      {nfcPlayoffs.inTheHunt.length > 0 && (
-                        <div>
-                          <p className="text-xs font-bold text-gray-500 uppercase mb-2">In the Hunt</p>
-                          {nfcPlayoffs.inTheHunt.map((team) => {
-                            const teamInfo = getTeamInfo(team.teamName);
-                            return (
-                              <div key={team.teamId} className="flex items-center gap-3 py-2 px-3 bg-gray-50 rounded-lg mb-2 border border-gray-200">
-                                {teamInfo && (
-                                  <img src={teamInfo.logoUrl} alt={teamInfo.abbreviation} className="w-6 h-6" />
-                                )}
-                                <div className="flex-1">
-                                  <span className="font-bold text-gray-900 text-sm">{teamInfo?.abbreviation}</span>
-                                  <span className="text-xs text-gray-600 ml-2">({team.wins}-{team.losses})</span>
-                                </div>
-                              </div>
-                            );
-                          })}
-                        </div>
-                      )}
                     </div>
                   </div>
                 </div>
