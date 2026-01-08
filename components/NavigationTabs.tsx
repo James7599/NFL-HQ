@@ -86,8 +86,8 @@ export default function NavigationTabs({ activeTab, onTabChange, team }: Navigat
               onClick={() => onTabChange(tab.id)}
               className={`py-4 px-2 border-b-2 font-medium text-sm whitespace-nowrap transition-colors will-change-auto ${
                 activeTab === tab.id
-                  ? 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  ? 'border-transparent text-gray-600 hover:text-gray-700 hover:border-gray-300'
+                  : 'border-transparent text-gray-600 hover:text-gray-700 hover:border-gray-300'
               }`}
               style={{
                 contain: 'layout style',

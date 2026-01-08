@@ -202,7 +202,7 @@ export default function TeamInfoTab({ team }: TeamInfoTabProps) {
         </h3>
 
         {hallOfFamers.length === 0 ? (
-          <div className="text-center py-8 text-gray-500">
+          <div className="text-center py-8 text-gray-600">
             No Hall of Fame data available for {team.fullName}
           </div>
         ) : (

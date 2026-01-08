@@ -280,7 +280,7 @@ export default function DraftPicksTab({ team }: DraftPicksTabProps) {
       {/* Table with Year Headers */}
       <div className="overflow-x-auto">
         {sortedYears.length === 0 ? (
-          <div className="text-center py-8 text-gray-500">
+          <div className="text-center py-8 text-gray-600">
             No draft picks found matching your criteria.
           </div>
         ) : (
@@ -348,7 +348,7 @@ export default function DraftPicksTab({ team }: DraftPicksTabProps) {
                                       key={i}
                                       className={`${item.addSpacing ? 'mt-2' : ''} ${
                                         item.isHistory
-                                          ? 'text-gray-500 italic ml-4'
+                                          ? 'text-gray-600 italic ml-4'
                                           : item.content.endsWith(':')
                                           ? 'text-gray-700 font-medium'
                                           : 'text-gray-600 italic'

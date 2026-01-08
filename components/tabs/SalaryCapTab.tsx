@@ -215,7 +215,7 @@ export default function SalaryCapTab({ team }: SalaryCapTabProps) {
               <div className="text-center">
                 <h4 className="text-sm font-semibold text-gray-700 mb-2 uppercase tracking-wide">Salary Cap</h4>
                 <div className="text-2xl font-bold text-gray-900 mb-1">${(salaryCapData.teamSummary.salaryCap / 1000000).toFixed(1)}M</div>
-                <div className="text-sm text-gray-500">2025 Season</div>
+                <div className="text-sm text-gray-600">2025 Season</div>
               </div>
             </div>
 
@@ -225,7 +225,7 @@ export default function SalaryCapTab({ team }: SalaryCapTabProps) {
                 <div className={`text-2xl font-bold mb-1 ${salaryCapData.teamSummary.capSpace > 0 ? 'text-green-600' : 'text-red-600'}`}>
                   ${(salaryCapData.teamSummary.capSpace / 1000000).toFixed(1)}M
                 </div>
-                <div className="text-sm text-gray-500">
+                <div className="text-sm text-gray-600">
                   {salaryCapData.teamSummary.capSpace > 0 ? 'Over Cap' : 'Under Cap'}
                 </div>
               </div>
@@ -235,7 +235,7 @@ export default function SalaryCapTab({ team }: SalaryCapTabProps) {
               <div className="text-center">
                 <h4 className="text-sm font-semibold text-gray-700 mb-2 uppercase tracking-wide">Active Cap Spend</h4>
                 <div className="text-2xl font-bold text-gray-900 mb-1">${(salaryCapData.teamSummary.activeCapSpend / 1000000).toFixed(1)}M</div>
-                <div className="text-sm text-gray-500">
+                <div className="text-sm text-gray-600">
                   {((salaryCapData.teamSummary.activeCapSpend / salaryCapData.teamSummary.salaryCap) * 100).toFixed(1)}% of cap
                 </div>
               </div>
@@ -245,7 +245,7 @@ export default function SalaryCapTab({ team }: SalaryCapTabProps) {
               <div className="text-center">
                 <h4 className="text-sm font-semibold text-gray-700 mb-2 uppercase tracking-wide">Dead Money</h4>
                 <div className="text-2xl font-bold text-gray-900 mb-1">${(salaryCapData.teamSummary.deadMoney / 1000000).toFixed(1)}M</div>
-                <div className="text-sm text-gray-500">
+                <div className="text-sm text-gray-600">
                   {((salaryCapData.teamSummary.deadMoney / salaryCapData.teamSummary.salaryCap) * 100).toFixed(1)}% of cap
                 </div>
               </div>

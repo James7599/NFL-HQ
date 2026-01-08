@@ -32,7 +32,7 @@ export default function NotFound() {
           Page Not Found
         </h2>
 
-        <p className="text-lg text-gray-400 mb-8 max-w-md mx-auto">
+        <p className="text-lg text-gray-300 mb-8 max-w-md mx-auto">
           Looks like this play didn&apos;t work out. The page you&apos;re looking for has been moved, deleted, or doesn&apos;t exist.
         </p>
 
@@ -55,21 +55,21 @@ export default function NotFound() {
 
         {/* Quick Links */}
         <div className="mt-12 pt-8 border-t border-gray-700">
-          <p className="text-sm text-gray-500 mb-4">Popular pages:</p>
+          <p className="text-sm text-gray-300 mb-4">Popular pages:</p>
           <div className="flex flex-wrap gap-3 justify-center">
-            <Link href="/standings" className="text-sm text-gray-400 hover:text-[#0050A0] transition-colors">
+            <Link href="/standings" className="text-sm text-gray-300 hover:text-[#0050A0] transition-colors">
               Standings
             </Link>
-            <span className="text-gray-600">•</span>
-            <Link href="/power-rankings-builder" className="text-sm text-gray-400 hover:text-[#0050A0] transition-colors">
+            <span className="text-gray-500">•</span>
+            <Link href="/power-rankings-builder" className="text-sm text-gray-300 hover:text-[#0050A0] transition-colors">
               Power Rankings
             </Link>
-            <span className="text-gray-600">•</span>
-            <Link href="/player-rankings-builder" className="text-sm text-gray-400 hover:text-[#0050A0] transition-colors">
+            <span className="text-gray-500">•</span>
+            <Link href="/player-rankings-builder" className="text-sm text-gray-300 hover:text-[#0050A0] transition-colors">
               Player Rankings
             </Link>
-            <span className="text-gray-600">•</span>
-            <Link href="/draft-order" className="text-sm text-gray-400 hover:text-[#0050A0] transition-colors">
+            <span className="text-gray-500">•</span>
+            <Link href="/draft-order" className="text-sm text-gray-300 hover:text-[#0050A0] transition-colors">
               Draft Order
             </Link>
           </div>

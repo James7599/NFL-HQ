@@ -803,7 +803,7 @@ export default function StatsTab({ team }: StatsTabProps) {
           className="flex items-center justify-between w-full text-left"
         >
           <h3 className="text-lg font-semibold text-gray-800">Glossary</h3>
-          <span className="text-2xl text-gray-500">
+          <span className="text-2xl text-gray-600">
             {isGlossaryOpen ? '−' : '+'}
           </span>
         </button>

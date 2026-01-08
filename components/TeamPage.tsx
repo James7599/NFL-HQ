@@ -94,7 +94,7 @@ function TeamHeroSection({ team, liveRecord, liveDivisionRank, teamStats }: Team
                   <>
                     <div className="text-2xl font-bold text-gray-900 min-w-[100px] inline-block">
                       {teamStats.offi.value}
-                      <span className="text-sm text-gray-500 ml-1">({teamStats.offi.rank})</span>
+                      <span className="text-sm text-gray-600 ml-1">({teamStats.offi.rank})</span>
                     </div>
                     <a
                       href="https://www.profootballnetwork.com/nfl-offense-rankings-impact/"
@@ -130,7 +130,7 @@ function TeamHeroSection({ team, liveRecord, liveDivisionRank, teamStats }: Team
                   <>
                     <div className="text-2xl font-bold text-gray-900 min-w-[100px] inline-block">
                       {teamStats.defi.value}
-                      <span className="text-sm text-gray-500 ml-1">({teamStats.defi.rank})</span>
+                      <span className="text-sm text-gray-600 ml-1">({teamStats.defi.rank})</span>
                     </div>
                     <a
                       href="https://www.profootballnetwork.com/nfl-defense-rankings-impact/"

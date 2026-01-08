@@ -638,7 +638,7 @@ export default function StandingsClient() {
                     <div className="space-y-3">
                       {/* Division Winners */}
                       <div>
-                        <p className="text-xs font-bold text-gray-500 uppercase mb-2">Division Winners</p>
+                        <p className="text-xs font-bold text-gray-600 uppercase mb-2">Division Winners</p>
                         {afcPlayoffs.divisionWinners.map((team, idx) => {
                           const teamInfo = getTeamInfo(team.teamName);
                           return (
@@ -660,7 +660,7 @@ export default function StandingsClient() {
                       </div>
                       {/* Wild Card Teams */}
                       <div>
-                        <p className="text-xs font-bold text-gray-500 uppercase mb-2">Wild Card</p>
+                        <p className="text-xs font-bold text-gray-600 uppercase mb-2">Wild Card</p>
                         {afcPlayoffs.wildCardTeams.map((team, idx) => {
                           const teamInfo = getTeamInfo(team.teamName);
                           return (
@@ -691,7 +691,7 @@ export default function StandingsClient() {
                     <div className="space-y-3">
                       {/* Division Winners */}
                       <div>
-                        <p className="text-xs font-bold text-gray-500 uppercase mb-2">Division Winners</p>
+                        <p className="text-xs font-bold text-gray-600 uppercase mb-2">Division Winners</p>
                         {nfcPlayoffs.divisionWinners.map((team, idx) => {
                           const teamInfo = getTeamInfo(team.teamName);
                           return (
@@ -713,7 +713,7 @@ export default function StandingsClient() {
                       </div>
                       {/* Wild Card Teams */}
                       <div>
-                        <p className="text-xs font-bold text-gray-500 uppercase mb-2">Wild Card</p>
+                        <p className="text-xs font-bold text-gray-600 uppercase mb-2">Wild Card</p>
                         {nfcPlayoffs.wildCardTeams.map((team, idx) => {
                           const teamInfo = getTeamInfo(team.teamName);
                           return (

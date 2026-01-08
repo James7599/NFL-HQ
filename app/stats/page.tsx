@@ -335,19 +335,19 @@ export default function StatsPage() {
                   <svg className="w-16 h-16 mx-auto text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                   </svg>
-                  <p className="text-gray-500 mb-2">No players found</p>
+                  <p className="text-gray-600 mb-2">No players found</p>
                 </div>
               ) : (
                 <div className="overflow-x-auto -mx-6 sm:mx-0">
                   <table className="w-full min-w-[640px]">
                     <thead className="bg-gray-50 border-b border-gray-200">
                       <tr>
-                        <th className="pl-4 sm:pl-6 pr-2 sm:pr-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider w-12 sm:w-16">Rank</th>
-                        <th className="px-2 sm:px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Player</th>
-                        <th className="px-2 sm:px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider w-20 sm:w-24">Position</th>
-                        <th className="px-2 sm:px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Team</th>
-                        <th className="px-2 sm:px-4 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider w-16 sm:w-20">GP</th>
-                        <th className="px-4 sm:px-6 py-3 text-right text-xs font-bold text-gray-500 uppercase tracking-wider w-20 sm:w-24">
+                        <th className="pl-4 sm:pl-6 pr-2 sm:pr-4 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider w-12 sm:w-16">Rank</th>
+                        <th className="px-2 sm:px-4 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Player</th>
+                        <th className="px-2 sm:px-4 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider w-20 sm:w-24">Position</th>
+                        <th className="px-2 sm:px-4 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Team</th>
+                        <th className="px-2 sm:px-4 py-3 text-center text-xs font-bold text-gray-600 uppercase tracking-wider w-16 sm:w-20">GP</th>
+                        <th className="px-4 sm:px-6 py-3 text-right text-xs font-bold text-gray-600 uppercase tracking-wider w-20 sm:w-24">
                           {showPerGame ? `${activeCategoryInfo.abbr}/G` : activeCategoryInfo.abbr}
                         </th>
                       </tr>
@@ -405,7 +405,7 @@ export default function StatsPage() {
                                   <span className="text-gray-700 font-medium text-xs sm:text-sm">{team.abbreviation}</span>
                                 </Link>
                               ) : (
-                                <span className="text-gray-500 text-xs sm:text-sm">{player.teamId}</span>
+                                <span className="text-gray-600 text-xs sm:text-sm">{player.teamId}</span>
                               )}
                             </td>
 
@@ -518,7 +518,7 @@ export default function StatsPage() {
                       >
                         <div className="flex items-center justify-between mb-4">
                           <h3 className="font-bold text-sm text-gray-900 group-hover:text-[#0050A0] transition-colors">{category.label}</h3>
-                          <span className="text-xs font-semibold text-gray-500 bg-white px-2 py-1 rounded border border-gray-200">
+                          <span className="text-xs font-semibold text-gray-600 bg-white px-2 py-1 rounded border border-gray-200">
                             {showPerGame ? `${category.abbr}/G` : category.abbr}
                           </span>
                         </div>
@@ -606,7 +606,7 @@ export default function StatsPage() {
               {/* Stats Grid */}
               <div className="p-6">
                 <div className="flex items-center justify-between mb-4">
-                  <div className="text-sm text-gray-500">
+                  <div className="text-sm text-gray-600">
                     {selectedPlayer.gamesPlayed} Games Played
                   </div>
                   <span className={`inline-flex items-center px-3 py-1 rounded-md border text-sm font-semibold ${getPositionColor(selectedPlayer.position)}`}>
@@ -618,7 +618,7 @@ export default function StatsPage() {
                   {/* Passing Stats */}
                   {(selectedPlayer.passingYards && parseInt(selectedPlayer.passingYards) > 0) && (
                     <div>
-                      <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">Passing</h4>
+                      <h4 className="text-xs font-bold text-gray-600 uppercase tracking-wide mb-2">Passing</h4>
                       <div className="grid grid-cols-3 gap-3">
                         <div className="bg-gray-50 rounded-lg p-3 text-center border border-gray-200">
                           <div className="text-2xl font-bold text-[#0050A0]">{selectedPlayer.passingYards}</div>
@@ -639,7 +639,7 @@ export default function StatsPage() {
                   {/* Rushing Stats */}
                   {(selectedPlayer.rushingYards && parseInt(selectedPlayer.rushingYards) > 0) && (
                     <div>
-                      <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">Rushing</h4>
+                      <h4 className="text-xs font-bold text-gray-600 uppercase tracking-wide mb-2">Rushing</h4>
                       <div className="grid grid-cols-3 gap-3">
                         <div className="bg-gray-50 rounded-lg p-3 text-center border border-gray-200">
                           <div className="text-2xl font-bold text-[#0050A0]">{selectedPlayer.rushingYards}</div>
@@ -660,7 +660,7 @@ export default function StatsPage() {
                   {/* Receiving Stats */}
                   {(selectedPlayer.receivingYards && parseInt(selectedPlayer.receivingYards) > 0) && (
                     <div>
-                      <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">Receiving</h4>
+                      <h4 className="text-xs font-bold text-gray-600 uppercase tracking-wide mb-2">Receiving</h4>
                       <div className="grid grid-cols-3 gap-3">
                         <div className="bg-gray-50 rounded-lg p-3 text-center border border-gray-200">
                           <div className="text-2xl font-bold text-[#0050A0]">{selectedPlayer.receivingYards}</div>
@@ -681,7 +681,7 @@ export default function StatsPage() {
                   {/* Defensive Stats */}
                   {(selectedPlayer.tackles && parseInt(selectedPlayer.tackles) > 0) && (
                     <div>
-                      <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">Defense</h4>
+                      <h4 className="text-xs font-bold text-gray-600 uppercase tracking-wide mb-2">Defense</h4>
                       <div className="grid grid-cols-3 gap-3">
                         <div className="bg-gray-50 rounded-lg p-3 text-center border border-gray-200">
                           <div className="text-2xl font-bold text-[#0050A0]">{selectedPlayer.tackles}</div>

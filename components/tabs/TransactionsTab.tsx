@@ -308,7 +308,7 @@ export default function TransactionsTab({ team }: TransactionsTabProps) {
                         <div>
                           {transaction.fromTeam && transaction.toTeam && (
                             <div className="text-sm">
-                              <span className="text-gray-500">from:</span> 
+                              <span className="text-gray-600">from:</span> 
                               <a 
                                 href={getTeamUrl(transaction.fromTeam)}
                                 target="_blank"
@@ -318,7 +318,7 @@ export default function TransactionsTab({ team }: TransactionsTabProps) {
                               >
                                 {transaction.fromTeam}
                               </a>
-                              <span className="text-gray-500 ml-3">to:</span>
+                              <span className="text-gray-600 ml-3">to:</span>
                               <a 
                                 href={getTeamUrl(transaction.toTeam)}
                                 target="_blank"
@@ -332,7 +332,7 @@ export default function TransactionsTab({ team }: TransactionsTabProps) {
                           )}
                           {transaction.fromTeam && !transaction.toTeam && (
                             <div className="text-sm">
-                              <span className="text-gray-500">from:</span>
+                              <span className="text-gray-600">from:</span>
                               <a 
                                 href={getTeamUrl(transaction.fromTeam)}
                                 target="_blank"
@@ -346,7 +346,7 @@ export default function TransactionsTab({ team }: TransactionsTabProps) {
                           )}
                           {!transaction.fromTeam && transaction.toTeam && transaction.toTeam !== team.fullName && (
                             <div className="text-sm">
-                              <span className="text-gray-500">to:</span>
+                              <span className="text-gray-600">to:</span>
                               <a 
                                 href={getTeamUrl(transaction.toTeam)}
                                 target="_blank"
@@ -375,7 +375,7 @@ export default function TransactionsTab({ team }: TransactionsTabProps) {
       </div>
 
       {Object.keys(groupedData).length === 0 && (
-        <div className="text-center py-8 text-gray-500">
+        <div className="text-center py-8 text-gray-600">
           No transactions found for the selected criteria.
         </div>
       )}

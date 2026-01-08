@@ -81,7 +81,7 @@ const PositionTable = ({
                       {starter.name}
                     </a>
                   ) : (
-                    <span className="text-gray-500">-</span>
+                    <span className="text-gray-600">-</span>
                   )}
                 </td>
                 <td className="p-3">
@@ -96,7 +96,7 @@ const PositionTable = ({
                       {second.name}
                     </a>
                   ) : (
-                    <span className="text-gray-500">-</span>
+                    <span className="text-gray-600">-</span>
                   )}
                 </td>
                 <td className="p-3">
@@ -111,7 +111,7 @@ const PositionTable = ({
                       {third.name}
                     </a>
                   ) : (
-                    <span className="text-gray-500">-</span>
+                    <span className="text-gray-600">-</span>
                   )}
                 </td>
                 <td className="p-3">
@@ -126,7 +126,7 @@ const PositionTable = ({
                       {fourth.name}
                     </a>
                   ) : (
-                    <span className="text-gray-500">-</span>
+                    <span className="text-gray-600">-</span>
                   )}
                 </td>
               </tr>

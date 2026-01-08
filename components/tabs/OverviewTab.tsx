@@ -438,7 +438,7 @@ export default function OverviewTab({ team, onTabChange, schedule: passedSchedul
             <div className="space-y-3 flex-grow">
               {scheduleLoading ? (
                 <div className="text-center py-8">
-                  <div className="text-gray-500 text-sm">Loading schedule...</div>
+                  <div className="text-gray-600 text-sm">Loading schedule...</div>
                 </div>
               ) : scheduleError ? (
                 <div className="text-center py-8">
@@ -461,7 +461,7 @@ export default function OverviewTab({ team, onTabChange, schedule: passedSchedul
                             {new Date(game.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                           </div>
                           <div className="flex items-center space-x-2">
-                            {!game.isHome && <span className="text-xs text-gray-500">@</span>}
+                            {!game.isHome && <span className="text-xs text-gray-600">@</span>}
                             <OptimizedImage
                               src={game.opponentLogo}
                               alt={game.opponentAbbr || ''}
@@ -494,7 +494,7 @@ export default function OverviewTab({ team, onTabChange, schedule: passedSchedul
                 ))
               ) : (
                 <div className="text-center py-8">
-                  <div className="text-gray-500 text-sm">No upcoming games</div>
+                  <div className="text-gray-600 text-sm">No upcoming games</div>
                 </div>
               )}
             </div>
@@ -521,10 +521,10 @@ export default function OverviewTab({ team, onTabChange, schedule: passedSchedul
               <table className="w-full text-sm">
                 <thead>
                   <tr className="text-left border-b">
-                    <th className="pb-2 text-xs font-medium text-gray-500 uppercase tracking-wider">Team</th>
-                    <th className="pb-2 text-xs font-medium text-gray-500 uppercase tracking-wider text-center">W</th>
-                    <th className="pb-2 text-xs font-medium text-gray-500 uppercase tracking-wider text-center">L</th>
-                    <th className="pb-2 text-xs font-medium text-gray-500 uppercase tracking-wider text-center">PCT</th>
+                    <th className="pb-2 text-xs font-medium text-gray-600 uppercase tracking-wider">Team</th>
+                    <th className="pb-2 text-xs font-medium text-gray-600 uppercase tracking-wider text-center">W</th>
+                    <th className="pb-2 text-xs font-medium text-gray-600 uppercase tracking-wider text-center">L</th>
+                    <th className="pb-2 text-xs font-medium text-gray-600 uppercase tracking-wider text-center">PCT</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -605,7 +605,7 @@ export default function OverviewTab({ team, onTabChange, schedule: passedSchedul
             </div>
             {statsLoading ? (
               <div className="flex items-center justify-center py-8 flex-grow">
-                <div className="text-gray-500 text-sm">Loading stats...</div>
+                <div className="text-gray-600 text-sm">Loading stats...</div>
               </div>
             ) : statsError ? (
               <div className="flex items-center justify-center py-8 flex-grow">
@@ -627,7 +627,7 @@ export default function OverviewTab({ team, onTabChange, schedule: passedSchedul
                         <div className="text-sm font-bold">{stats.passingYards.stat.toLocaleString()}</div>
                       </>
                     ) : (
-                      <div className="text-xs text-gray-500">No data</div>
+                      <div className="text-xs text-gray-600">No data</div>
                     )}
                   </div>
                   <div className="text-center">
@@ -642,7 +642,7 @@ export default function OverviewTab({ team, onTabChange, schedule: passedSchedul
                         <div className="text-sm font-bold">{stats.rushingYards.stat.toLocaleString()}</div>
                       </>
                     ) : (
-                      <div className="text-xs text-gray-500">No data</div>
+                      <div className="text-xs text-gray-600">No data</div>
                     )}
                   </div>
                 </div>
@@ -661,7 +661,7 @@ export default function OverviewTab({ team, onTabChange, schedule: passedSchedul
                         <div className="text-sm font-bold">{stats.receivingYards.stat.toLocaleString()}</div>
                       </>
                     ) : (
-                      <div className="text-xs text-gray-500">No data</div>
+                      <div className="text-xs text-gray-600">No data</div>
                     )}
                   </div>
                   <div className="text-center">
@@ -676,7 +676,7 @@ export default function OverviewTab({ team, onTabChange, schedule: passedSchedul
                         <div className="text-sm font-bold">{stats.tackles.stat.toLocaleString()}</div>
                       </>
                     ) : (
-                      <div className="text-xs text-gray-500">No data</div>
+                      <div className="text-xs text-gray-600">No data</div>
                     )}
                   </div>
                 </div>
@@ -755,7 +755,7 @@ export default function OverviewTab({ team, onTabChange, schedule: passedSchedul
                         {article.description}
                       </p>
                       <div className="flex items-center justify-between text-sm">
-                        <span className="text-gray-500">
+                        <span className="text-gray-600">
                           {getRelativeTime(article.pubDate)}
                         </span>
                         <span className="font-medium" style={{ color: team.primaryColor }}>
@@ -782,7 +782,7 @@ export default function OverviewTab({ team, onTabChange, schedule: passedSchedul
             </>
           ) : (
             <div className="text-center py-8">
-              <div className="text-gray-500 text-sm">No articles available</div>
+              <div className="text-gray-600 text-sm">No articles available</div>
             </div>
           )}
         </div>

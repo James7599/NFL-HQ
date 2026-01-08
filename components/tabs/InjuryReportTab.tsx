@@ -360,7 +360,7 @@ export default function InjuryReportTab({ team }: InjuryReportTabProps) {
         </div>
         <div className="text-center py-8">
           <div className="text-red-600 mb-2">Error loading injury data</div>
-          <div className="text-gray-500 text-sm">{error}</div>
+          <div className="text-gray-600 text-sm">{error}</div>
         </div>
       </div>
     );
@@ -412,7 +412,7 @@ export default function InjuryReportTab({ team }: InjuryReportTabProps) {
         <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">{team.fullName} Injury Report</h2>
         <div className="h-1 rounded-full" style={{ backgroundColor: team.primaryColor, width: 'fit-content', minWidth: '280px' }}></div>
         {lastUpdated && (
-          <div className="text-xs text-gray-500 mt-2">
+          <div className="text-xs text-gray-600 mt-2">
             <span>Last updated: {new Date(lastUpdated).toLocaleString()}</span>
           </div>
         )}
@@ -422,7 +422,7 @@ export default function InjuryReportTab({ team }: InjuryReportTabProps) {
         <div className="space-y-6">
           {/* Show total count */}
           {totalMatched === 0 ? (
-            <div className="text-center py-8 text-gray-500">
+            <div className="text-center py-8 text-gray-600">
               <div className="text-lg mb-2">🏥 No injuries found</div>
               <div className="text-sm">
                 Great news! No {team.fullName} players are currently on the injury report.

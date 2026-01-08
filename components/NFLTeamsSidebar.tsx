@@ -304,7 +304,7 @@ const NFLTeamsSidebar: React.FC<NFLTeamsSidebarProps> = ({ currentTeam, currentT
               className={`relative flex items-center px-3 py-2 mx-1 rounded-md transition-all duration-200 ${
                 normalizePath(pathname) === '' || normalizePath(pathname) === '/'
                   ? 'bg-[#0050A0] text-white'
-                  : 'text-gray-300 hover:bg-gray-800/50 hover:text-white'
+                  : 'text-gray-100 hover:bg-gray-800/50 hover:text-white'
               }`}
             >
               <div className="flex items-center gap-2 w-full">
@@ -334,7 +334,7 @@ const NFLTeamsSidebar: React.FC<NFLTeamsSidebarProps> = ({ currentTeam, currentT
               className={`relative flex items-center px-3 py-2 mx-1 rounded-md transition-all duration-200 ${
                 normalizePath(pathname) === '/teams'
                   ? 'bg-[#0050A0] text-white'
-                  : 'text-gray-300 hover:bg-gray-800/50 hover:text-white'
+                  : 'text-gray-100 hover:bg-gray-800/50 hover:text-white'
               }`}
             >
               <div className="flex items-center gap-2 w-full">
@@ -363,7 +363,7 @@ const NFLTeamsSidebar: React.FC<NFLTeamsSidebarProps> = ({ currentTeam, currentT
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <div className="h-0.5 w-3 bg-gray-600 rounded"></div>
-                  <span className="text-[11px] font-bold text-gray-500 uppercase tracking-widest">
+                  <span className="text-[11px] font-bold text-gray-300 uppercase tracking-widest">
                     NFL Teams {currentTab && `- ${currentTab.replace('-', ' ').toUpperCase()}`}
                   </span>
                 </div>
@@ -381,7 +381,7 @@ const NFLTeamsSidebar: React.FC<NFLTeamsSidebarProps> = ({ currentTeam, currentT
                     relative flex items-center px-3 py-2 mx-1 rounded-md transition-all duration-200
                     ${isCurrentTeam
                       ? 'bg-[#0050A0] text-white'
-                      : 'text-gray-300 hover:bg-gray-800/50 hover:text-white'
+                      : 'text-gray-100 hover:bg-gray-800/50 hover:text-white'
                     }
                   `}
                 >
@@ -430,7 +430,7 @@ const NFLTeamsSidebar: React.FC<NFLTeamsSidebarProps> = ({ currentTeam, currentT
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <div className="h-0.5 w-3 bg-gray-600 rounded"></div>
-                  <span className="text-[11px] font-bold text-gray-500 uppercase tracking-widest">NFL Tools</span>
+                  <span className="text-[11px] font-bold text-gray-300 uppercase tracking-widest">NFL Tools</span>
                 </div>
                 <div className="flex-1 ml-3 h-px bg-gradient-to-r from-gray-800 to-transparent"></div>
               </div>
@@ -449,7 +449,7 @@ const NFLTeamsSidebar: React.FC<NFLTeamsSidebarProps> = ({ currentTeam, currentT
                   className={`relative flex items-center px-3 py-2 mx-1 rounded-md transition-all duration-200 ${
                     isActive
                       ? 'bg-[#0050A0] text-white'
-                      : 'text-gray-300 hover:bg-gray-800/50 hover:text-white'
+                      : 'text-gray-100 hover:bg-gray-800/50 hover:text-white'
                   }`}
                 >
                   <span className="text-sm font-medium truncate flex items-center gap-2">
@@ -471,7 +471,7 @@ const NFLTeamsSidebar: React.FC<NFLTeamsSidebarProps> = ({ currentTeam, currentT
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <div className="h-0.5 w-3 bg-gray-600 rounded"></div>
-                  <span className="text-[11px] font-bold text-gray-500 uppercase tracking-widest">Other Tools</span>
+                  <span className="text-[11px] font-bold text-gray-300 uppercase tracking-widest">Other Tools</span>
                 </div>
                 <div className="flex-1 ml-3 h-px bg-gradient-to-r from-gray-800 to-transparent"></div>
               </div>

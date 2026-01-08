@@ -551,7 +551,7 @@ export default function SchedulePage() {
                   )}
                 </div>
                 {!loading && !error && games.length > 0 && (
-                  <div className="mt-1 text-xs sm:text-sm text-gray-500">
+                  <div className="mt-1 text-xs sm:text-sm text-gray-600">
                     {games.length} game{games.length !== 1 ? 's' : ''} scheduled
                   </div>
                 )}
@@ -704,13 +704,13 @@ export default function SchedulePage() {
                                     <span className="sm:hidden">{awayTeam.name}</span>
                                     <span className="hidden sm:inline">{awayTeam.fullName}</span>
                                   </div>
-                                  <div className="text-sm text-gray-500">{game.away_team.wins}-{game.away_team.losses}</div>
+                                  <div className="text-sm text-gray-600">{game.away_team.wins}-{game.away_team.losses}</div>
                                 </div>
                               </>
                             ) : (
                               <div className="flex-1">
                                 <div className="font-bold text-gray-900">{game.away_team.abbr}</div>
-                                <div className="text-sm text-gray-500">{game.away_team.wins}-{game.away_team.losses}</div>
+                                <div className="text-sm text-gray-600">{game.away_team.wins}-{game.away_team.losses}</div>
                               </div>
                             )}
                           </div>
@@ -731,13 +731,13 @@ export default function SchedulePage() {
                                     <span className="sm:hidden">{homeTeam.name}</span>
                                     <span className="hidden sm:inline">{homeTeam.fullName}</span>
                                   </div>
-                                  <div className="text-sm text-gray-500">{game.home_team.wins}-{game.home_team.losses}</div>
+                                  <div className="text-sm text-gray-600">{game.home_team.wins}-{game.home_team.losses}</div>
                                 </div>
                               </>
                             ) : (
                               <div className="flex-1">
                                 <div className="font-bold text-gray-900">{game.home_team.abbr}</div>
-                                <div className="text-sm text-gray-500">{game.home_team.wins}-{game.home_team.losses}</div>
+                                <div className="text-sm text-gray-600">{game.home_team.wins}-{game.home_team.losses}</div>
                               </div>
                             )}
                           </div>
@@ -813,13 +813,13 @@ export default function SchedulePage() {
                           {/* Game Leaders */}
                           {isFinal && (game.hi_pass || game.hi_rush || game.hi_rec) && (
                             <div>
-                              <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-3">Game Leaders</h4>
+                              <h4 className="text-xs font-bold text-gray-600 uppercase tracking-wide mb-3">Game Leaders</h4>
                               <div className="space-y-3">
                                 {game.hi_pass && (
                                   <div className="flex items-center gap-2">
                                     <div className="flex-1">
                                       <div className="text-sm font-semibold text-gray-900">{game.hi_pass.player_name}</div>
-                                      <div className="text-xs text-gray-500">Passing</div>
+                                      <div className="text-xs text-gray-600">Passing</div>
                                     </div>
                                     <div className="text-sm font-bold text-[#0050A0]">{game.hi_pass.value} YDS</div>
                                   </div>
@@ -828,7 +828,7 @@ export default function SchedulePage() {
                                   <div className="flex items-center gap-2">
                                     <div className="flex-1">
                                       <div className="text-sm font-semibold text-gray-900">{game.hi_rush.player_name}</div>
-                                      <div className="text-xs text-gray-500">Rushing</div>
+                                      <div className="text-xs text-gray-600">Rushing</div>
                                     </div>
                                     <div className="text-sm font-bold text-[#0050A0]">{game.hi_rush.value} YDS</div>
                                   </div>
@@ -837,7 +837,7 @@ export default function SchedulePage() {
                                   <div className="flex items-center gap-2">
                                     <div className="flex-1">
                                       <div className="text-sm font-semibold text-gray-900">{game.hi_rec.player_name}</div>
-                                      <div className="text-xs text-gray-500">Receiving</div>
+                                      <div className="text-xs text-gray-600">Receiving</div>
                                     </div>
                                     <div className="text-sm font-bold text-[#0050A0]">{game.hi_rec.value} YDS</div>
                                   </div>
@@ -849,7 +849,7 @@ export default function SchedulePage() {
                           {/* Stadium */}
                           {game.venue && (
                             <div>
-                              <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-3">Stadium</h4>
+                              <h4 className="text-xs font-bold text-gray-600 uppercase tracking-wide mb-3">Stadium</h4>
                               <div className="flex items-start gap-3">
                                 <svg className="w-5 h-5 text-gray-400 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
@@ -857,7 +857,7 @@ export default function SchedulePage() {
                                 </svg>
                                 <div>
                                   <div className="text-sm font-semibold text-gray-900">{game.venue.name}</div>
-                                  <div className="text-xs text-gray-500">
+                                  <div className="text-xs text-gray-600">
                                     {game.venue.city}{game.venue.state ? `, ${game.venue.state.abbreviation}` : ''}
                                   </div>
                                 </div>
@@ -868,7 +868,7 @@ export default function SchedulePage() {
                           {/* TV Broadcast */}
                           {game.tv_stations && game.tv_stations.length > 0 && (
                             <div>
-                              <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-3">Broadcast</h4>
+                              <h4 className="text-xs font-bold text-gray-600 uppercase tracking-wide mb-3">Broadcast</h4>
                               <div className="flex items-start gap-3">
                                 <svg className="w-5 h-5 text-gray-400 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
@@ -962,7 +962,7 @@ export default function SchedulePage() {
                     return (
                       <div key={day} className={`bg-white rounded-xl border shadow-sm overflow-hidden ${isToday ? 'border-[#0050A0] ring-2 ring-[#0050A0]' : 'border-gray-200'}`}>
                         <div className={`p-3 text-center border-b ${isToday ? 'bg-blue-50 border-[#0050A0]' : 'bg-gray-50 border-gray-200'}`}>
-                          <div className="text-xs font-semibold text-gray-500 uppercase">
+                          <div className="text-xs font-semibold text-gray-600 uppercase">
                             {dayDate.toLocaleDateString('en-US', { weekday: 'short' })}
                           </div>
                           <div className="text-lg font-bold text-gray-900">
@@ -1002,7 +1002,7 @@ export default function SchedulePage() {
                                         {(game.has_score || (game.status !== 'Pre-Game' && game.away_team.score !== undefined && game.away_team.score !== null)) ? (
                                           <span className={isFinal && game.away_team.is_winner ? 'font-bold' : ''}>{game.away_team.score}</span>
                                         ) : (
-                                          <span className="text-gray-500 text-[10px]">
+                                          <span className="text-gray-600 text-[10px]">
                                             {new Date(game.start_date).toLocaleTimeString('en-US', {
                                               hour: 'numeric',
                                               minute: '2-digit'
@@ -1028,10 +1028,10 @@ export default function SchedulePage() {
                                         {/* Stadium */}
                                         {game.venue && (
                                           <div className="mb-3">
-                                            <h4 className="text-[10px] font-bold text-gray-500 uppercase tracking-wide mb-1">Stadium</h4>
+                                            <h4 className="text-[10px] font-bold text-gray-600 uppercase tracking-wide mb-1">Stadium</h4>
                                             <div className="text-xs">
                                               <div className="font-semibold text-gray-900">{game.venue.name}</div>
-                                              <div className="text-gray-500">
+                                              <div className="text-gray-600">
                                                 {game.venue.city}{game.venue.state ? `, ${game.venue.state.abbreviation}` : ''}
                                               </div>
                                             </div>
@@ -1041,7 +1041,7 @@ export default function SchedulePage() {
                                         {/* TV Broadcast */}
                                         {game.tv_stations && game.tv_stations.length > 0 && (
                                           <div className="mb-3">
-                                            <h4 className="text-[10px] font-bold text-gray-500 uppercase tracking-wide mb-1">Broadcast</h4>
+                                            <h4 className="text-[10px] font-bold text-gray-600 uppercase tracking-wide mb-1">Broadcast</h4>
                                             <div className="flex flex-wrap gap-1">
                                               {game.tv_stations.map((station, idx) => (
                                                 <span

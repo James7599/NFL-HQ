@@ -333,7 +333,7 @@ export default function SalaryCapTrackerClient() {
                               </span>
                             </a>
                           </td>
-                          <td className={`px-2 sm:px-4 py-3 sm:py-4 text-sm sm:text-base font-semibold ${isNaN(team.capSpace) ? 'text-gray-500' : team.capSpace >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                          <td className={`px-2 sm:px-4 py-3 sm:py-4 text-sm sm:text-base font-semibold ${isNaN(team.capSpace) ? 'text-gray-600' : team.capSpace >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                             {formatCurrency(team.capSpace)}
                           </td>
                           <td className="px-2 sm:px-4 py-3 sm:py-4 text-xs sm:text-sm text-gray-700">

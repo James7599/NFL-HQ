@@ -169,7 +169,7 @@ export default function TeamsPage() {
             ) : (
               <>
                 <p className="text-sm font-semibold text-gray-900">{record}</p>
-                <p className="text-xs text-gray-500 mt-1">{divisionRank}</p>
+                <p className="text-xs text-gray-600 mt-1">{divisionRank}</p>
               </>
             )}
           </div>

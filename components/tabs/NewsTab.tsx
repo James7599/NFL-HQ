@@ -139,7 +139,7 @@ export default function NewsTab({ team }: NewsTabProps) {
           <p className="text-gray-600 mb-4">
             We couldn&apos;t find any NFL news articles at the moment.
           </p>
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-gray-600">
             Check back later or click &ldquo;Refresh News&rdquo; to try again.
           </p>
         </div>
@@ -172,7 +172,7 @@ export default function NewsTab({ team }: NewsTabProps) {
                 )}
                 
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 pt-3 border-t border-gray-100">
-                  <div className="flex items-center space-x-4 text-sm text-gray-500">
+                  <div className="flex items-center space-x-4 text-sm text-gray-600">
                     {article.author && (
                       <span>By {article.author}</span>
                     )}
@@ -182,7 +182,7 @@ export default function NewsTab({ team }: NewsTabProps) {
                       </span>
                     )}
                   </div>
-                  <div className="text-sm text-gray-500">
+                  <div className="text-sm text-gray-600">
                     {formatDate(article.pubDate)}
                   </div>
                 </div>

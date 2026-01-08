@@ -344,7 +344,7 @@ export default function TransactionsClient() {
                                 <div className="text-sm text-gray-700">
                                   {transaction.transaction}
                                   {transaction.fromTeam && transaction.toTeam && (
-                                    <span className="text-gray-500 ml-1">
+                                    <span className="text-gray-600 ml-1">
                                       (from {transaction.fromTeam} to {transaction.toTeam})
                                     </span>
                                   )}
