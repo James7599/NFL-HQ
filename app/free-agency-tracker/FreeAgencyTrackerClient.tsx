@@ -4,6 +4,7 @@ import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import NFLTeamsSidebar from '@/components/NFLTeamsSidebar';
 import { getAllTeams } from '@/data/teams';
+import { getApiPath } from '@/utils/api';
 
 // TypeScript Interfaces
 interface FreeAgent {
@@ -131,7 +132,7 @@ export default function FreeAgencyTrackerClient() {
     async function fetchFreeAgents() {
       try {
         setLoading(true);
-        const response = await fetch('https://statics.sportskeeda.com/assets/sheets/tools/free-agents/freeAgentsData.json');
+        const response = await fetch(getApiPath('api/free-agents'));
 
         if (!response.ok) {
           throw new Error(`Failed to fetch free agents: ${response.status}`);
