@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 
@@ -245,7 +245,7 @@ const getMonthDays = (dateStr: string) => {
 
 type ViewMode = 'daily' | 'weekly' | 'monthly';
 
-export default function SchedulePage() {
+function SchedulePageContent() {
   const allTeams = getAllTeams();
   const searchParams = useSearchParams();
 
@@ -1238,5 +1238,23 @@ export default function SchedulePage() {
         </div>
       </main>
     </div>
+  );
+}
+
+// Wrapper component with Suspense boundary
+export default function SchedulePage() {
+  return (
+    <Suspense fallback={
+      <div className="flex h-screen bg-gray-50">
+        <div className="flex-1 flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto mb-4"></div>
+            <p className="text-gray-600">Loading schedule...</p>
+          </div>
+        </div>
+      </div>
+    }>
+      <SchedulePageContent />
+    </Suspense>
   );
 }
