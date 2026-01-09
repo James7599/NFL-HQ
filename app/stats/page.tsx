@@ -3,6 +3,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 
+import { getAllTeams } from '@/data/teams';
 import NFLTeamsSidebar from '@/components/NFLTeamsSidebar';
 import { getApiPath } from '@/utils/api';
 import SkeletonLoader from '@/components/SkeletonLoader';

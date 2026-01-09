@@ -412,10 +412,10 @@ export default function FreeAgencyTrackerClient() {
                               <SortIndicator column="name" />
                             </div>
                           </th>
-                          <th className="px-4 py-3 text-left text-xs font-bold text-white uppercase tracking-wider">
+                          <th className="px-4 py-3 text-center text-xs font-bold text-white uppercase tracking-wider">
                             Position
                           </th>
-                          <th className="px-4 py-3 text-left text-xs font-bold text-white uppercase tracking-wider">
+                          <th className="px-4 py-3 text-center text-xs font-bold text-white uppercase tracking-wider">
                             2025 Team
                           </th>
                           <th className="px-4 py-3 text-center text-xs font-bold text-white uppercase tracking-wider">
@@ -439,7 +439,7 @@ export default function FreeAgencyTrackerClient() {
                               <SortIndicator column="pfsn2025Impact" />
                             </div>
                           </th>
-                          <th className="px-4 py-3 text-left text-xs font-bold text-white uppercase tracking-wider">
+                          <th className="px-4 py-3 text-center text-xs font-bold text-white uppercase tracking-wider">
                             2026 Team
                           </th>
                           <th
@@ -451,7 +451,7 @@ export default function FreeAgencyTrackerClient() {
                               <SortIndicator column="positionRank" />
                             </div>
                           </th>
-                          <th className="px-4 py-3 text-left text-xs font-bold text-white uppercase tracking-wider">
+                          <th className="px-4 py-3 text-center text-xs font-bold text-white uppercase tracking-wider">
                             Status
                           </th>
                         </tr>
@@ -470,21 +470,21 @@ export default function FreeAgencyTrackerClient() {
                               <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900">
                                 {agent.name}
                               </td>
-                              <td className="px-4 py-3 whitespace-nowrap text-sm">
+                              <td className="px-4 py-3 whitespace-nowrap text-sm text-center">
                                 <span className={`inline-block px-2 py-1 rounded text-xs font-semibold border ${getPositionColor(agent.position)}`}>
                                   {agent.position}
                                 </span>
                               </td>
                               <td className="px-4 py-3 whitespace-nowrap text-sm">
                                 {teamInfo ? (
-                                  <Link href={`/teams/${teamInfo.id}`} className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+                                  <Link href={`/teams/${teamInfo.id}`} className="flex items-center justify-center gap-2 hover:opacity-80 transition-opacity">
                                     <img src={teamInfo.logoUrl} alt={teamInfo.abbreviation} className="w-6 h-6 sm:w-8 sm:h-8" />
                                     <span className="font-medium text-[#0050A0]">{teamInfo.abbreviation}</span>
                                   </Link>
                                 ) : agent.current2025Team ? (
-                                  <span className="text-gray-500 text-xs">{agent.current2025Team}</span>
+                                  <span className="text-gray-500 text-xs block text-center">{agent.current2025Team}</span>
                                 ) : (
-                                  <span className="text-gray-400">—</span>
+                                  <span className="text-gray-400 block text-center">—</span>
                                 )}
                               </td>
                               <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-700 text-center">
@@ -500,20 +500,20 @@ export default function FreeAgencyTrackerClient() {
                               </td>
                               <td className="px-4 py-3 whitespace-nowrap text-sm">
                                 {signed2026TeamInfo ? (
-                                  <Link href={`/teams/${signed2026TeamInfo.id}`} className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+                                  <Link href={`/teams/${signed2026TeamInfo.id}`} className="flex items-center justify-center gap-2 hover:opacity-80 transition-opacity">
                                     <img src={signed2026TeamInfo.logoUrl} alt={signed2026TeamInfo.abbreviation} className="w-6 h-6 sm:w-8 sm:h-8" />
                                     <span className="font-medium text-[#0050A0]">{signed2026TeamInfo.abbreviation}</span>
                                   </Link>
                                 ) : isUnsigned ? (
-                                  <span className="text-gray-400">—</span>
+                                  <span className="text-gray-400 block text-center">—</span>
                                 ) : (
-                                  <span className="text-gray-500 text-xs">{agent.signed2026Team}</span>
+                                  <span className="text-gray-500 text-xs block text-center">{agent.signed2026Team}</span>
                                 )}
                               </td>
                               <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-700 text-center">
                                 {agent.positionRank}
                               </td>
-                              <td className="px-4 py-3 whitespace-nowrap text-sm">
+                              <td className="px-4 py-3 whitespace-nowrap text-sm text-center">
                                 {isUnsigned ? (
                                   <span className="inline-block px-2 py-1 rounded text-xs font-semibold bg-red-100 text-red-700 border border-red-200">
                                     Unsigned
