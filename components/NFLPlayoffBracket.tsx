@@ -488,7 +488,7 @@ export default function NFLPlayoffBracket() {
               <div className="mt-3 text-center">
                 <div className={`inline-block rounded-lg px-4 py-2 ${champion ? 'bg-yellow-100 border border-yellow-300' : 'bg-gray-100 border border-gray-200'}`}>
                   <span className={`font-semibold text-sm ${champion ? 'text-yellow-800' : 'text-gray-500'}`}>
-                    {userPicks['superbowl'] && !finalMatchup.completed ? 'Your Pick' : 'Champion'}
+                    {userPicks['superbowl'] && !finalMatchup.completed ? 'Your Winner' : 'Champion'}
                   </span>
                   {champion ? (
                     <div className="flex items-center justify-center gap-2 mt-1">
@@ -538,7 +538,7 @@ export default function NFLPlayoffBracket() {
           {/* Champion Banner */}
           <div className={`rounded-lg p-4 text-center ${champion ? 'bg-yellow-50 border border-yellow-200' : 'bg-gray-50 border border-gray-200'}`}>
             <span className={`font-semibold text-sm ${champion ? 'text-yellow-800' : 'text-gray-500'}`}>
-              {userPicks['superbowl'] && !finalMatchup.completed ? 'Your Champion Pick' : 'Super Bowl LX Champion'}
+              {userPicks['superbowl'] && !finalMatchup.completed ? 'Your Winner' : 'Super Bowl LX Champion'}
             </span>
             {champion ? (
               <div className="flex items-center justify-center gap-2 mt-2">
