@@ -229,12 +229,12 @@ export default function HomePage() {
         </div>
 
         {/* NFL Playoff Bracket */}
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 mb-8">
           <NFLPlayoffBracket />
         </div>
 
         {/* Upcoming Games Section */}
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 pt-8">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mb-8">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-bold text-gray-900">Upcoming Games</h2>
