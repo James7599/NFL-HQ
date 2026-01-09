@@ -85,8 +85,28 @@ function getPositionColor(position: string): string {
 }
 
 function transformFreeAgentData(rawData: RawFreeAgentData[]): FreeAgent[] {
-  return rawData.map(agent => {
+  return rawData.map((agent, index) => {
     const teamId = mapTeamNameToId(agent['2025 Team']);
+
+    // Debug position rank for first few items
+    if (index < 3) {
+      console.log(`Player ${agent.Name}:`, {
+        'Pos. Rank raw value': agent['Pos. Rank'],
+        'Type': typeof agent['Pos. Rank'],
+        'Parsed': parseInt(agent['Pos. Rank'] as any)
+      });
+    }
+
+    // Parse position rank - handle empty strings and null
+    let positionRank = 0;
+    if (agent['Pos. Rank'] !== null && agent['Pos. Rank'] !== undefined && agent['Pos. Rank'] !== '') {
+      if (typeof agent['Pos. Rank'] === 'number') {
+        positionRank = agent['Pos. Rank'];
+      } else {
+        const parsed = parseInt(String(agent['Pos. Rank']));
+        positionRank = isNaN(parsed) ? 0 : parsed;
+      }
+    }
 
     return {
       rank: typeof agent.Rank === 'number' ? agent.Rank : parseInt(agent.Rank) || 0,
@@ -99,9 +119,7 @@ function transformFreeAgentData(rawData: RawFreeAgentData[]): FreeAgent[] {
         ? agent['PFSN 2025 Impact']
         : parseFloat(agent['PFSN 2025 Impact']) || 0,
       signed2026Team: agent['2026 Team'] || '',
-      positionRank: typeof agent['Pos. Rank'] === 'number'
-        ? agent['Pos. Rank']
-        : parseInt(agent['Pos. Rank']) || 0,
+      positionRank,
       teamId
     };
   });
