@@ -320,7 +320,7 @@ export default function PowerRankingsClient() {
       await Promise.all(
         allTeams.map(async (team) => {
           try {
-            const proxyUrl = `/api/proxy-image?url=${encodeURIComponent(team.logoUrl)}`;
+            const proxyUrl = `/nfl-hq/api/proxy-image?url=${encodeURIComponent(team.logoUrl)}`;
             const response = await fetch(proxyUrl);
             if (!response.ok) throw new Error('Failed to fetch logo');
 
