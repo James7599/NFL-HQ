@@ -59,7 +59,7 @@ export default function InjuriesClient() {
 
   // Get unique positions for filter in specified order
   const positions = useMemo(() => {
-    const positionOrder = ['QB', 'RB', 'FB', 'WR', 'TE', 'OT', 'T', 'OG', 'G', 'OC', 'C', 'NT', 'DT', 'DE', 'EDGE', 'LB', 'CB', 'S', 'DB'];
+    const positionOrder = ['QB', 'RB', 'FB', 'WR', 'TE', 'OL', 'OT', 'T', 'OG', 'G', 'OC', 'C', 'NT', 'DT', 'DL', 'DE', 'EDGE', 'LB', 'CB', 'S', 'DB', 'K', 'P'];
     const uniquePositions = new Set(injuries.map(i => i.position));
 
     // Filter to only include positions that exist in the data, in the specified order
