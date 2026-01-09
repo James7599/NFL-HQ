@@ -225,6 +225,10 @@ export async function GET(
 
     const rosterUrl = `${baseUrl}${apiPath}`;
 
+    console.log(`[TEAM INJURY API] teamId: ${teamId}`);
+    console.log(`[TEAM INJURY API] VERCEL_URL: ${process.env.VERCEL_URL}`);
+    console.log(`[TEAM INJURY API] Roster URL: ${rosterUrl}`);
+
     const [injuryResponse, rosterResponse] = await Promise.all([
       fetch(
         'https://www.rotoballer.com/api/rbapps/nfl-injuries.php?partner=prosportsnetwork&key=x63sLHVNR4a37LvBetiiBXvmEs6XKpVQS1scgVoYf3kxXZ4Kl8bC2BahiSsP',

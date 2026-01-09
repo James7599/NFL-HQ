@@ -84,14 +84,25 @@ async function fetchRotoballerInjuries(): Promise<Record<string, InjuryData[]>> 
           : `/nfl/teams/api/roster/${team.id}`;
 
         const url = `${baseUrl}${apiPath}`;
-        console.log(`Fetching roster for ${team.id} from: ${url}`);
+        console.log(`[INJURY API] Fetching roster for ${team.id} from: ${url}`);
+        console.log(`[INJURY API] VERCEL_URL: ${process.env.VERCEL_URL}`);
+        console.log(`[INJURY API] baseUrl: ${baseUrl}, apiPath: ${apiPath}`);
 
         return fetch(url, {
           next: { revalidate: 86400 } // Cache for 24 hours
-        }).catch((err) => {
-          console.error(`Failed to fetch roster for ${team.id}:`, err);
-          return null;
-        });
+        })
+          .then(res => {
+            if (!res.ok) {
+              console.error(`[INJURY API] Failed to fetch roster for ${team.id}: ${res.status} ${res.statusText}`);
+            } else {
+              console.log(`[INJURY API] Successfully fetched roster for ${team.id}`);
+            }
+            return res;
+          })
+          .catch((err) => {
+            console.error(`[INJURY API] Exception fetching roster for ${team.id}:`, err);
+            return null;
+          });
       })
     ]);
 
@@ -104,10 +115,15 @@ async function fetchRotoballerInjuries(): Promise<Record<string, InjuryData[]>> 
     // Build a map of player names to teams from all rosters
     const playerToTeamMap = new Map<string, string>();
     let totalRosterPlayers = 0;
+    let successfulRosters = 0;
+    let failedRosters = 0;
+
+    console.log(`[INJURY API] Processing ${rosterResponses.length} roster responses`);
 
     for (let i = 0; i < rosterResponses.length; i++) {
       const response = rosterResponses[i];
       if (response && response.ok) {
+        successfulRosters++;
         try {
           const rosterData: TeamRosterResponse = await response.json();
           const team = allTeams[i];
@@ -129,12 +145,17 @@ async function fetchRotoballerInjuries(): Promise<Record<string, InjuryData[]>> 
             playerToTeamMap.set(normalizedName, team.abbreviation);
           });
         } catch (e) {
-          console.error(`Error processing roster for team ${allTeams[i].id}:`, e);
+          console.error(`[INJURY API] Error processing roster for team ${allTeams[i].id}:`, e);
+          failedRosters++;
         }
+      } else {
+        failedRosters++;
+        console.error(`[INJURY API] Failed roster response for team ${allTeams[i]?.id}: ${response ? `${response.status} ${response.statusText}` : 'null response'}`);
       }
     }
 
-    console.log(`Built player-to-team map with ${playerToTeamMap.size} unique players from ${totalRosterPlayers} roster entries`);
+    console.log(`[INJURY API] Roster fetching complete: ${successfulRosters} successful, ${failedRosters} failed out of ${allTeams.length} teams`);
+    console.log(`[INJURY API] Built player-to-team map with ${playerToTeamMap.size} unique players from ${totalRosterPlayers} roster entries`);
 
     // Process and organize injury data by team
     const injuries: Record<string, InjuryData[]> = {}
