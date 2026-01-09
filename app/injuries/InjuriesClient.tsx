@@ -24,6 +24,8 @@ export default function InjuriesClient() {
   const [selectedPosition, setSelectedPosition] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [lastUpdated, setLastUpdated] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(25);
 
   useEffect(() => {
     async function fetchInjuries() {
@@ -55,10 +57,13 @@ export default function InjuriesClient() {
     fetchInjuries();
   }, []);
 
-  // Get unique positions for filter
+  // Get unique positions for filter in specified order
   const positions = useMemo(() => {
+    const positionOrder = ['QB', 'RB', 'FB', 'WR', 'TE', 'OT', 'T', 'OG', 'G', 'OC', 'C', 'NT', 'DT', 'DE', 'EDGE', 'LB', 'CB', 'S', 'DB'];
     const uniquePositions = new Set(injuries.map(i => i.position));
-    return Array.from(uniquePositions).sort();
+
+    // Filter to only include positions that exist in the data, in the specified order
+    return positionOrder.filter(pos => uniquePositions.has(pos));
   }, [injuries]);
 
   // Filter and search injuries
@@ -79,6 +84,17 @@ export default function InjuriesClient() {
       return matchesTeam && matchesPosition && matchesSearch;
     });
   }, [injuries, selectedTeam, selectedPosition, searchQuery]);
+
+  // Pagination calculations
+  const totalPages = Math.ceil(filteredInjuries.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedInjuries = filteredInjuries.slice(startIndex, endIndex);
+
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedTeam, selectedPosition, searchQuery]);
 
   // Group injuries by team
   const injuriesByTeam = useMemo(() => {
@@ -116,10 +132,15 @@ export default function InjuriesClient() {
 
   // Simplify status by removing practice participation details
   const simplifyStatus = (status: string) => {
+    // Replace NFI (Non-Football Injury) with just NFI
+    let simplified = status.replace(/NFI\s*\(Non-Football Injury\)/gi, 'NFI');
+
     // Remove practice participation details (DNP, Limited, Full, etc.)
-    return status
+    simplified = simplified
       .replace(/\s*-\s*(DNP|Limited|Full|Did Not Participate|Limited Participation|Full Participation)/gi, '')
       .trim();
+
+    return simplified;
   };
 
   // Get position badge color
@@ -282,7 +303,7 @@ export default function InjuriesClient() {
                     </tr>
                   </thead>
                   <tbody>
-                    {filteredInjuries.map((injury, index) => {
+                    {paginatedInjuries.map((injury, index) => {
                       const teamInfo = getTeamInfo(injury.team);
                       return (
                         <tr
@@ -346,6 +367,50 @@ export default function InjuriesClient() {
                     })}
                   </tbody>
                 </table>
+              </div>
+
+              {/* Pagination Controls */}
+              <div className="bg-gray-50 border-t border-gray-200 px-4 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+                {/* Per Page Selector */}
+                <div className="flex items-center gap-2">
+                  <label htmlFor="per-page" className="text-sm text-gray-700 font-medium">
+                    Per Page:
+                  </label>
+                  <select
+                    id="per-page"
+                    value={itemsPerPage}
+                    onChange={(e) => {
+                      setItemsPerPage(Number(e.target.value));
+                      setCurrentPage(1);
+                    }}
+                    className="px-3 py-1.5 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[#0050A0]"
+                  >
+                    <option value={25}>25</option>
+                    <option value={50}>50</option>
+                    <option value={100}>100</option>
+                  </select>
+                </div>
+
+                {/* Page Navigation */}
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                    disabled={currentPage === 1}
+                    className="px-3 py-1.5 border border-gray-300 rounded-md text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 transition-colors"
+                  >
+                    Previous
+                  </button>
+                  <span className="text-sm text-gray-700 px-2">
+                    Page {currentPage} of {totalPages}
+                  </span>
+                  <button
+                    onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                    disabled={currentPage === totalPages}
+                    className="px-3 py-1.5 border border-gray-300 rounded-md text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 transition-colors"
+                  >
+                    Next
+                  </button>
+                </div>
               </div>
             </div>
           ) : (
