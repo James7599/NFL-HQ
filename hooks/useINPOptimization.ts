@@ -99,18 +99,8 @@ export function useOptimizedTabChange(onTabChange: (tab: string) => void) {
 
   const optimizedTabChange = useCallback(
     (tab: string) => {
-      // Use CSS containment to isolate layout changes
-      document.body.style.contain = 'layout style paint';
-
-      // Batch DOM updates
-      requestAnimationFrame(() => {
-        onTabChange(tab);
-
-        // Remove containment after update
-        setTimeout(() => {
-          document.body.style.contain = '';
-        }, 0);
-      });
+      // Call tab change immediately for responsive UI
+      onTabChange(tab);
     },
     [onTabChange]
   );

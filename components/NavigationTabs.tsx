@@ -16,7 +16,7 @@ export default function NavigationTabs({ activeTab, onTabChange, team }: Navigat
 
   // Refs for scroll management
   const navRef = useRef<HTMLElement>(null);
-  const activeButtonRef = useRef<HTMLButtonElement>(null);
+  const activeLinkRef = useRef<HTMLAnchorElement>(null);
 
   // Memoize tabs to prevent unnecessary re-renders
   const tabs = useMemo(() => [
@@ -36,31 +36,31 @@ export default function NavigationTabs({ activeTab, onTabChange, team }: Navigat
   // Scroll active tab into view when activeTab changes
   // Defer scroll to avoid blocking interaction (improves INP)
   useEffect(() => {
-    if (activeButtonRef.current && navRef.current) {
-      const button = activeButtonRef.current;
+    if (activeLinkRef.current && navRef.current) {
+      const link = activeLinkRef.current;
       const nav = navRef.current;
 
       // Use requestAnimationFrame to defer scroll and avoid blocking interaction
       requestAnimationFrame(() => {
-        // Calculate button position relative to nav container
-        const buttonRect = button.getBoundingClientRect();
+        // Calculate link position relative to nav container
+        const linkRect = link.getBoundingClientRect();
         const navRect = nav.getBoundingClientRect();
 
-        // Check if button is out of view
-        const buttonLeft = buttonRect.left - navRect.left + nav.scrollLeft;
-        const buttonRight = buttonLeft + buttonRect.width;
+        // Check if link is out of view
+        const linkLeft = linkRect.left - navRect.left + nav.scrollLeft;
+        const linkRight = linkLeft + linkRect.width;
         const navWidth = nav.clientWidth;
 
-        if (buttonLeft < nav.scrollLeft) {
-          // Button is to the left of visible area
+        if (linkLeft < nav.scrollLeft) {
+          // Link is to the left of visible area
           nav.scrollTo({
-            left: buttonLeft - 20, // Add some padding
+            left: linkLeft - 20, // Add some padding
             behavior: 'auto' // Use instant scroll to avoid INP impact
           });
-        } else if (buttonRight > nav.scrollLeft + navWidth) {
-          // Button is to the right of visible area
+        } else if (linkRight > nav.scrollLeft + navWidth) {
+          // Link is to the right of visible area
           nav.scrollTo({
-            left: buttonRight - navWidth + 20, // Add some padding
+            left: linkRight - navWidth + 20, // Add some padding
             behavior: 'auto' // Use instant scroll to avoid INP impact
           });
         }
@@ -80,11 +80,15 @@ export default function NavigationTabs({ activeTab, onTabChange, team }: Navigat
       <div className="container mx-auto px-4">
         <nav ref={navRef} className="flex space-x-8 overflow-x-auto scrollbar-hide">
           {tabs.map((tab) => (
-            <button
+            <a
               key={tab.id}
-              ref={activeTab === tab.id ? activeButtonRef : null}
-              onClick={() => onTabChange(tab.id)}
-              className={`py-4 px-2 border-b-2 font-medium text-sm whitespace-nowrap transition-colors will-change-auto ${
+              ref={activeTab === tab.id ? activeLinkRef : null}
+              href={tab.id === 'overview' ? `/nfl-hq/teams/${team.id}/` : `/nfl-hq/teams/${team.id}/${tab.id}/`}
+              onClick={(e) => {
+                e.preventDefault();
+                onTabChange(tab.id);
+              }}
+              className={`py-4 px-2 border-b-2 font-medium text-sm whitespace-nowrap transition-colors will-change-auto cursor-pointer ${
                 activeTab === tab.id
                   ? 'border-transparent text-gray-600 hover:text-gray-700 hover:border-gray-300'
                   : 'border-transparent text-gray-600 hover:text-gray-700 hover:border-gray-300'
@@ -101,7 +105,7 @@ export default function NavigationTabs({ activeTab, onTabChange, team }: Navigat
               role="tab"
             >
               {tab.label}
-            </button>
+            </a>
           ))}
         </nav>
       </div>

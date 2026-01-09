@@ -239,7 +239,7 @@ export default function ScheduleTab({ team }: ScheduleTabProps) {
                       ) : (
                         <a
                           href={getTeamUrl(game.opponent, game.opponentAbbr)}
-                          className="text-sm font-medium hover:underline transition-colors truncate"
+                          className="text-sm font-medium hover:underline transition-colors truncate cursor-pointer"
                           style={{
                             color: team.primaryColor
                           }}

@@ -336,7 +336,7 @@ export default function SalaryCapTab({ team }: SalaryCapTabProps) {
                         href={getPFNUrl(player.name)}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="font-medium hover:underline"
+                        className="font-medium hover:underline cursor-pointer"
                         style={{ color: team.primaryColor }}
                       >
                         {player.name}

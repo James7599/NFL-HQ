@@ -157,7 +157,7 @@ export default function NewsTab({ team }: NewsTabProps) {
                       href={article.link}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="hover:underline"
+                      className="hover:underline cursor-pointer"
                       style={{ color: team.primaryColor }}
                     >
                       {article.title}

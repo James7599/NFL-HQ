@@ -384,7 +384,7 @@ export default function InjuryReportTab({ team }: InjuryReportTabProps) {
                     href={getPFNUrl(playerInjury.player.name)}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="hover:underline"
+                    className="hover:underline cursor-pointer"
                     style={{ color: team.primaryColor }}
                   >
                     {playerInjury.player.name}

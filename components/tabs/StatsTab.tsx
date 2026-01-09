@@ -771,7 +771,7 @@ export default function StatsTab({ team }: StatsTabProps) {
                           href={getPFNUrl(value)}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="font-medium hover:underline"
+                          className="font-medium hover:underline cursor-pointer"
                           style={{ color: team.primaryColor }}
                         >
                           {value}

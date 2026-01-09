@@ -324,7 +324,7 @@ export default function DraftPicksTab({ team }: DraftPicksTabProps) {
                                   href={getPFNUrl(pick.name)}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className="font-medium hover:underline"
+                                  className="font-medium hover:underline cursor-pointer"
                                   style={{ color: team.primaryColor }}
                                 >
                                   {pick.name}

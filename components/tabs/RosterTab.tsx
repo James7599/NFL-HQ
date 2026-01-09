@@ -317,7 +317,7 @@ export default function RosterTab({ team }: RosterTabProps) {
                                     href={getPFNUrl(player.name)}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="font-medium hover:underline whitespace-nowrap"
+                                    className="font-medium hover:underline whitespace-nowrap cursor-pointer"
                                     style={{ color: team.primaryColor }}
                                   >
                                     {player.name}

@@ -75,7 +75,7 @@ const PositionTable = ({
                       href={getPFNUrl(starter.name)}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="font-medium hover:underline"
+                      className="font-medium hover:underline cursor-pointer"
                       style={{ color: team.primaryColor }}
                     >
                       {starter.name}
@@ -90,7 +90,7 @@ const PositionTable = ({
                       href={getPFNUrl(second.name)}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="font-medium hover:underline"
+                      className="font-medium hover:underline cursor-pointer"
                       style={{ color: team.primaryColor }}
                     >
                       {second.name}
@@ -105,7 +105,7 @@ const PositionTable = ({
                       href={getPFNUrl(third.name)}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="font-medium hover:underline"
+                      className="font-medium hover:underline cursor-pointer"
                       style={{ color: team.primaryColor }}
                     >
                       {third.name}
@@ -120,7 +120,7 @@ const PositionTable = ({
                       href={getPFNUrl(fourth.name)}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="font-medium hover:underline"
+                      className="font-medium hover:underline cursor-pointer"
                       style={{ color: team.primaryColor }}
                     >
                       {fourth.name}
