@@ -239,7 +239,7 @@ export default function HomePage() {
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-bold text-gray-900">Upcoming Games</h2>
               <Link
-                href="/schedule"
+                href="/nfl-hq/schedule"
                 className="text-[#0050A0] hover:text-blue-700 font-semibold text-sm transition-colors"
               >
                 View All Upcoming Games →
@@ -288,9 +288,14 @@ export default function HomePage() {
                   const isFinal = game.status === 'Final';
                   const isLive = game.status !== 'Pre-Game' && game.status !== 'Final' && (game.has_score || (game.away_team.score !== undefined && game.away_team.score !== null));
                   const hasScore = game.has_score || (game.status !== 'Pre-Game' && game.away_team.score !== undefined && game.away_team.score !== null);
+                  const gameDateString = gameDate.toISOString().split('T')[0]; // Get YYYY-MM-DD format
 
                   return (
-                    <div key={game.event_id} className={`border rounded-lg p-4 hover:border-[#0050A0] transition-colors relative ${isLive ? 'border-green-400 ring-2 ring-green-100' : 'border-gray-200'}`}>
+                    <Link
+                      key={game.event_id}
+                      href={`/nfl-hq/schedule?view=daily&date=${gameDateString}`}
+                      className={`block border rounded-lg p-4 hover:border-[#0050A0] transition-colors relative ${isLive ? 'border-green-400 ring-2 ring-green-100' : 'border-gray-200'}`}
+                    >
                       {isLive && (
                         <div className="absolute top-2 right-2 flex items-center gap-1 px-2 py-0.5 bg-green-500 text-white text-[10px] font-bold uppercase rounded">
                           <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse"></span>
@@ -360,7 +365,7 @@ export default function HomePage() {
                           </div>
                         )}
                       </div>
-                    </div>
+                    </Link>
                   );
                 })}
               </div>

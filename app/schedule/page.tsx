@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 
 import { getAllTeams } from '@/data/teams';
 import NFLTeamsSidebar from '@/components/NFLTeamsSidebar';
@@ -246,8 +247,14 @@ type ViewMode = 'daily' | 'weekly' | 'monthly';
 
 export default function SchedulePage() {
   const allTeams = getAllTeams();
-  const [viewMode, setViewMode] = useState<ViewMode>('weekly');
-  const [selectedDate, setSelectedDate] = useState<string>(getLocalDateString());
+  const searchParams = useSearchParams();
+
+  // Initialize state from URL parameters if available
+  const urlView = searchParams.get('view') as ViewMode | null;
+  const urlDate = searchParams.get('date');
+
+  const [viewMode, setViewMode] = useState<ViewMode>(urlView && ['daily', 'weekly', 'monthly'].includes(urlView) ? urlView : 'weekly');
+  const [selectedDate, setSelectedDate] = useState<string>(urlDate || getLocalDateString());
   const [games, setGames] = useState<Game[]>([]);
   const [weeklyGames, setWeeklyGames] = useState<Record<string, Game[]>>({});
   const [monthlyGames, setMonthlyGames] = useState<Record<string, Game[]>>({});
@@ -255,6 +262,35 @@ export default function SchedulePage() {
   const [error, setError] = useState<string | null>(null);
   const [expandedGame, setExpandedGame] = useState<string | null>(null);
   const [expandedWeeklyGame, setExpandedWeeklyGame] = useState<string | null>(null);
+  const [teamRecords, setTeamRecords] = useState<Record<string, string>>({});
+
+  // Fetch team records from standings API
+  useEffect(() => {
+    async function fetchTeamRecords() {
+      try {
+        const response = await fetch(getApiPath('nfl/teams/api/standings?season=2025'));
+        if (!response.ok) return;
+
+        const data = await response.json();
+        const recordsMap: Record<string, string> = {};
+
+        if (data.standings && Array.isArray(data.standings)) {
+          for (const team of data.standings) {
+            const wins = team.record?.wins || 0;
+            const losses = team.record?.losses || 0;
+            const ties = team.record?.ties || 0;
+            recordsMap[team.teamId] = ties > 0 ? `${wins}-${losses}-${ties}` : `${wins}-${losses}`;
+          }
+        }
+
+        setTeamRecords(recordsMap);
+      } catch (err) {
+        console.error('Error fetching team records:', err);
+      }
+    }
+
+    fetchTeamRecords();
+  }, []);
 
   // Consolidated fetch based on view mode - prevents multiple concurrent API calls
   useEffect(() => {
@@ -671,7 +707,7 @@ export default function SchedulePage() {
                                     <span className="sm:hidden">{awayTeam.name}</span>
                                     <span className="hidden sm:inline">{awayTeam.fullName}</span>
                                   </div>
-                                  <div className="text-base text-gray-600">{game.away_team.wins}-{game.away_team.losses}</div>
+                                  <div className="text-base text-gray-600">{teamRecords[awayTeam.id] || '0-0'}</div>
                                 </div>
                               </>
                             ) : (
@@ -698,7 +734,7 @@ export default function SchedulePage() {
                                     <span className="sm:hidden">{homeTeam.name}</span>
                                     <span className="hidden sm:inline">{homeTeam.fullName}</span>
                                   </div>
-                                  <div className="text-base text-gray-600">{game.home_team.wins}-{game.home_team.losses}</div>
+                                  <div className="text-base text-gray-600">{teamRecords[homeTeam.id] || '0-0'}</div>
                                 </div>
                               </>
                             ) : (
