@@ -423,23 +423,23 @@ export default function FreeAgencyTrackerClient() {
                           <th className="px-4 py-3 text-left text-xs font-bold text-white uppercase tracking-wider">
                             2025 Team
                           </th>
-                          <th className="px-4 py-3 text-left text-xs font-bold text-white uppercase tracking-wider">
+                          <th className="px-4 py-3 text-center text-xs font-bold text-white uppercase tracking-wider">
                             FA Type
                           </th>
                           <th
-                            className="px-4 py-3 text-left text-xs font-bold text-white uppercase tracking-wider cursor-pointer hover:bg-[#003d7a]"
+                            className="px-4 py-3 text-center text-xs font-bold text-white uppercase tracking-wider cursor-pointer hover:bg-[#003d7a]"
                             onClick={() => handleSort('age')}
                           >
-                            <div className="flex items-center">
+                            <div className="flex items-center justify-center">
                               Age
                               <SortIndicator column="age" />
                             </div>
                           </th>
                           <th
-                            className="px-4 py-3 text-left text-xs font-bold text-white uppercase tracking-wider cursor-pointer hover:bg-[#003d7a]"
+                            className="px-4 py-3 text-center text-xs font-bold text-white uppercase tracking-wider cursor-pointer hover:bg-[#003d7a]"
                             onClick={() => handleSort('pfsn2025Impact')}
                           >
-                            <div className="flex items-center">
+                            <div className="flex items-center justify-center">
                               Impact
                               <SortIndicator column="pfsn2025Impact" />
                             </div>
@@ -448,10 +448,10 @@ export default function FreeAgencyTrackerClient() {
                             2026 Team
                           </th>
                           <th
-                            className="px-4 py-3 text-left text-xs font-bold text-white uppercase tracking-wider cursor-pointer hover:bg-[#003d7a]"
+                            className="px-4 py-3 text-center text-xs font-bold text-white uppercase tracking-wider cursor-pointer hover:bg-[#003d7a]"
                             onClick={() => handleSort('positionRank')}
                           >
-                            <div className="flex items-center">
+                            <div className="flex items-center justify-center">
                               Pos Rank
                               <SortIndicator column="positionRank" />
                             </div>
@@ -486,17 +486,19 @@ export default function FreeAgencyTrackerClient() {
                                     <img src={teamInfo.logoUrl} alt={teamInfo.abbreviation} className="w-6 h-6" />
                                     <span>{teamInfo.abbreviation}</span>
                                   </Link>
+                                ) : agent.current2025Team ? (
+                                  <span className="text-gray-500 text-xs">{agent.current2025Team}</span>
                                 ) : (
-                                  <span className="text-gray-500">{agent.current2025Team || 'N/A'}</span>
+                                  <span className="text-gray-400">—</span>
                                 )}
                               </td>
-                              <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-700">
+                              <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-700 text-center">
                                 {agent.faType}
                               </td>
-                              <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-700">
+                              <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-700 text-center">
                                 {agent.age}
                               </td>
-                              <td className="px-4 py-3 whitespace-nowrap text-sm font-semibold">
+                              <td className="px-4 py-3 whitespace-nowrap text-sm font-semibold text-center">
                                 <span className={agent.pfsn2025Impact >= 80 ? 'text-green-600' : agent.pfsn2025Impact >= 70 ? 'text-blue-600' : 'text-gray-700'}>
                                   {agent.pfsn2025Impact.toFixed(1)}
                                 </span>
@@ -513,7 +515,7 @@ export default function FreeAgencyTrackerClient() {
                                   <span className="text-gray-500 text-xs">{agent.signed2026Team}</span>
                                 )}
                               </td>
-                              <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-700">
+                              <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-700 text-center">
                                 {agent.positionRank}
                               </td>
                               <td className="px-4 py-3 whitespace-nowrap text-sm">
