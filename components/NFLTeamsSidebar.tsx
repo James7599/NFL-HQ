@@ -360,12 +360,12 @@ const NFLTeamsSidebar: React.FC<NFLTeamsSidebarProps> = ({ currentTeam, currentT
           {/* NFL Tools Section */}
           <li className="mb-2 pt-2">
             <div className="px-3 mb-2">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <div className="h-0.5 w-3 bg-gray-600 rounded"></div>
-                  <span className="text-[11px] font-bold text-gray-300 uppercase tracking-widest">NFL Tools</span>
+              <div className="flex items-center justify-between min-w-0">
+                <div className="flex items-center gap-2 min-w-0 flex-shrink">
+                  <div className="h-0.5 w-3 bg-gray-600 rounded flex-shrink-0"></div>
+                  <span className="text-[11px] font-bold text-gray-300 uppercase tracking-wider truncate">NFL Tools</span>
                 </div>
-                <div className="flex-1 ml-3 h-px bg-gradient-to-r from-gray-800 to-transparent"></div>
+                <div className="flex-1 ml-3 h-px bg-gradient-to-r from-gray-800 to-transparent flex-shrink-0"></div>
               </div>
             </div>
           </li>
@@ -401,14 +401,14 @@ const NFLTeamsSidebar: React.FC<NFLTeamsSidebarProps> = ({ currentTeam, currentT
           {/* NFL Teams Section */}
           <li className="mb-2 pt-6">
             <div className="px-3 mb-2">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <div className="h-0.5 w-3 bg-gray-600 rounded"></div>
-                  <span className="text-[11px] font-bold text-gray-300 uppercase tracking-widest">
+              <div className="flex items-center justify-between min-w-0">
+                <div className="flex items-center gap-2 min-w-0 flex-shrink">
+                  <div className="h-0.5 w-3 bg-gray-600 rounded flex-shrink-0"></div>
+                  <span className="text-[11px] font-bold text-gray-300 uppercase tracking-wider truncate">
                     NFL Teams {currentTab && `- ${currentTab.replace('-', ' ').toUpperCase()}`}
                   </span>
                 </div>
-                <div className="flex-1 ml-3 h-px bg-gradient-to-r from-gray-800 to-transparent"></div>
+                <div className="flex-1 ml-3 h-px bg-gradient-to-r from-gray-800 to-transparent flex-shrink-0"></div>
               </div>
             </div>
           </li>
@@ -468,12 +468,12 @@ const NFLTeamsSidebar: React.FC<NFLTeamsSidebarProps> = ({ currentTeam, currentT
           {/* Other Tools Section */}
           <li className="pt-6">
             <div className="px-3 mb-2">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <div className="h-0.5 w-3 bg-gray-600 rounded"></div>
-                  <span className="text-[11px] font-bold text-gray-300 uppercase tracking-widest">Other Tools</span>
+              <div className="flex items-center justify-between min-w-0">
+                <div className="flex items-center gap-2 min-w-0 flex-shrink">
+                  <div className="h-0.5 w-3 bg-gray-600 rounded flex-shrink-0"></div>
+                  <span className="text-[11px] font-bold text-gray-300 uppercase tracking-wider truncate">Other Tools</span>
                 </div>
-                <div className="flex-1 ml-3 h-px bg-gradient-to-r from-gray-800 to-transparent"></div>
+                <div className="flex-1 ml-3 h-px bg-gradient-to-r from-gray-800 to-transparent flex-shrink-0"></div>
               </div>
             </div>
           </li>
