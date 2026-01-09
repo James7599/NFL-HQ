@@ -88,22 +88,15 @@ function transformFreeAgentData(rawData: RawFreeAgentData[]): FreeAgent[] {
   return rawData.map((agent, index) => {
     const teamId = mapTeamNameToId(agent['2025 Team']);
 
-    // Debug position rank for first few items
-    if (index < 3) {
-      console.log(`Player ${agent.Name}:`, {
-        'Pos. Rank raw value': agent['Pos. Rank'],
-        'Type': typeof agent['Pos. Rank'],
-        'Parsed': parseInt(agent['Pos. Rank'] as any)
-      });
-    }
-
-    // Parse position rank - handle empty strings and null
+    // Parse position rank - handle formats like "WR1", "CB2", "EDGE1"
     let positionRank = 0;
     if (agent['Pos. Rank'] !== null && agent['Pos. Rank'] !== undefined && agent['Pos. Rank'] !== '') {
       if (typeof agent['Pos. Rank'] === 'number') {
         positionRank = agent['Pos. Rank'];
       } else {
-        const parsed = parseInt(String(agent['Pos. Rank']));
+        // Extract numeric part from strings like "WR1", "EDGE1", "CB2"
+        const numericPart = String(agent['Pos. Rank']).replace(/\D/g, '');
+        const parsed = parseInt(numericPart);
         positionRank = isNaN(parsed) ? 0 : parsed;
       }
     }
@@ -170,11 +163,6 @@ export default function FreeAgencyTrackerClient() {
         }
 
         if (data.output && Array.isArray(data.output)) {
-          // Debug: Log first item to see actual field names
-          if (data.output.length > 0) {
-            console.log('Sample API data:', data.output[0]);
-            console.log('Available fields:', Object.keys(data.output[0]));
-          }
           const transformed = transformFreeAgentData(data.output);
           setAllFreeAgents(transformed);
         } else {
