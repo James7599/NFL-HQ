@@ -73,13 +73,16 @@ async function fetchRotoballerInjuries(): Promise<Record<string, InjuryData[]>> 
       ),
       ...allTeams.map(team => {
         // Determine base URL for internal API calls (server-side only)
-        // On Vercel, use the deployment URL; locally use localhost
-        const baseUrl = process.env.VERCEL_URL
+        // Priority: PRODUCTION_URL > VERCEL_URL > localhost
+        const baseUrl = process.env.PRODUCTION_URL
+          ? process.env.PRODUCTION_URL
+          : process.env.VERCEL_URL
           ? `https://${process.env.VERCEL_URL}`
-          : process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+          : 'http://localhost:3000';
 
-        // Include basePath in production (nfl-hq is our basePath)
-        const apiPath = process.env.VERCEL_URL
+        // Include basePath when not in local development
+        const isProduction = process.env.PRODUCTION_URL || process.env.VERCEL_URL;
+        const apiPath = isProduction
           ? `/nfl-hq/nfl/teams/api/roster/${team.id}`
           : `/nfl/teams/api/roster/${team.id}`;
 

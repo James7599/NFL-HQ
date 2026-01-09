@@ -214,12 +214,16 @@ export async function GET(
 
     // Fetch both injury data and team roster in parallel
     // Determine base URL and API path for internal API calls
-    const baseUrl = process.env.VERCEL_URL
+    // Priority: PRODUCTION_URL > VERCEL_URL > localhost
+    const baseUrl = process.env.PRODUCTION_URL
+      ? process.env.PRODUCTION_URL
+      : process.env.VERCEL_URL
       ? `https://${process.env.VERCEL_URL}`
-      : process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3003';
+      : 'http://localhost:3003';
 
-    // Include basePath in production (nfl-hq is our basePath)
-    const apiPath = process.env.VERCEL_URL
+    // Include basePath when not in local development
+    const isProduction = process.env.PRODUCTION_URL || process.env.VERCEL_URL;
+    const apiPath = isProduction
       ? `/nfl-hq/nfl/teams/api/roster/${teamId}`
       : `/nfl/teams/api/roster/${teamId}`;
 
