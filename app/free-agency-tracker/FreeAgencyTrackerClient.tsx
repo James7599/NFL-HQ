@@ -141,11 +141,6 @@ export default function FreeAgencyTrackerClient() {
         }
 
         const data = await response.json();
-        console.log('Received data structure:', {
-          hasOutput: !!data.output,
-          isArray: Array.isArray(data.output),
-          hasError: !!data.error
-        });
 
         if (data.error) {
           throw new Error(data.message || data.error);

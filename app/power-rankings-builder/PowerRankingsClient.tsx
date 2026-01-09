@@ -237,7 +237,7 @@ export default function PowerRankingsClient() {
       rankings: rankings
     };
 
-    const existing = localStorage.getItem('nba-power-rankings');
+    const existing = localStorage.getItem('nfl-power-rankings');
     const allSaved = existing ? JSON.parse(existing) : [];
     allSaved.push(saved);
 
@@ -246,7 +246,7 @@ export default function PowerRankingsClient() {
       allSaved.shift();
     }
 
-    localStorage.setItem('nba-power-rankings', JSON.stringify(allSaved));
+    localStorage.setItem('nfl-power-rankings', JSON.stringify(allSaved));
     setSaveNameInput('');
     setShowSaveDialog(false);
     loadSavedRankings();
@@ -254,7 +254,7 @@ export default function PowerRankingsClient() {
   };
 
   const loadSavedRankings = () => {
-    const saved = localStorage.getItem('nba-power-rankings');
+    const saved = localStorage.getItem('nfl-power-rankings');
     if (saved) {
       setSavedRankings(JSON.parse(saved));
     }
@@ -268,11 +268,11 @@ export default function PowerRankingsClient() {
   };
 
   const deleteSavedRanking = (index: number) => {
-    const saved = localStorage.getItem('nba-power-rankings');
+    const saved = localStorage.getItem('nfl-power-rankings');
     if (saved) {
       const allSaved = JSON.parse(saved);
       allSaved.splice(index, 1);
-      localStorage.setItem('nba-power-rankings', JSON.stringify(allSaved));
+      localStorage.setItem('nfl-power-rankings', JSON.stringify(allSaved));
       loadSavedRankings();
     }
   };
@@ -338,7 +338,6 @@ export default function PowerRankingsClient() {
       setLogoDataUrls(urls);
       setLogoImages(images);
       setLogosLoaded(true);
-      console.log('All logos preloaded:', Object.keys(urls).length);
     };
 
     preloadLogos();
@@ -540,7 +539,7 @@ export default function PowerRankingsClient() {
     // Header
     ctx.fillStyle = '#ffffff';
     ctx.font = 'italic 900 38px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
-    const headerText = 'MY NBA POWER RANKINGS';
+    const headerText = 'MY NFL POWER RANKINGS';
     const headerWidth = ctx.measureText(headerText).width;
     ctx.fillText(headerText, (canvasWidth - headerWidth) / 2, yPos + 38);
     yPos += headerHeight;
@@ -581,15 +580,8 @@ export default function PowerRankingsClient() {
       ctx.font = `600 ${teamFontSize}px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif`;
       const teamTextY = containerCenterY + (teamFontSize * 0.35);
 
-      // Use shortened names for long team names when showing all 30
+      // Use shortened names for long team names when showing all 32 teams
       let teamName = selectedTeams.length > 10 ? rankedTeam.team.name : rankedTeam.team.fullName;
-      if (selectedTeams.length === 30) {
-        if (rankedTeam.team.id === 'minnesota-timberwolves') {
-          teamName = 'T-Wolves';
-        } else if (rankedTeam.team.id === 'portland-trail-blazers') {
-          teamName = 'Blazers';
-        }
-      }
 
       ctx.fillText(teamName, xPos + paddingX + rankWidth + 20, teamTextY);
 
@@ -974,10 +966,10 @@ export default function PowerRankingsClient() {
                           <span className="font-medium">Top 10 Teams</span>
                         </button>
                         <button
-                          onClick={() => handleDownload(30)}
+                          onClick={() => handleDownload(32)}
                           className="w-full px-4 py-2 text-left hover:bg-gray-50 text-gray-700 transition-colors"
                         >
-                          <span className="font-medium">All 30 Teams</span>
+                          <span className="font-medium">All 32 Teams</span>
                         </button>
                       </div>
                     </div>

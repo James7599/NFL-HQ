@@ -6,49 +6,6 @@ import NFLTeamsSidebar from '@/components/NFLTeamsSidebar';
 import { useState, useEffect } from 'react';
 import { getApiPath } from '@/utils/api';
 
-// Map API team slugs to our team IDs (NFL teams)
-const teamSlugMapping: Record<string, string> = {
-  // AFC East
-  'buffalo-bills': 'buffalo-bills',
-  'miami-dolphins': 'miami-dolphins',
-  'new-england-patriots': 'new-england-patriots',
-  'new-york-jets': 'new-york-jets',
-  // AFC North
-  'baltimore-ravens': 'baltimore-ravens',
-  'cincinnati-bengals': 'cincinnati-bengals',
-  'cleveland-browns': 'cleveland-browns',
-  'pittsburgh-steelers': 'pittsburgh-steelers',
-  // AFC South
-  'houston-texans': 'houston-texans',
-  'indianapolis-colts': 'indianapolis-colts',
-  'jacksonville-jaguars': 'jacksonville-jaguars',
-  'tennessee-titans': 'tennessee-titans',
-  // AFC West
-  'denver-broncos': 'denver-broncos',
-  'kansas-city-chiefs': 'kansas-city-chiefs',
-  'las-vegas-raiders': 'las-vegas-raiders',
-  'los-angeles-chargers': 'los-angeles-chargers',
-  // NFC East
-  'dallas-cowboys': 'dallas-cowboys',
-  'new-york-giants': 'new-york-giants',
-  'philadelphia-eagles': 'philadelphia-eagles',
-  'washington-commanders': 'washington-commanders',
-  // NFC North
-  'chicago-bears': 'chicago-bears',
-  'detroit-lions': 'detroit-lions',
-  'green-bay-packers': 'green-bay-packers',
-  'minnesota-vikings': 'minnesota-vikings',
-  // NFC South
-  'atlanta-falcons': 'atlanta-falcons',
-  'carolina-panthers': 'carolina-panthers',
-  'new-orleans-saints': 'new-orleans-saints',
-  'tampa-bay-buccaneers': 'tampa-bay-buccaneers',
-  // NFC West
-  'arizona-cardinals': 'arizona-cardinals',
-  'los-angeles-rams': 'los-angeles-rams',
-  'san-francisco-49ers': 'san-francisco-49ers',
-  'seattle-seahawks': 'seattle-seahawks',
-};
 
 export default function HomePage() {
   const allTeams = getAllTeams();
@@ -211,7 +168,6 @@ export default function HomePage() {
               tackles: data.data.tackles || [],
             });
           } else if (data.error) {
-            console.warn('Stat leaders API returned error:', data.error);
             // Keep statLeaders as null to show unavailable message
           }
         }
@@ -299,8 +255,8 @@ export default function HomePage() {
             ) : upcomingGames.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {upcomingGames.map((game) => {
-                  const awayTeam = allTeams.find(t => t.id === teamSlugMapping[game.away_team.team_slug] || t.id === game.away_team.team_slug);
-                  const homeTeam = allTeams.find(t => t.id === teamSlugMapping[game.home_team.team_slug] || t.id === game.home_team.team_slug);
+                  const awayTeam = allTeams.find(t => t.id === game.away_team.team_slug);
+                  const homeTeam = allTeams.find(t => t.id === game.home_team.team_slug);
                   const gameDate = new Date(game.start_date);
                   const gameDateTime = gameDate.toLocaleString('en-US', {
                     weekday: 'short',

@@ -19,13 +19,6 @@ export async function GET() {
 
     const data = await response.json();
 
-    console.log('Free agents API response structure:', {
-      hasCollections: !!data.collections,
-      isCollectionsArray: Array.isArray(data.collections),
-      firstCollection: data.collections?.[0]?.sheetName,
-      dataLength: data.collections?.[0]?.data?.length
-    });
-
     // Validate and transform data structure
     if (!data.collections || !Array.isArray(data.collections) || !data.collections[0]?.data) {
       console.error('Invalid data structure from Sportskeeda API:', Object.keys(data));

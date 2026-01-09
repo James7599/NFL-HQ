@@ -3,10 +3,11 @@
 import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 
-import { getAllTeams } from '@/data/teams';
 import NFLTeamsSidebar from '@/components/NFLTeamsSidebar';
 import { getApiPath } from '@/utils/api';
 import SkeletonLoader from '@/components/SkeletonLoader';
+import { getPositionColor } from '@/utils/colorHelpers';
+import { getTeamInfoById } from '@/utils/teamHelpers';
 
 interface StatLeader {
   playerId: number;
@@ -113,11 +114,9 @@ export default function StatsPage() {
         }
 
         const data = await response.json();
-        console.log('Stat Leaders Data:', data);
 
         // Check if API returned an error but with empty data
         if (data.error) {
-          console.warn('API returned with error:', data.error);
           setError('Stat leaders data is temporarily unavailable. Please try again later.');
         } else {
           setStatLeaders(data.data);
