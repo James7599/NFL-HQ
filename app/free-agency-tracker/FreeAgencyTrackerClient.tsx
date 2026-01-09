@@ -84,6 +84,29 @@ function getPositionColor(position: string): string {
   return 'bg-gray-100 text-gray-700 border-gray-200';
 }
 
+function getPositionImpactUrl(position: string): string {
+  const pos = position.toUpperCase();
+
+  // Position-specific impact grade pages
+  if (pos === 'QB') return 'https://www.profootballnetwork.com/nfl-qb-rankings-impact/';
+  if (pos === 'RB' || pos === 'FB') return 'https://www.profootballnetwork.com/nfl-rb-rankings-impact/';
+  if (pos === 'WR') return 'https://www.profootballnetwork.com/nfl-wr-rankings-impact/';
+  if (pos === 'TE') return 'https://www.profootballnetwork.com/nfl-te-rankings-impact/';
+  if (pos === 'OL' || pos === 'OT' || pos === 'OG' || pos === 'OC' || pos === 'T' || pos === 'G' || pos === 'C') {
+    return 'https://www.profootballnetwork.com/nfl-player-ol-rankings-impact/';
+  }
+  if (pos === 'DT' || pos === 'NT') return 'https://www.profootballnetwork.com/nfl-dt-rankings-impact/';
+  if (pos === 'EDGE' || pos === 'DE') return 'https://www.profootballnetwork.com/nfl-edge-rankings-impact/';
+  if (pos === 'LB' || pos === 'ILB' || pos === 'OLB' || pos === 'MLB') return 'https://www.profootballnetwork.com/nfl-lb-rankings-impact/';
+  if (pos === 'CB') return 'https://www.profootballnetwork.com/nfl-cb-rankings-impact/';
+  if (pos === 'S' || pos === 'FS' || pos === 'SS' || pos === 'SAF' || pos === 'DB') {
+    return 'https://www.profootballnetwork.com/nfl-saf-rankings-impact/';
+  }
+
+  // Default fallback
+  return 'https://www.profootballnetwork.com/nfl-player-rankings-impact/';
+}
+
 function transformFreeAgentData(rawData: RawFreeAgentData[]): FreeAgent[] {
   return rawData.map((agent, index) => {
     const teamId = mapTeamNameToId(agent['2025 Team']);
@@ -510,9 +533,14 @@ export default function FreeAgencyTrackerClient() {
                                 {agent.age}
                               </td>
                               <td className="px-4 py-3 whitespace-nowrap text-sm font-semibold text-center">
-                                <span className={agent.pfsn2025Impact >= 80 ? 'text-green-600' : agent.pfsn2025Impact >= 70 ? 'text-blue-600' : 'text-gray-700'}>
+                                <a
+                                  href={getPositionImpactUrl(agent.position)}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className={`hover:opacity-80 transition-opacity ${agent.pfsn2025Impact >= 80 ? 'text-green-600' : agent.pfsn2025Impact >= 70 ? 'text-blue-600' : 'text-gray-700'}`}
+                                >
                                   {agent.pfsn2025Impact.toFixed(1)}
-                                </span>
+                                </a>
                               </td>
                               <td className="px-4 py-3 whitespace-nowrap text-sm">
                                 {signed2026TeamInfo ? (
