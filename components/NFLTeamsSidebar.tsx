@@ -36,6 +36,7 @@ const NFLTeamsSidebar: React.FC<NFLTeamsSidebarProps> = ({ currentTeam, currentT
     { title: 'NFL Injury Report', url: '/nfl-hq/injuries', external: false },
     { title: 'NFL Stat Leaders', url: '/nfl-hq/stats', external: false },
     { title: 'NFL Free Agency Tracker', url: '/nfl-hq/free-agency-tracker', external: false },
+    { title: 'NFL Draft Hub', url: 'https://www.profootballnetwork.com/nfl-draft-hq/', external: true },
     { title: 'NFL Playoff Predictor', url: 'https://www.profootballnetwork.com/nfl-playoff-predictor', external: true },
     { title: 'NFL Power Rankings Builder', url: '/nfl-hq/power-rankings-builder', external: false },
     { title: 'NFL Transactions', url: '/nfl-hq/transactions', external: false },
@@ -47,7 +48,6 @@ const NFLTeamsSidebar: React.FC<NFLTeamsSidebarProps> = ({ currentTeam, currentT
 
   const otherTools = [
     { title: 'Fantasy Football Hub', url: 'https://www.profootballnetwork.com/fantasy/football/' },
-    { title: 'NFL Draft Hub', url: 'https://www.profootballnetwork.com/nfl-draft-hq/' },
     { title: 'CFB Playoff Predictor', url: 'https://www.profootballnetwork.com/cfb/playoff-predictor-cfb-cta/' },
     { title: 'NBA Mock Draft Simulator', url: 'https://www.profootballnetwork.com/nba-mock-draft-simulator' },
     { title: 'World Cup Simulator', url: 'https://www.profootballnetwork.com/fifa-world-cup-simulator/' },
