@@ -553,9 +553,6 @@ export default function HomePage() {
               <h2 className="text-2xl font-bold text-gray-900">
                 Interactive Tools & Features
               </h2>
-              <p className="text-base text-gray-600 mt-1">
-                Discover comprehensive NFL data, build custom rankings, and explore team information
-              </p>
             </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -750,9 +747,6 @@ export default function HomePage() {
                 <h2 className="text-2xl font-bold text-gray-900">
                   Featured Teams
                 </h2>
-                <p className="text-sm text-gray-600 mt-1">
-                  Quick access to popular NFL franchises
-                </p>
               </div>
               <Link
                 href="/teams"
