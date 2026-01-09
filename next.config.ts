@@ -7,6 +7,7 @@ const bundleAnalyzer = withBundleAnalyzer({
 
 const nextConfig: NextConfig = {
   basePath: '/nfl-hq',
+  trailingSlash: true,
   images: {
     remotePatterns: [
       {
