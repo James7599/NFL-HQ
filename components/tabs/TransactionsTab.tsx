@@ -25,7 +25,7 @@ const getTeamUrl = (teamName: string) => {
     .replace(/new england patriots/g, 'new-england-patriots')
     .replace(/kansas city chiefs/g, 'kansas-city-chiefs')
     .replace(/\s+/g, '-');
-  return `https://www.profootballnetwork.com/teams/${teamSlug}/`;
+  return `https://www.profootballnetwork.com/nfl-hq/teams/${teamSlug}/`;
 };
 
 interface Transaction {

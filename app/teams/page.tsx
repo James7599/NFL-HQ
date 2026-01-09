@@ -140,7 +140,7 @@ export default function TeamsPage() {
 
     return (
       <Link
-        href={`/nfl-hq/teams/${team.id}`}
+        href={`/teams/${team.id}`}
         className="group block bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow duration-200 border border-gray-200"
       >
         <div className="p-4 flex items-center space-x-4">

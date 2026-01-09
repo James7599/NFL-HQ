@@ -88,7 +88,7 @@ export default function HomePage() {
     }
 
     fetchTopStandings();
-  }, [allTeams]);
+  }, []);
 
 
   // Upcoming games - fetch from schedule API

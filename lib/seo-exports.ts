@@ -23,7 +23,7 @@ export interface ExternalSEOConfig {
 // Function to generate external SEO config for a team
 export function getExternalSEOConfig(team: TeamData): ExternalSEOConfig {
   return {
-    baseUrl: `https://www.profootballnetwork.com/nfl/teams/${team.id}`,
+    baseUrl: `https://www.profootballnetwork.com/nfl-hq/teams/${team.id}`,
     siteName: team.fullName,
     defaultImage: team.logoUrl,
     twitterHandle: `@${team.abbreviation}`, // This is a placeholder - you'd want to map actual Twitter handles

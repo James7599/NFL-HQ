@@ -88,7 +88,7 @@ const getTeamUrl = (opponent: string, opponentAbbr?: string): string => {
   }
 
   if (targetTeam) {
-    return `/teams/${targetTeam.id}`;
+    return `/nfl-hq/teams/${targetTeam.id}`;
   }
 
   return '#';

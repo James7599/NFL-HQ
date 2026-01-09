@@ -18,9 +18,9 @@ const GamesPageSidebar: React.FC<GamesPageSidebarProps> = ({ currentGame, isMobi
   // Function to generate team URL based on current tab
   const getTeamUrl = (teamId: string) => {
     if (currentTab === 'overview') {
-      return `/nfl/teams/${teamId}`;
+      return `/nfl-hq/teams/${teamId}`;
     }
-    return `/nfl/teams/${teamId}/${currentTab}`;
+    return `/nfl-hq/teams/${teamId}/${currentTab}`;
   };
   const nflTools = [
     { title: 'Mock Draft Simulator', url: 'https://www.profootballnetwork.com/mockdraft' },
