@@ -533,14 +533,18 @@ export default function FreeAgencyTrackerClient() {
                                 {agent.age}
                               </td>
                               <td className="px-4 py-3 whitespace-nowrap text-sm font-semibold text-center">
-                                <a
-                                  href={getPositionImpactUrl(agent.position)}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className={`hover:opacity-80 transition-opacity ${agent.pfsn2025Impact >= 80 ? 'text-green-600' : agent.pfsn2025Impact >= 70 ? 'text-blue-600' : 'text-gray-700'}`}
-                                >
-                                  {agent.pfsn2025Impact.toFixed(1)}
-                                </a>
+                                {agent.pfsn2025Impact > 0 ? (
+                                  <a
+                                    href={getPositionImpactUrl(agent.position)}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className={`hover:opacity-80 transition-opacity ${agent.pfsn2025Impact >= 80 ? 'text-green-600' : agent.pfsn2025Impact >= 70 ? 'text-blue-600' : 'text-gray-700'}`}
+                                  >
+                                    {agent.pfsn2025Impact.toFixed(1)}
+                                  </a>
+                                ) : (
+                                  <span className="text-gray-400">—</span>
+                                )}
                               </td>
                               <td className="px-4 py-3 whitespace-nowrap text-sm">
                                 {signed2026TeamInfo ? (
