@@ -81,10 +81,11 @@ async function fetchRotoballerInjuries(): Promise<Record<string, InjuryData[]>> 
           : 'http://localhost:3000';
 
         // Include basePath when not in local development
+        // Note: trailingSlash: true in config requires trailing slash in URLs
         const isProduction = process.env.PRODUCTION_URL || process.env.VERCEL_URL;
         const apiPath = isProduction
-          ? `/nfl-hq/nfl/teams/api/roster/${team.id}`
-          : `/nfl/teams/api/roster/${team.id}`;
+          ? `/nfl-hq/nfl/teams/api/roster/${team.id}/`
+          : `/nfl/teams/api/roster/${team.id}/`;
 
         const url = `${baseUrl}${apiPath}`;
         console.log(`[INJURY API] Fetching roster for ${team.id} from: ${url}`);

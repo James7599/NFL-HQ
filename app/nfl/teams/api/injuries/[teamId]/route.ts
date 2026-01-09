@@ -222,10 +222,11 @@ export async function GET(
       : 'http://localhost:3003';
 
     // Include basePath when not in local development
+    // Note: trailingSlash: true in config requires trailing slash in URLs
     const isProduction = process.env.PRODUCTION_URL || process.env.VERCEL_URL;
     const apiPath = isProduction
-      ? `/nfl-hq/nfl/teams/api/roster/${teamId}`
-      : `/nfl/teams/api/roster/${teamId}`;
+      ? `/nfl-hq/nfl/teams/api/roster/${teamId}/`
+      : `/nfl/teams/api/roster/${teamId}/`;
 
     const rosterUrl = `${baseUrl}${apiPath}`;
 
