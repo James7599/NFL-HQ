@@ -603,7 +603,7 @@ export default function PowerRankingsClient() {
     const footerPadding = 30;
     ctx.fillStyle = '#ffffff';
     ctx.font = '600 16px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
-    ctx.fillText('nfl-hq.com/power-rankings', footerPadding, footerY + 38);
+    ctx.fillText('nfl-hq.vercel.app/power-rankings-builder', footerPadding, footerY + 38);
 
     // PFSN Logo on the right (square aspect ratio)
     if (pfsnLogoImage) {
