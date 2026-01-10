@@ -3,6 +3,7 @@
 import { useState, useMemo, useEffect, useCallback } from 'react';
 import LayoutStabilizer from '@/components/LayoutStabilizer';
 import { TeamData } from '@/data/teams';
+import { getApiPath } from '@/utils/api';
 import futureDraftPicksData from '@/data/futureDraftPicks.json';
 
 // Helper function to generate PFSN URL
@@ -98,7 +99,7 @@ export default function DraftPicksTab({ team }: DraftPicksTabProps) {
       setLoading(true);
       setError(null);
 
-      const response = await fetch(`/nfl-hq/nfl/teams/api/draft-picks/${team.id}`);
+      const response = await fetch(getApiPath(`nfl/teams/api/draft-picks/${team.id}`));
 
       if (!response.ok) {
         if (response.status === 404) {

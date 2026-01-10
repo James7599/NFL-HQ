@@ -3,6 +3,7 @@
 import { useState, useMemo, useEffect, useCallback } from 'react';
 import LayoutStabilizer from '@/components/LayoutStabilizer';
 import { TeamData } from '@/data/teams';
+import { getApiPath } from '@/utils/api';
 
 // Helper function to generate PFSN URL
 const getPFNUrl = (playerName: string) => {
@@ -62,7 +63,7 @@ export default function TransactionsTab({ team }: TransactionsTabProps) {
       setLoading(true);
       setError(null);
 
-      const response = await fetch(`/nfl-hq/nfl/teams/api/transactions/${team.id}`);
+      const response = await fetch(getApiPath(`nfl/teams/api/transactions/${team.id}`));
 
       if (!response.ok) {
         if (response.status === 404) {

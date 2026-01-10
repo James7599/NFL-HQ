@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { TeamData } from '@/data/teams';
+import { getApiPath } from '@/utils/api';
 import LayoutStabilizer from '@/components/LayoutStabilizer';
 
 // Helper function to generate PFSN URL
@@ -103,7 +104,7 @@ export default function RosterTab({ team }: RosterTabProps) {
       setLoading(true);
       setError(null);
 
-      const response = await fetch(`/nfl-hq/nfl/teams/api/roster/${team.id}`);
+      const response = await fetch(getApiPath(`nfl/teams/api/roster/${team.id}`));
 
       if (!response.ok) {
         throw new Error(`Failed to fetch roster: ${response.status}`);

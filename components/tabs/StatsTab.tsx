@@ -2,6 +2,7 @@
 
 import { useState, useMemo, useEffect, useCallback } from 'react';
 import { TeamData } from '@/data/teams';
+import { getApiPath } from '@/utils/api';
 import LayoutStabilizer from '@/components/LayoutStabilizer';
 
 // Helper function to generate PFSN URL
@@ -366,7 +367,7 @@ export default function StatsTab({ team }: StatsTabProps) {
       setLoading(true);
       setError(null);
 
-      const response = await fetch(`/nfl-hq/nfl/teams/api/stats/${team.id}`);
+      const response = await fetch(getApiPath(`nfl/teams/api/stats/${team.id}`));
 
       if (!response.ok) {
         if (response.status === 404) {

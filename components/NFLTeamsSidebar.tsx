@@ -25,23 +25,23 @@ const NFLTeamsSidebar: React.FC<NFLTeamsSidebarProps> = ({ currentTeam, currentT
   // Function to generate team URL based on current tab
   const getTeamUrl = (teamId: string) => {
     if (currentTab === 'overview') {
-      return `/nfl-hq/teams/${teamId}`;
+      return `/teams/${teamId}`;
     }
-    return `/nfl-hq/teams/${teamId}/${currentTab}`;
+    return `/teams/${teamId}/${currentTab}`;
   };
 
   const nflTools = [
-    { title: 'NFL Schedule', url: '/nfl-hq/schedule', external: false },
-    { title: 'NFL Standings', url: '/nfl-hq/standings', external: false },
-    { title: 'NFL Injury Report', url: '/nfl-hq/injuries', external: false },
-    { title: 'NFL Stat Leaders', url: '/nfl-hq/stats', external: false },
-    { title: 'NFL Free Agency Tracker', url: '/nfl-hq/free-agency-tracker', external: false },
+    { title: 'NFL Schedule', url: '/schedule', external: false },
+    { title: 'NFL Standings', url: '/standings', external: false },
+    { title: 'NFL Injury Report', url: '/injuries', external: false },
+    { title: 'NFL Stat Leaders', url: '/stats', external: false },
+    { title: 'NFL Free Agency Tracker', url: '/free-agency-tracker', external: false },
     { title: 'NFL Draft Hub', url: 'https://www.profootballnetwork.com/nfl-draft-hq/', external: true },
     { title: 'NFL Playoff Predictor', url: 'https://www.profootballnetwork.com/nfl-playoff-predictor', external: true },
-    { title: 'NFL Power Rankings Builder', url: '/nfl-hq/power-rankings-builder', external: false },
-    { title: 'NFL Transactions', url: '/nfl-hq/transactions', external: false },
+    { title: 'NFL Power Rankings Builder', url: '/power-rankings-builder', external: false },
+    { title: 'NFL Transactions', url: '/transactions', external: false },
     { title: 'NFL Mock Draft Simulator', url: 'https://www.profootballnetwork.com/mockdraft', external: true },
-    { title: 'NFL Salary Cap Tracker', url: '/nfl-hq/salary-cap-tracker', external: false },
+    { title: 'NFL Salary Cap Tracker', url: '/salary-cap-tracker', external: false },
     { title: 'NFL Ultimate GM Simulator', url: 'https://www.profootballnetwork.com/cta-ultimate-gm-simulator-nfl/', external: true },
   ];
 

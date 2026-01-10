@@ -143,7 +143,7 @@ export default function PowerRankingsClient() {
         const allTeams = getAllTeams();
         const statsPromises = allTeams.map(async (team) => {
           try {
-            const response = await fetch(`/nfl-hq/api/nfl/team-stats/${team.id}?season=2025&event=regular`);
+            const response = await fetch(getApiPath(`api/nfl/team-stats/${team.id}?season=2025&event=regular`));
             if (!response.ok) return { teamId: team.id, stats: {} };
 
             const data = await response.json();

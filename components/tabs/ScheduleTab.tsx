@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { TeamData, getAllTeams } from '@/data/teams';
+import { getApiPath } from '@/utils/api';
 import LayoutStabilizer from '@/components/LayoutStabilizer';
 import OptimizedImage from '../OptimizedImage';
 
@@ -72,7 +73,7 @@ export default function ScheduleTab({ team }: ScheduleTabProps) {
       setLoading(true);
       setError(null);
 
-      const response = await fetch(`/nfl-hq/nfl/teams/api/schedule/${team.id}`);
+      const response = await fetch(getApiPath(`nfl/teams/api/schedule/${team.id}`));
 
       if (!response.ok) {
         if (response.status === 404) {

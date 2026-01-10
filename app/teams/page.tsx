@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { teams } from '@/data/teams';
 import NFLTeamsSidebar from '@/components/NFLTeamsSidebar';
+import { getApiPath } from '@/utils/api';
 
 interface ScheduleGame {
   week: number | string;
@@ -44,7 +45,7 @@ export default function TeamsPage() {
           const batch = teamsList.slice(i, i + batchSize);
           const batchPromises = batch.map(async (team) => {
             try {
-              const response = await fetch(`/nfl-hq/nfl/teams/api/schedule/${team.id}`, {
+              const response = await fetch(getApiPath(`nfl/teams/api/schedule/${team.id}`), {
                 headers: {
                   'Content-Type': 'application/json',
                 },

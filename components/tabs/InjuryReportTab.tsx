@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { TeamData } from '@/data/teams';
+import { getApiPath } from '@/utils/api';
 
 interface InjuryData {
   Name: string;
@@ -263,8 +264,8 @@ export default function InjuryReportTab({ team }: InjuryReportTabProps) {
       try {
         // Fetch both injury data and roster data in parallel
         const [injuryResponse, rosterResponse] = await Promise.all([
-          fetch('/nfl-hq/nfl/teams/api/injuries'),
-          fetch(`/nfl-hq/nfl/teams/api/roster/${team.id}`)
+          fetch(getApiPath('nfl/teams/api/injuries')),
+          fetch(getApiPath(`nfl/teams/api/roster/${team.id}`))
         ]);
 
         if (!injuryResponse.ok) {
