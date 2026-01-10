@@ -157,7 +157,7 @@ export default function TeamsPage() {
           </div>
           <div className="flex-1 min-w-0">
             <h3 className="font-bold text-gray-900">
-              <div>{team.city}</div>
+              <div>{team.abbreviation}</div>
               <div>{team.name}</div>
             </h3>
           </div>
