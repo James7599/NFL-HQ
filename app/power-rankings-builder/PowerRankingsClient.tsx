@@ -657,14 +657,67 @@ export default function PowerRankingsClient() {
         throw new Error('Failed to generate canvas');
       }
 
-      const link = document.createElement('a');
-      link.download = `NFL_Power_Rankings_${Date.now()}.png`;
-      link.href = canvas.toDataURL('image/png', 1.0);
-      link.click();
+      // Detect if mobile device
+      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+      if (isMobile) {
+        // For mobile: Convert to blob and use Web Share API or open in new tab
+        canvas.toBlob(async (blob) => {
+          if (!blob) {
+            throw new Error('Failed to create image blob');
+          }
+
+          const fileName = `NFL_Power_Rankings_${Date.now()}.png`;
+
+          // Try Web Share API first (works on iOS Safari, Android Chrome)
+          if (navigator.share && navigator.canShare) {
+            const file = new File([blob], fileName, { type: 'image/png' });
+
+            if (navigator.canShare({ files: [file] })) {
+              try {
+                await navigator.share({
+                  files: [file],
+                  title: 'My NFL Power Rankings',
+                  text: 'Check out my NFL Power Rankings!'
+                });
+                setIsDownloading(false);
+                return;
+              } catch (err) {
+                // User cancelled share or share failed, fall through to image opening
+                console.log('Share cancelled or failed:', err);
+              }
+            }
+          }
+
+          // Fallback: Open image in new tab (user can long-press to save on mobile)
+          const url = URL.createObjectURL(blob);
+          const newWindow = window.open(url, '_blank');
+
+          if (newWindow) {
+            // Clean up the URL after a delay
+            setTimeout(() => URL.revokeObjectURL(url), 100);
+          } else {
+            // If popup was blocked, try direct download
+            const link = document.createElement('a');
+            link.download = fileName;
+            link.href = url;
+            link.click();
+            URL.revokeObjectURL(url);
+          }
+
+          setIsDownloading(false);
+        }, 'image/png', 1.0);
+      } else {
+        // Desktop: Traditional download
+        const link = document.createElement('a');
+        link.download = `NFL_Power_Rankings_${Date.now()}.png`;
+        link.href = canvas.toDataURL('image/png', 1.0);
+        link.click();
+        setIsDownloading(false);
+      }
     } catch (error) {
       console.error('Error generating image:', error);
       alert('Failed to generate image. Please try again.');
-    } finally {
       setIsDownloading(false);
     }
   };
