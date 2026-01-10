@@ -237,7 +237,7 @@ export default function SalaryCapTrackerClient() {
             {loading ? (
               <SkeletonLoader type="table" rows={32} />
             ) : (
-              <div className="overflow-x-auto -mx-4 sm:mx-0">
+              <div className="overflow-x-auto">
                 <table className="w-full min-w-[800px]">
                   <thead className="bg-[#0050A0] text-white">
                     <tr>

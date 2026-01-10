@@ -338,7 +338,7 @@ export default function StatsPage() {
                   <p className="text-gray-600 mb-2">No players found</p>
                 </div>
               ) : (
-                <div className="overflow-x-auto -mx-4 sm:-mx-6 lg:mx-0">
+                <div className="overflow-x-auto">
                   <table className="w-full min-w-[480px] sm:min-w-[560px] md:min-w-[640px]">
                     <thead className="bg-gray-50 border-b border-gray-200">
                       <tr>
