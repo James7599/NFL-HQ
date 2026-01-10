@@ -535,38 +535,25 @@ export default function NFLPlayoffBracket() {
 
         {/* Mobile/Tablet View */}
         <div className="lg:hidden space-y-6">
-          {/* Champion Banner */}
-          <div className={`rounded-lg p-4 text-center ${champion ? 'bg-yellow-50 border border-yellow-200' : 'bg-gray-50 border border-gray-200'}`}>
-            <span className={`font-semibold text-sm ${champion ? 'text-yellow-800' : 'text-gray-500'}`}>
-              {userPicks['superbowl'] && !finalMatchup.completed ? 'Your Winner' : 'Super Bowl LX Champion'}
-            </span>
-            {champion ? (
-              <div className="flex items-center justify-center gap-2 mt-2">
-                <TeamLogo teamId={champion.teamId} size={32} />
-                <span className="text-xl font-bold text-gray-900">{champion.name}</span>
-              </div>
-            ) : (
-              <div className="text-xl font-bold text-gray-500 mt-1 italic">TBD</div>
-            )}
-          </div>
-
-          {/* Super Bowl */}
+          {/* Wild Card Round */}
           <div>
-            <h4 className="text-sm font-semibold text-gray-700 mb-2">Super Bowl LX - Feb 8</h4>
-            <MatchupCard matchup={displayData['superbowl']} userPick={userPicks['superbowl']} onPickWinner={handlePickWinner} canPick />
-          </div>
-
-          {/* Conference Championships */}
-          <div>
-            <h4 className="text-sm font-semibold text-gray-700 mb-2">Conference Championships - Jan 26</h4>
+            <h4 className="text-sm font-semibold text-gray-700 mb-2">Wild Card Round - Jan 11-13</h4>
             <div className="space-y-3">
               <div>
-                <div className="text-xs text-gray-600 mb-1 font-medium">AFC Championship</div>
-                <MatchupCard matchup={displayData['afc-conf']} userPick={userPicks['afc-conf']} onPickWinner={handlePickWinner} canPick />
+                <div className="text-xs text-gray-600 mb-1 font-medium">AFC Wild Card</div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  <MatchupCard matchup={displayData['afc-wc-1']} userPick={userPicks['afc-wc-1']} onPickWinner={handlePickWinner} canPick />
+                  <MatchupCard matchup={displayData['afc-wc-2']} userPick={userPicks['afc-wc-2']} onPickWinner={handlePickWinner} canPick />
+                  <MatchupCard matchup={displayData['afc-wc-3']} userPick={userPicks['afc-wc-3']} onPickWinner={handlePickWinner} canPick />
+                </div>
               </div>
               <div>
-                <div className="text-xs text-gray-600 mb-1 font-medium">NFC Championship</div>
-                <MatchupCard matchup={displayData['nfc-conf']} userPick={userPicks['nfc-conf']} onPickWinner={handlePickWinner} canPick />
+                <div className="text-xs text-gray-600 mb-1 font-medium">NFC Wild Card</div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  <MatchupCard matchup={displayData['nfc-wc-1']} userPick={userPicks['nfc-wc-1']} onPickWinner={handlePickWinner} canPick />
+                  <MatchupCard matchup={displayData['nfc-wc-2']} userPick={userPicks['nfc-wc-2']} onPickWinner={handlePickWinner} canPick />
+                  <MatchupCard matchup={displayData['nfc-wc-3']} userPick={userPicks['nfc-wc-3']} onPickWinner={handlePickWinner} canPick />
+                </div>
               </div>
             </div>
           </div>
@@ -592,27 +579,40 @@ export default function NFLPlayoffBracket() {
             </div>
           </div>
 
-          {/* Wild Card Round */}
+          {/* Conference Championships */}
           <div>
-            <h4 className="text-sm font-semibold text-gray-700 mb-2">Wild Card Round - Jan 11-13</h4>
+            <h4 className="text-sm font-semibold text-gray-700 mb-2">Conference Championships - Jan 26</h4>
             <div className="space-y-3">
               <div>
-                <div className="text-xs text-gray-600 mb-1 font-medium">AFC Wild Card</div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                  <MatchupCard matchup={displayData['afc-wc-1']} userPick={userPicks['afc-wc-1']} onPickWinner={handlePickWinner} canPick />
-                  <MatchupCard matchup={displayData['afc-wc-2']} userPick={userPicks['afc-wc-2']} onPickWinner={handlePickWinner} canPick />
-                  <MatchupCard matchup={displayData['afc-wc-3']} userPick={userPicks['afc-wc-3']} onPickWinner={handlePickWinner} canPick />
-                </div>
+                <div className="text-xs text-gray-600 mb-1 font-medium">AFC Championship</div>
+                <MatchupCard matchup={displayData['afc-conf']} userPick={userPicks['afc-conf']} onPickWinner={handlePickWinner} canPick />
               </div>
               <div>
-                <div className="text-xs text-gray-600 mb-1 font-medium">NFC Wild Card</div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                  <MatchupCard matchup={displayData['nfc-wc-1']} userPick={userPicks['nfc-wc-1']} onPickWinner={handlePickWinner} canPick />
-                  <MatchupCard matchup={displayData['nfc-wc-2']} userPick={userPicks['nfc-wc-2']} onPickWinner={handlePickWinner} canPick />
-                  <MatchupCard matchup={displayData['nfc-wc-3']} userPick={userPicks['nfc-wc-3']} onPickWinner={handlePickWinner} canPick />
-                </div>
+                <div className="text-xs text-gray-600 mb-1 font-medium">NFC Championship</div>
+                <MatchupCard matchup={displayData['nfc-conf']} userPick={userPicks['nfc-conf']} onPickWinner={handlePickWinner} canPick />
               </div>
             </div>
+          </div>
+
+          {/* Super Bowl */}
+          <div>
+            <h4 className="text-sm font-semibold text-gray-700 mb-2">Super Bowl LX - Feb 8</h4>
+            <MatchupCard matchup={displayData['superbowl']} userPick={userPicks['superbowl']} onPickWinner={handlePickWinner} canPick />
+          </div>
+
+          {/* Champion Banner */}
+          <div className={`rounded-lg p-4 text-center ${champion ? 'bg-yellow-50 border border-yellow-200' : 'bg-gray-50 border border-gray-200'}`}>
+            <span className={`font-semibold text-sm ${champion ? 'text-yellow-800' : 'text-gray-500'}`}>
+              {userPicks['superbowl'] && !finalMatchup.completed ? 'Your Winner' : 'Super Bowl LX Champion'}
+            </span>
+            {champion ? (
+              <div className="flex items-center justify-center gap-2 mt-2">
+                <TeamLogo teamId={champion.teamId} size={32} />
+                <span className="text-xl font-bold text-gray-900">{champion.name}</span>
+              </div>
+            ) : (
+              <div className="text-xl font-bold text-gray-500 mt-1 italic">TBD</div>
+            )}
           </div>
         </div>
       </div>
