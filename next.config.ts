@@ -6,7 +6,8 @@ const bundleAnalyzer = withBundleAnalyzer({
 });
 
 const nextConfig: NextConfig = {
-  basePath: '/nfl-hq',
+  // Use basePath '/nfl-hq' for production, empty for Vercel previews
+  basePath: process.env.NEXT_PUBLIC_BASE_PATH || '/nfl-hq',
   trailingSlash: true,
   images: {
     remotePatterns: [
