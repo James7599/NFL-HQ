@@ -1219,8 +1219,9 @@ function SchedulePageContent() {
                                     </div>
                                   ) : (
                                     /* For 4+ games: Show compact badge */
-                                    <div className={`inline-flex items-center justify-center w-full px-2 py-1 ${gameStyle.bg} ${gameStyle.text} border ${gameStyle.border} text-xs font-bold rounded-md`}>
-                                      {gameCount} games
+                                    <div className={`inline-flex items-center justify-center px-1.5 py-0.5 sm:px-2 sm:py-1 ${gameStyle.bg} ${gameStyle.text} border ${gameStyle.border} text-[10px] sm:text-xs font-bold rounded whitespace-nowrap`}>
+                                      <span className="hidden sm:inline">{gameCount} games</span>
+                                      <span className="sm:hidden">{gameCount}g</span>
                                     </div>
                                   )}
                                 </div>
