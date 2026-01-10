@@ -29,6 +29,21 @@ export const metadata: Metadata = {
   authors: [{ name: "PFSN" }],
   creator: "PFSN",
   publisher: "PFSN",
+  icons: {
+    icon: [
+      { url: '/nfl-hq/favicon.ico', sizes: 'any' },
+      { url: '/nfl-hq/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
+      { url: '/nfl-hq/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
+    ],
+    apple: [
+      { url: '/nfl-hq/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
+    ],
+    other: [
+      { url: '/nfl-hq/android-chrome-192x192.png', sizes: '192x192', type: 'image/png' },
+      { url: '/nfl-hq/android-chrome-512x512.png', sizes: '512x512', type: 'image/png' },
+    ],
+  },
+  manifest: '/nfl-hq/manifest.json',
   robots: {
     index: true,
     follow: true,
@@ -49,7 +64,7 @@ export const metadata: Metadata = {
     siteName: 'NFL HQ',
     images: [
       {
-        url: '/og-image.png',
+        url: '/nfl-hq/og-image.png',
         width: 1200,
         height: 630,
         alt: 'NFL HQ - Complete NFL Coverage',
@@ -62,7 +77,7 @@ export const metadata: Metadata = {
     description: 'Your complete NFL resource featuring all 32 team pages, live standings, stats, rosters, schedules, and the latest news.',
     creator: '@PFN365',
     site: '@PFN365',
-    images: ['/og-image.png'],
+    images: ['/nfl-hq/og-image.png'],
   },
   alternates: {
     canonical: 'https://profootballnetwork.com/nfl-hq',

@@ -1,0 +1,38 @@
+{
+  "name": "NFL HQ",
+  "short_name": "NFL HQ",
+  "description": "Your destination for NFL teams, stats, rankings, and interactive tools",
+  "start_url": "/nfl-hq/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#0050A0",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/nfl-hq/pfsn-logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/nfl-hq/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/nfl-hq/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/nfl-hq/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ],
+  "categories": ["sports", "news"],
+  "lang": "en-US",
+  "dir": "ltr",
+  "scope": "/nfl-hq/",
+  "prefer_related_applications": false
+}
