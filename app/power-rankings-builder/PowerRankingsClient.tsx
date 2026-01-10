@@ -805,7 +805,7 @@ export default function PowerRankingsClient() {
       <main className="flex-1 overflow-y-auto lg:pt-0 pt-14">
         {/* Header */}
         <div className="bg-[#0050A0] text-white pt-[57px] lg:pt-0 pb-4 lg:pb-6">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8 pt-8 lg:pt-10">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8 pt-4 lg:pt-10">
             <h1 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold mb-3">
               NFL Power Rankings Builder
             </h1>
@@ -1016,7 +1016,7 @@ export default function PowerRankingsClient() {
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                         </svg>
-                        Download
+                        Download Image
                       </>
                     )}
                   </button>

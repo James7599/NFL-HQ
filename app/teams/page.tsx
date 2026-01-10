@@ -156,7 +156,7 @@ export default function TeamsPage() {
             />
           </div>
           <div className="flex-1 min-w-0">
-            <h3 className="font-bold text-gray-900">
+            <h3 className={`font-bold text-gray-900 ${team.name === 'Buccaneers' || team.name === 'Commanders' ? 'text-sm sm:text-base' : ''}`}>
               <div>{team.abbreviation}</div>
               <div>{team.name}</div>
             </h3>
@@ -195,7 +195,7 @@ export default function TeamsPage() {
       <main className="flex-1 lg:ml-64 min-w-0 lg:pt-0 pt-14">
           {/* Header */}
           <div className="bg-[#0050A0] text-white pt-[57px] lg:pt-0 pb-4 lg:pb-6">
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8 pt-8 lg:pt-10">
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8 pt-4 lg:pt-10">
               <h1 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold mb-3">
                 NFL Teams
               </h1>
