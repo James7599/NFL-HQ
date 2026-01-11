@@ -337,11 +337,6 @@ export default function PlayersDirectoryClient() {
                         <p className="text-sm text-gray-700">
                           Page <span className="font-medium">{currentPage}</span> of{' '}
                           <span className="font-medium">{totalPages}</span>
-                          {pagination.totalPlayers > 0 && (
-                            <span className="text-gray-500 ml-2">
-                              ({pagination.totalPlayers.toLocaleString()} players)
-                            </span>
-                          )}
                         </p>
                         {/* Items Per Page */}
                         <div className="flex items-center gap-2">

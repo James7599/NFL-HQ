@@ -521,11 +521,11 @@ export async function GET(
     // Get team info
     const team = teams[foundTeamId];
 
-    // Fetch ESPN stats (currently unused, but available for future use)
-    let _espnStats: ESPNStats | null = null;
+    // Fetch ESPN stats
+    let espnStats: ESPNStats | null = null;
     const espnAthleteId = await fetchESPNAthleteId(foundTeamId, foundPlayer.name);
     if (espnAthleteId) {
-      _espnStats = await fetchESPNAthleteStats(espnAthleteId);
+      espnStats = await fetchESPNAthleteStats(espnAthleteId);
     }
 
     // Fetch PFSN Impact data (may fail if repos don't exist)
@@ -575,6 +575,19 @@ export async function GET(
         season: pfsnPlayer.season,
         weeklyData: pfsnPlayer.weeklyData,
         stats: pfsnPlayer.stats,
+      } : null,
+
+      // ESPN Stats
+      seasonStats: espnStats ? {
+        season: espnStats.displayName,
+        stats: espnStats.statistics.map(stat => ({
+          name: stat.name,
+          label: stat.displayName,
+          shortLabel: stat.shortDisplayName,
+          abbreviation: stat.abbreviation,
+          value: stat.value,
+          displayValue: stat.displayValue,
+        })),
       } : null,
     };
 
