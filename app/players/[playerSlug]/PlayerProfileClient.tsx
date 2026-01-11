@@ -375,19 +375,19 @@ export default function PlayerProfileClient({ playerSlug }: Props) {
 
       {/* Hero Section with Blue Background */}
       <div style={{ backgroundColor: '#0050A0' }} className="text-white pt-[57px] lg:pt-0">
-        <div className="container mx-auto px-4 py-5 lg:py-6">
+        <div className="container mx-auto px-4 py-4 lg:py-5">
           <div className="flex flex-col lg:flex-row items-center justify-between">
             {/* Player Info */}
-            <div className="flex flex-col sm:flex-row items-center sm:items-start space-y-4 sm:space-y-0 sm:space-x-8 mb-6 lg:mb-0">
+            <div className="flex flex-col sm:flex-row items-center sm:items-start space-y-4 sm:space-y-0 sm:space-x-8 mb-4 lg:mb-0">
               {/* Headshot */}
-              <div className="w-28 h-28 lg:w-32 lg:h-32 bg-white rounded-full flex items-center justify-center shadow-lg overflow-hidden flex-shrink-0">
+              <div className="w-28 h-28 lg:w-32 lg:h-32 rounded-full flex items-center justify-center shadow-lg overflow-hidden flex-shrink-0 bg-[#0050A0]">
                 {!imageError ? (
                   <Image
                     src={player.headshotUrl}
                     alt={player.name}
                     width={160}
                     height={160}
-                    className="w-full h-full object-cover object-top scale-125"
+                    className="w-full h-full object-cover object-top scale-[1.35]"
                     onError={() => setImageError(true)}
                   />
                 ) : (
@@ -432,23 +432,23 @@ export default function PlayerProfileClient({ playerSlug }: Props) {
             </div>
 
             {/* PFSN Impact Card */}
-            <div className="bg-white text-gray-800 rounded-lg p-4 lg:p-6 w-full sm:w-auto min-w-[200px] shadow-lg">
-              <h3 className="text-sm font-semibold mb-3 text-center text-gray-600">PFSN IMPACT GRADE</h3>
+            <div className="bg-white text-gray-800 rounded-lg p-3 lg:p-4 w-full sm:w-auto min-w-[180px] shadow-lg">
+              <h3 className="text-xs font-semibold mb-2 text-center text-gray-600">PFSN IMPACT GRADE</h3>
               {player.pfsnImpact ? (
                 <div className="text-center">
-                  <div className="flex items-center justify-center gap-4">
+                  <div className="flex items-center justify-center gap-3">
                     <div
-                      className={`w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold ${gradeColors?.bg} ${gradeColors?.text} border-2 ${gradeColors?.border}`}
+                      className={`w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold ${gradeColors?.bg} ${gradeColors?.text} border-2 ${gradeColors?.border}`}
                     >
                       {player.pfsnImpact.grade}
                     </div>
                     <div className="text-left">
-                      <div className={`text-3xl font-bold ${getScoreColor(player.pfsnImpact.score)}`}>
+                      <div className={`text-2xl font-bold ${getScoreColor(player.pfsnImpact.score)}`}>
                         {player.pfsnImpact.score}
                       </div>
                     </div>
                   </div>
-                  <div className="flex justify-center mt-3 pt-3 border-t border-gray-100 text-sm">
+                  <div className="flex justify-center mt-2 pt-2 border-t border-gray-100 text-xs">
                     <div>
                       <span className="text-gray-500">Season Rank</span>
                       <span className="font-bold text-gray-900 ml-1">#{player.pfsnImpact.seasonRank}</span>
@@ -456,8 +456,8 @@ export default function PlayerProfileClient({ playerSlug }: Props) {
                   </div>
                 </div>
               ) : (
-                <div className="text-center py-2">
-                  <div className="w-16 h-16 mx-auto rounded-full bg-gray-100 flex items-center justify-center text-2xl font-bold text-gray-400 mb-2">
+                <div className="text-center py-1">
+                  <div className="w-12 h-12 mx-auto rounded-full bg-gray-100 flex items-center justify-center text-xl font-bold text-gray-400 mb-1">
                     —
                   </div>
                   <p className="text-gray-500 text-xs">Not available</p>
