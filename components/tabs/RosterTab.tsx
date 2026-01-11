@@ -351,11 +351,7 @@ export default function RosterTab({ team }: RosterTabProps) {
                                   href={getPositionImpactUrl(player.position)}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className={`font-semibold hover:underline ${
-                                    player.impactPlus >= 80 ? 'text-green-600' :
-                                    player.impactPlus >= 70 ? 'text-blue-600' :
-                                    'text-gray-700'
-                                  }`}
+                                  className="font-semibold hover:underline text-blue-600"
                                 >
                                   {player.impactPlus.toFixed(1)}
                                 </a>
