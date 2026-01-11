@@ -88,6 +88,26 @@ function normalizePlayerName(name: string): string {
     .replace(/(jr|sr|ii|iii|iv)$/g, '');
 }
 
+// Generate multiple name variations for better matching
+function generateNameVariations(name: string): string[] {
+  const normalized = normalizePlayerName(name);
+  const variations = [normalized];
+
+  // Handle names with initials like "A.J. Brown" -> "ajbrown" or "aj-brown"
+  const withoutPeriods = name.replace(/\./g, '');
+  variations.push(normalizePlayerName(withoutPeriods));
+
+  // Handle hyphenated names
+  const withoutHyphens = name.replace(/-/g, ' ');
+  variations.push(normalizePlayerName(withoutHyphens));
+
+  // Handle "Jr." and other suffixes more aggressively
+  const withoutSuffix = name.replace(/\s+(jr\.?|sr\.?|ii|iii|iv|v)$/i, '');
+  variations.push(normalizePlayerName(withoutSuffix));
+
+  return [...new Set(variations)];
+}
+
 function parseCSVLine(line: string): string[] {
   const result: string[] = [];
   let current = '';
@@ -167,11 +187,14 @@ async function getAllImpactGrades(): Promise<Map<string, number>> {
     positions.map(pos => fetchPositionGrades(pos))
   );
 
-  // Combine all grades into map
+  // Combine all grades into map with multiple name variations
   for (const grades of allGradesResults) {
     for (const grade of grades) {
-      const normalizedName = normalizePlayerName(grade.player);
-      gradesMap.set(normalizedName, grade.score);
+      // Store under all name variations for better matching
+      const variations = generateNameVariations(grade.player);
+      for (const variant of variations) {
+        gradesMap.set(variant, grade.score);
+      }
     }
   }
 
@@ -308,8 +331,16 @@ export async function GET(
     // Transform the data to our format
     const transformedRoster = data.squad
       .map(player => {
-        const normalizedName = normalizePlayerName(player.name);
-        const impactScore = impactGrades.get(normalizedName) || 0;
+        // Try multiple name variations to find a match
+        const nameVariations = generateNameVariations(player.name);
+        let impactScore = 0;
+        for (const variant of nameVariations) {
+          const score = impactGrades.get(variant);
+          if (score && score > 0) {
+            impactScore = score;
+            break;
+          }
+        }
 
         return {
           name: player.name,

@@ -72,6 +72,25 @@ function getPositionGroup(position: string): string {
   return 'Other';
 }
 
+function getPositionImpactUrl(position: string): string {
+  const pos = position.toUpperCase();
+  if (pos === 'QB') return 'https://www.profootballnetwork.com/nfl-qb-rankings-impact/';
+  if (pos === 'RB' || pos === 'FB') return 'https://www.profootballnetwork.com/nfl-rb-rankings-impact/';
+  if (pos === 'WR') return 'https://www.profootballnetwork.com/nfl-wr-rankings-impact/';
+  if (pos === 'TE') return 'https://www.profootballnetwork.com/nfl-te-rankings-impact/';
+  if (pos === 'OL' || pos === 'OT' || pos === 'OG' || pos === 'OC' || pos === 'T' || pos === 'G' || pos === 'C') {
+    return 'https://www.profootballnetwork.com/nfl-player-ol-rankings-impact/';
+  }
+  if (pos === 'DT' || pos === 'NT') return 'https://www.profootballnetwork.com/nfl-dt-rankings-impact/';
+  if (pos === 'EDGE' || pos === 'DE') return 'https://www.profootballnetwork.com/nfl-edge-rankings-impact/';
+  if (pos === 'LB' || pos === 'ILB' || pos === 'OLB' || pos === 'MLB') return 'https://www.profootballnetwork.com/nfl-lb-rankings-impact/';
+  if (pos === 'CB') return 'https://www.profootballnetwork.com/nfl-cb-rankings-impact/';
+  if (pos === 'S' || pos === 'FS' || pos === 'SS' || pos === 'SAF' || pos === 'DB') {
+    return 'https://www.profootballnetwork.com/nfl-saf-rankings-impact/';
+  }
+  return 'https://www.profootballnetwork.com/nfl-player-rankings-impact/';
+}
+
 const positionOrder = [
   'Quarterback',
   'Running Back',
@@ -268,22 +287,22 @@ export default function RosterTab({ team }: RosterTabProps) {
                     <table className="min-w-full text-sm">
                       <thead>
                         <tr className="text-white" style={{ backgroundColor: team.primaryColor }}>
-                          <th className="text-center px-4 py-3 font-medium whitespace-nowrap">#</th>
-                          <th className="text-left px-4 py-3 font-medium whitespace-nowrap min-w-[200px]">Name</th>
-                          <th className="text-center px-4 py-3 font-medium whitespace-nowrap">Impact Grade</th>
-                          <th className="text-center px-4 py-3 font-medium whitespace-nowrap">Experience</th>
-                          <th className="text-center px-4 py-3 font-medium whitespace-nowrap">Age</th>
-                          <th className="text-center px-4 py-3 font-medium whitespace-nowrap">Height</th>
-                          <th className="text-center px-4 py-3 font-medium whitespace-nowrap">Weight</th>
-                          <th className="text-left px-4 py-3 font-medium whitespace-nowrap min-w-[150px]">College</th>
+                          <th className="text-center px-3 py-3 font-medium whitespace-nowrap w-12">#</th>
+                          <th className="text-left px-3 py-3 font-medium whitespace-nowrap min-w-[200px]">Name</th>
+                          <th className="text-center px-3 py-3 font-medium whitespace-nowrap w-24">Impact Grade</th>
+                          <th className="text-center px-3 py-3 font-medium whitespace-nowrap w-24">Experience</th>
+                          <th className="text-center px-3 py-3 font-medium whitespace-nowrap w-16">Age</th>
+                          <th className="text-center px-3 py-3 font-medium whitespace-nowrap w-16">Height</th>
+                          <th className="text-center px-3 py-3 font-medium whitespace-nowrap w-16">Weight</th>
+                          <th className="text-left px-3 py-3 font-medium whitespace-nowrap min-w-[120px]">College</th>
                         </tr>
                       </thead>
                       <tbody>
                         {positionPlayers.map((player, index) => (
                           <tr key={`${player.jerseyNumber}-${player.name}`}
                               className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                            <td className="px-4 py-3 font-semibold text-gray-900 whitespace-nowrap text-center">{player.jerseyNumber}</td>
-                            <td className="px-4 py-3">
+                            <td className="px-3 py-3 font-semibold text-gray-900 whitespace-nowrap text-center">{player.jerseyNumber}</td>
+                            <td className="px-3 py-3">
                               <div className="flex items-center space-x-3 min-w-[200px]">
                                 <img
                                   src={`https://staticd.profootballnetwork.com/skm/assets/player-images/nfl/${player.slug}.png?w=80`}
@@ -326,10 +345,12 @@ export default function RosterTab({ team }: RosterTabProps) {
                                 </div>
                               </div>
                             </td>
-                            <td className="px-4 py-3 whitespace-nowrap text-center">
+                            <td className="px-3 py-3 whitespace-nowrap text-center">
                               {player.impactPlus > 0 ? (
-                                <Link
-                                  href={`/players/${player.slug}`}
+                                <a
+                                  href={getPositionImpactUrl(player.position)}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
                                   className={`font-semibold hover:underline ${
                                     player.impactPlus >= 80 ? 'text-green-600' :
                                     player.impactPlus >= 70 ? 'text-blue-600' :
@@ -337,16 +358,16 @@ export default function RosterTab({ team }: RosterTabProps) {
                                   }`}
                                 >
                                   {player.impactPlus.toFixed(1)}
-                                </Link>
+                                </a>
                               ) : (
                                 <span className="text-gray-400">-</span>
                               )}
                             </td>
-                            <td className="px-4 py-3 text-gray-700 whitespace-nowrap text-center">{player.experience === 0 ? 'R' : player.experience}</td>
-                            <td className="px-4 py-3 text-gray-700 whitespace-nowrap text-center">{player.age}</td>
-                            <td className="px-4 py-3 text-gray-700 whitespace-nowrap text-center">{player.height}</td>
-                            <td className="px-4 py-3 text-gray-700 whitespace-nowrap text-center">{player.weight}</td>
-                            <td className="px-4 py-3 text-gray-700 whitespace-nowrap">{player.college}</td>
+                            <td className="px-3 py-3 text-gray-700 whitespace-nowrap text-center">{player.experience === 0 ? 'R' : player.experience}</td>
+                            <td className="px-3 py-3 text-gray-700 whitespace-nowrap text-center">{player.age}</td>
+                            <td className="px-3 py-3 text-gray-700 whitespace-nowrap text-center">{player.height}</td>
+                            <td className="px-3 py-3 text-gray-700 whitespace-nowrap text-center">{player.weight}</td>
+                            <td className="px-3 py-3 text-gray-700 whitespace-nowrap">{player.college}</td>
                           </tr>
                         ))}
                       </tbody>
