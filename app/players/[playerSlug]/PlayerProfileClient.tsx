@@ -55,6 +55,7 @@ interface PlayerProfile {
   } | null;
   gameLog: {
     season: string;
+    availableSeasons: number[];
     statLabels: Array<{ name: string; label: string }>;
     games: Array<{
       week: number;
@@ -186,6 +187,9 @@ export default function PlayerProfileClient({ playerSlug }: Props) {
   const [articles, setArticles] = useState<Article[]>([]);
   const [visibleArticles, setVisibleArticles] = useState(3);
   const [selectedSeason, setSelectedSeason] = useState<number | 'career'>('career');
+  const [selectedGameLogSeason, setSelectedGameLogSeason] = useState<number | null>(null);
+  const [gameLogData, setGameLogData] = useState<PlayerProfile['gameLog'] | null>(null);
+  const [gameLogLoading, setGameLogLoading] = useState(false);
 
   useEffect(() => {
     async function fetchPlayer() {
@@ -215,6 +219,54 @@ export default function PlayerProfileClient({ playerSlug }: Props) {
 
     fetchPlayer();
   }, [playerSlug]);
+
+  // Initialize game log data from player and handle season changes
+  useEffect(() => {
+    if (player?.gameLog) {
+      // Initialize with current season's game log from player data
+      if (selectedGameLogSeason === null) {
+        setGameLogData(player.gameLog);
+        // Set the default selected season from the season string (e.g., "2024 Regular Season" -> 2024)
+        const seasonMatch = player.gameLog.season.match(/^(\d{4})/);
+        if (seasonMatch) {
+          setSelectedGameLogSeason(parseInt(seasonMatch[1]));
+        }
+      }
+    }
+  }, [player, selectedGameLogSeason]);
+
+  // Fetch game log for a different season
+  useEffect(() => {
+    async function fetchGameLog() {
+      if (!player || selectedGameLogSeason === null) return;
+
+      // Check if this is the current season (already loaded)
+      const currentSeasonMatch = player.gameLog?.season.match(/^(\d{4})/);
+      const currentSeason = currentSeasonMatch ? parseInt(currentSeasonMatch[1]) : null;
+
+      if (selectedGameLogSeason === currentSeason) {
+        setGameLogData(player.gameLog);
+        return;
+      }
+
+      setGameLogLoading(true);
+      try {
+        const response = await fetch(getApiPath(`api/nfl/player/${playerSlug}?gameLogSeason=${selectedGameLogSeason}`));
+        if (response.ok) {
+          const data = await response.json();
+          if (data.player?.gameLog) {
+            setGameLogData(data.player.gameLog);
+          }
+        }
+      } catch (err) {
+        console.error('Error fetching game log:', err);
+      } finally {
+        setGameLogLoading(false);
+      }
+    }
+
+    fetchGameLog();
+  }, [selectedGameLogSeason, player, playerSlug]);
 
   // Fetch articles from RSS feed
   useEffect(() => {
@@ -370,7 +422,7 @@ export default function PlayerProfileClient({ playerSlug }: Props) {
       />
 
       {/* Hero Section with Blue Background */}
-      <div style={{ backgroundColor: '#0050A0' }} className="text-white pt-[57px] lg:pt-6">
+      <div style={{ backgroundColor: '#0050A0' }} className="text-white pt-[57px] lg:pt-6 lg:pb-6">
         <div className="container mx-auto px-4 py-4 lg:py-5">
           <div className="flex flex-col lg:flex-row items-center justify-between">
             {/* Player Info */}
@@ -383,7 +435,7 @@ export default function PlayerProfileClient({ playerSlug }: Props) {
                     alt={player.name}
                     width={160}
                     height={160}
-                    className="w-full h-full object-cover object-top scale-[1.35]"
+                    className="w-full h-full object-cover object-[center_10%] scale-[1.35]"
                     onError={() => setImageError(true)}
                   />
                 ) : (
@@ -540,50 +592,69 @@ export default function PlayerProfileClient({ playerSlug }: Props) {
         )}
 
         {/* Game Log Section - ESPN Stats */}
-        {player.gameLog && player.gameLog.games.length > 0 && (
+        {player.gameLog && player.gameLog.availableSeasons.length > 0 && (
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-5 mb-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">
-              Game Log
-            </h2>
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b-2 border-gray-200">
-                    <th className="text-left py-3 px-2 font-semibold text-gray-600 bg-gray-50 whitespace-nowrap">WK</th>
-                    <th className="text-left py-3 px-2 font-semibold text-gray-600 bg-gray-50 whitespace-nowrap">OPP</th>
-                    <th className="text-center py-3 px-2 font-semibold text-gray-600 bg-gray-50 whitespace-nowrap">RESULT</th>
-                    {player.gameLog.statLabels.slice(0, 8).map((label) => (
-                      <th key={label.name} className="text-center py-3 px-2 font-semibold text-gray-600 bg-gray-50 whitespace-nowrap">
-                        {label.label}
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {player.gameLog.games.map((game, index) => (
-                    <tr
-                      key={game.week}
-                      className={`border-b border-gray-100 hover:bg-gray-50 ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'}`}
-                    >
-                      <td className="py-3 px-2 font-medium text-gray-900 whitespace-nowrap">{game.week}</td>
-                      <td className="py-3 px-2 text-gray-700 whitespace-nowrap">
-                        <span className="text-gray-500">{game.homeAway}</span> {game.opponent}
-                      </td>
-                      <td className="py-3 px-2 text-center whitespace-nowrap">
-                        <span className={`font-medium ${game.result.startsWith('W') ? 'text-green-600' : game.result.startsWith('L') ? 'text-red-600' : 'text-gray-600'}`}>
-                          {game.result}
-                        </span>
-                      </td>
-                      {player.gameLog!.statLabels.slice(0, 8).map((label) => (
-                        <td key={label.name} className="py-3 px-2 text-center text-gray-700 whitespace-nowrap">
-                          {game.stats[label.name] || '-'}
-                        </td>
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
+              <h2 className="text-lg font-semibold text-gray-900">
+                Game Log
+              </h2>
+              <select
+                value={selectedGameLogSeason || ''}
+                onChange={(e) => setSelectedGameLogSeason(parseInt(e.target.value))}
+                className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+              >
+                {player.gameLog.availableSeasons.map((year) => (
+                  <option key={year} value={year}>{year} Season</option>
+                ))}
+              </select>
+            </div>
+            {gameLogLoading ? (
+              <div className="flex items-center justify-center py-8">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+              </div>
+            ) : gameLogData && gameLogData.games.length > 0 ? (
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b-2 border-gray-200">
+                      <th className="text-left py-3 px-2 font-semibold text-gray-600 bg-gray-50 whitespace-nowrap">WK</th>
+                      <th className="text-left py-3 px-2 font-semibold text-gray-600 bg-gray-50 whitespace-nowrap">OPP</th>
+                      <th className="text-center py-3 px-2 font-semibold text-gray-600 bg-gray-50 whitespace-nowrap">RESULT</th>
+                      {gameLogData.statLabels.slice(0, 8).map((label) => (
+                        <th key={label.name} className="text-center py-3 px-2 font-semibold text-gray-600 bg-gray-50 whitespace-nowrap">
+                          {label.label}
+                        </th>
                       ))}
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                  </thead>
+                  <tbody>
+                    {gameLogData.games.map((game, index) => (
+                      <tr
+                        key={game.week}
+                        className={`border-b border-gray-100 hover:bg-gray-50 ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'}`}
+                      >
+                        <td className="py-3 px-2 font-medium text-gray-900 whitespace-nowrap">{game.week}</td>
+                        <td className="py-3 px-2 text-gray-700 whitespace-nowrap">
+                          <span className="text-gray-500">{game.homeAway}</span> {game.opponent}
+                        </td>
+                        <td className="py-3 px-2 text-center whitespace-nowrap">
+                          <span className={`font-medium ${game.result.startsWith('W') ? 'text-green-600' : game.result.startsWith('L') ? 'text-red-600' : 'text-gray-600'}`}>
+                            {game.result}
+                          </span>
+                        </td>
+                        {gameLogData.statLabels.slice(0, 8).map((label) => (
+                          <td key={label.name} className="py-3 px-2 text-center text-gray-700 whitespace-nowrap">
+                            {game.stats[label.name] || '-'}
+                          </td>
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <p className="text-gray-500 text-center py-4">No game log data available for this season.</p>
+            )}
           </div>
         )}
 

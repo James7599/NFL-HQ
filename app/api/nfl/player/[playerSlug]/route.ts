@@ -381,10 +381,14 @@ async function fetchESPNAthleteStats(athleteId: string): Promise<ESPNStats | nul
   }
 }
 
-async function fetchESPNGameLog(athleteId: string): Promise<ESPNGameLog | null> {
+async function fetchESPNGameLog(athleteId: string, season?: number): Promise<ESPNGameLog | null> {
   try {
+    const url = season
+      ? `https://site.web.api.espn.com/apis/common/v3/sports/football/nfl/athletes/${athleteId}/gamelog?season=${season}`
+      : `https://site.web.api.espn.com/apis/common/v3/sports/football/nfl/athletes/${athleteId}/gamelog`;
+
     const response = await fetch(
-      `https://site.web.api.espn.com/apis/common/v3/sports/football/nfl/athletes/${athleteId}/gamelog`,
+      url,
       {
         headers: { 'User-Agent': 'Mozilla/5.0 (compatible; NFL-HQ/1.0)' },
         next: { revalidate: 604800 }, // Cache for 1 week (season is over)
@@ -835,11 +839,13 @@ void _extractWeeklyData;
 void _extractStats;
 
 export async function GET(
-  _request: NextRequest,
+  request: NextRequest,
   { params }: { params: Promise<{ playerSlug: string }> }
 ) {
   try {
     const { playerSlug } = await params;
+    const searchParams = request.nextUrl.searchParams;
+    const gameLogSeason = searchParams.get('gameLogSeason');
 
     if (!playerSlug) {
       return NextResponse.json(
@@ -889,9 +895,10 @@ export async function GET(
     const espnAthleteId = await fetchESPNAthleteId(foundTeamId, foundPlayer.name);
     if (espnAthleteId) {
       // Fetch stats, game log, and career stats in parallel
+      const seasonParam = gameLogSeason ? parseInt(gameLogSeason) : undefined;
       const [statsResult, gameLogResult, careerStatsResult] = await Promise.all([
         fetchESPNAthleteStats(espnAthleteId),
-        fetchESPNGameLog(espnAthleteId),
+        fetchESPNGameLog(espnAthleteId, seasonParam),
         fetchESPNCareerStats(espnAthleteId),
       ]);
       espnStats = statsResult;
@@ -971,6 +978,7 @@ export async function GET(
       // Game Log
       gameLog: espnGameLog ? {
         season: espnGameLog.season,
+        availableSeasons: espnCareerStats?.availableSeasons || [],
         statLabels: espnGameLog.statLabels,
         games: espnGameLog.games.map(game => ({
           week: game.week,
