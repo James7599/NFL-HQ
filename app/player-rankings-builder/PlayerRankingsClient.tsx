@@ -5,9 +5,11 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import { getCurrentPlayers, getAlltimePlayersPublic, PlayerData } from '@/data/players/index';
 import { getAllTeams } from '@/data/teams';
 import NFLTeamsSidebar from '@/components/NFLTeamsSidebar';
-import { CURRENT_TOP_100_IDS } from '@/data/player-rankings/current-top-100';
-import { ALLTIME_TOP_100_IDS } from '@/data/player-rankings/alltime-top-100';
 import toast, { Toaster } from 'react-hot-toast';
+
+// Placeholder arrays - TODO: Replace with actual NFL player rankings
+const CURRENT_TOP_100_IDS: string[] = [];
+const ALLTIME_TOP_100_IDS: string[] = [];
 
 interface RankedPlayer {
   rank: number;
