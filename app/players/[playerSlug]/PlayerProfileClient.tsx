@@ -57,6 +57,7 @@ interface PlayerProfile {
     season: string;
     availableSeasons: number[];
     statLabels: Array<{ name: string; label: string }>;
+    seasonTotals: Record<string, string>;
     games: Array<{
       week: number;
       date: string;
@@ -480,11 +481,11 @@ export default function PlayerProfileClient({ playerSlug }: Props) {
             </div>
 
             {/* PFSN Impact Card */}
-            <div className="bg-white text-gray-800 rounded-lg p-4 lg:p-5 w-full sm:w-auto min-w-[200px] shadow-lg flex flex-col">
+            <div className="bg-white text-gray-800 rounded-lg p-4 lg:p-5 w-full sm:w-auto min-w-[200px] shadow-lg flex flex-col justify-between">
               <h3 className="text-base font-semibold text-center text-gray-600">PFSN Impact Grade</h3>
               {player.pfsnImpact ? (
-                <div className="flex flex-col flex-1">
-                  <div className="flex items-center justify-center gap-4 flex-1 py-3">
+                <>
+                  <div className="flex items-center justify-center gap-4 py-4">
                     <div
                       className={`w-14 h-14 rounded-full flex items-center justify-center text-2xl font-bold ${gradeColors?.bg} ${gradeColors?.text} border-2 ${gradeColors?.border}`}
                     >
@@ -502,7 +503,7 @@ export default function PlayerProfileClient({ playerSlug }: Props) {
                       <span className="font-bold text-gray-900 ml-1.5">#{player.pfsnImpact.seasonRank}</span>
                     </div>
                   </div>
-                </div>
+                </>
               ) : (
                 <div className="text-center py-2">
                   <div className="w-14 h-14 mx-auto rounded-full bg-gray-100 flex items-center justify-center text-2xl font-bold text-gray-400 mb-2">
@@ -633,20 +634,17 @@ export default function PlayerProfileClient({ playerSlug }: Props) {
                       </tr>
                     ))}
                   </tbody>
-                  {player.seasonStats && player.seasonStats.stats.length > 0 && (
+                  {gameLogData.seasonTotals && Object.keys(gameLogData.seasonTotals).length > 0 && (
                     <tfoot>
                       <tr className="border-t-2 border-gray-300 bg-gray-100 font-semibold">
                         <td className="py-3 px-2 text-gray-900 whitespace-nowrap" colSpan={3}>
                           SEASON TOTALS
                         </td>
-                        {gameLogData.statLabels.slice(0, 8).map((label) => {
-                          const stat = player.seasonStats?.stats.find(s => s.name === label.name);
-                          return (
-                            <td key={label.name} className="py-3 px-2 text-center text-gray-900 whitespace-nowrap">
-                              {stat?.displayValue || '-'}
-                            </td>
-                          );
-                        })}
+                        {gameLogData.statLabels.slice(0, 8).map((label) => (
+                          <td key={label.name} className="py-3 px-2 text-center text-gray-900 whitespace-nowrap">
+                            {gameLogData.seasonTotals[label.name] || '-'}
+                          </td>
+                        ))}
                       </tr>
                     </tfoot>
                   )}

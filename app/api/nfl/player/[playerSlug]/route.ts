@@ -104,6 +104,7 @@ interface ESPNGameLog {
   season: string;
   games: ESPNGameLogEntry[];
   statLabels: Array<{ name: string; label: string }>;
+  seasonTotals: Record<string, string>;
 }
 
 interface ESPNCareerStatsSeason {
@@ -455,10 +456,18 @@ async function fetchESPNGameLog(athleteId: string, season?: number): Promise<ESP
     // Sort by week
     games.sort((a, b) => a.week - b.week);
 
+    // Parse season totals from the category
+    const totalsArray = mainCategory.totals || [];
+    const seasonTotals: Record<string, string> = {};
+    statLabels.forEach((label, index) => {
+      seasonTotals[label.name] = totalsArray[index] || '-';
+    });
+
     return {
       season: seasonType.displayName || '2025 Regular Season',
       games,
       statLabels,
+      seasonTotals,
     };
   } catch (error) {
     console.error('Error fetching ESPN game log:', error);
@@ -980,6 +989,7 @@ export async function GET(
         season: espnGameLog.season,
         availableSeasons: espnCareerStats?.availableSeasons || [],
         statLabels: espnGameLog.statLabels,
+        seasonTotals: espnGameLog.seasonTotals,
         games: espnGameLog.games.map(game => ({
           week: game.week,
           date: game.date,
