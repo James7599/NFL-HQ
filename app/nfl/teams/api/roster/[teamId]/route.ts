@@ -44,33 +44,33 @@ const GOOGLE_SHEETS_CONFIG: Record<string, { spreadsheetId: string; gid: string 
   },
 };
 
-// Column mappings for each position sheet (must match player API)
+// Column mappings for each position sheet - verified from actual sheet structure
 const POSITION_COLUMN_MAPPINGS: Record<string, {
   playerCol: number;
   scoreCol: number;
   rankCol: number; // Used to validate rows
   headerRows: number;
 }> = {
-  // QB: Season, Rank, Player, Grade, Score, OVR. Rank
+  // QB: Season, Rank, Player, Grade, Score (col 4), OVR. Rank
   QB: { playerCol: 2, scoreCol: 4, rankCol: 1, headerRows: 1 },
-  // SAF: columns from end: -4=Ovr.Rank, -3=SeasonRank, -2=SAF+, -1=Grade
-  SAF: { playerCol: 1, scoreCol: -2, rankCol: -3, headerRows: 10 },
-  // CB: columns from end: -4=Ovr.Rank, -3=SeasonRank, -2=CB+, -1=Grade
-  CB: { playerCol: 1, scoreCol: -2, rankCol: -3, headerRows: 10 },
-  // LB: columns from end: -4=Ovr.Rank, -3=SeasonRank, -2=LB+, -1=Grade
-  LB: { playerCol: 2, scoreCol: -2, rankCol: -3, headerRows: 10 },
-  // EDGE: columns from end: -4=Ovr.Rank, -3=SeasonRank, -2=EDGE+, -1=Grade
-  EDGE: { playerCol: 1, scoreCol: -2, rankCol: -3, headerRows: 10 },
-  // DT: columns from end: -4=Ovr.Rank, -3=SeasonRank, -2=DT+, -1=Grade
-  DT: { playerCol: 1, scoreCol: -2, rankCol: -3, headerRows: 10 },
-  // OL: columns from end: -5=Ovr.Rank, -4=SeasonRank, -3=SeasonPosRank, -2=OL+, -1=Grade
-  OL: { playerCol: 3, scoreCol: -2, rankCol: -4, headerRows: 10 },
-  // TE: columns from end: -4=Ovr.Rank, -3=SeasonRank, -2=TE+, -1=Grade
-  TE: { playerCol: 1, scoreCol: -2, rankCol: -3, headerRows: 10 },
-  // WR: columns from end: -8=Ovr.Rank, -6=WR+, -5=Grade, -1=SeasonRank
-  WR: { playerCol: 1, scoreCol: -6, rankCol: -1, headerRows: 10 },
-  // RB: col 0=RB+, col 1=Grade, col 2=Player, from end: -3=OverallRank, -1=SeasonRank
-  RB: { playerCol: 2, scoreCol: 0, rankCol: -1, headerRows: 10 },
+  // SAF: ...Ovr.Rank, Season Rank, SAF+ (col -3), SAF+ Grade, [extra name+year]
+  SAF: { playerCol: 1, scoreCol: -3, rankCol: -4, headerRows: 10 },
+  // CB: ...Ovr.Rank, Season Rank, CB+ (col -3), CB+ Grade, [extra name+year]
+  CB: { playerCol: 1, scoreCol: -3, rankCol: -4, headerRows: 10 },
+  // LB: ...Ovr.Rank, Season Rank, LB+ (col -3), LB+ Grade, [extra name+year]
+  LB: { playerCol: 2, scoreCol: -3, rankCol: -4, headerRows: 10 },
+  // EDGE: ...Ovr.Rank, Season Rank, EDGE+ (col -3), EDGE+ Grade, [extra name+year]
+  EDGE: { playerCol: 1, scoreCol: -3, rankCol: -4, headerRows: 10 },
+  // DT: ...Ovr.Rank, Season Rank, DT+ (col -3), DT+ Grade, [extra name+year]
+  DT: { playerCol: 1, scoreCol: -3, rankCol: -4, headerRows: 10 },
+  // OL: ...Ovr.Rank, Season Rank, Season Pos. Rank, OL+ (col -9), OL+ Grade, Overall Pos Rank, [empty], Pass/Run Block scores, [extra]
+  OL: { playerCol: 3, scoreCol: -9, rankCol: -11, headerRows: 10 },
+  // TE: ...Ovr.Rank, Season Rank, TE+ (col -3), TE+ Grade, [extra name+year]
+  TE: { playerCol: 1, scoreCol: -3, rankCol: -4, headerRows: 10 },
+  // WR: ...Ovr.Rank, Name, WR+ (col -7), WR+ Grade, Team, Games, Season, Season Rank, [extra]
+  WR: { playerCol: 1, scoreCol: -7, rankCol: -2, headerRows: 9 },
+  // RB: RB+ (col 0), Grade, player (col 2), Team, ..., Overall Rank, Season Rank (col -4), [extra cols]
+  RB: { playerCol: 2, scoreCol: 0, rankCol: -4, headerRows: 10 },
 };
 
 // Position to sheet mapping

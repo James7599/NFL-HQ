@@ -443,8 +443,7 @@ interface SheetPlayerRow {
   position: string;
 }
 
-// Column mappings for each position sheet
-// Each position has different column structures
+// Column mappings for each position sheet - verified from actual sheet structure
 const POSITION_COLUMN_MAPPINGS: Record<string, {
   playerCol: number;
   scoreCol: number;
@@ -453,26 +452,26 @@ const POSITION_COLUMN_MAPPINGS: Record<string, {
   overallRankCol: number;
   headerRows: number;
 }> = {
-  // QB: Season, Rank, Player, Grade, Score, OVR. Rank
+  // QB: Season, Rank, Player, Grade, Score (col 4), OVR. Rank
   QB: { playerCol: 2, scoreCol: 4, gradeCol: 3, seasonRankCol: 1, overallRankCol: 5, headerRows: 1 },
-  // SAF: Season, Player, Team, ..., Ovr. Rank, Season Rank, SAF+, SAF+ Grade (columns from end: -4, -3, -2, -1)
-  SAF: { playerCol: 1, scoreCol: -2, gradeCol: -1, seasonRankCol: -3, overallRankCol: -4, headerRows: 10 },
-  // CB: Season, Player, ID, Pos, Team, ..., Ovr. Rank, Season Rank, CB+, CB+ Grade
-  CB: { playerCol: 1, scoreCol: -2, gradeCol: -1, seasonRankCol: -3, overallRankCol: -4, headerRows: 10 },
-  // LB: Season, Player Season ID, Player, Team, ..., Ovr. Rank, Season Rank, LB+, LB+ Grade
-  LB: { playerCol: 2, scoreCol: -2, gradeCol: -1, seasonRankCol: -3, overallRankCol: -4, headerRows: 10 },
-  // EDGE: Season, Player, Team, ..., Ovr. Rank, Season Rank, EDGE+, EDGE+ Grade
-  EDGE: { playerCol: 1, scoreCol: -2, gradeCol: -1, seasonRankCol: -3, overallRankCol: -4, headerRows: 10 },
-  // DT: Season, Player, Team, ..., Ovr. Rank, Season Rank, DT+, DT+ Grade
-  DT: { playerCol: 1, scoreCol: -2, gradeCol: -1, seasonRankCol: -3, overallRankCol: -4, headerRows: 10 },
-  // OL: Season, Player Season ID, pffPosGeneral, Player, Team, ..., Ovr. Rank, Season Rank, Season Pos. Rank, OL+, OL+ Grade
-  OL: { playerCol: 3, scoreCol: -2, gradeCol: -1, seasonRankCol: -4, overallRankCol: -5, headerRows: 10 },
-  // TE: Season, Player, Team, ..., Ovr. Rank, Season Rank, TE+, TE+ Grade
-  TE: { playerCol: 1, scoreCol: -2, gradeCol: -1, seasonRankCol: -3, overallRankCol: -4, headerRows: 10 },
-  // WR: Season, Player, Team, ..., Ovr. Rank, Name, WR+, WR+ Grade, Team, Games, Season, Season Rank
-  WR: { playerCol: 1, scoreCol: -6, gradeCol: -5, seasonRankCol: -1, overallRankCol: -8, headerRows: 10 },
-  // RB: RB+, Grade, player, Team Name, ..., Overall Rank, Season Rank (score is col 0, grade is col 1)
-  RB: { playerCol: 2, scoreCol: 0, gradeCol: 1, seasonRankCol: -1, overallRankCol: -3, headerRows: 10 },
+  // SAF: ...Ovr.Rank (-5), Season Rank (-4), SAF+ (-3), SAF+ Grade (-2), [extra name+year (-1)]
+  SAF: { playerCol: 1, scoreCol: -3, gradeCol: -2, seasonRankCol: -4, overallRankCol: -5, headerRows: 10 },
+  // CB: ...Ovr.Rank (-5), Season Rank (-4), CB+ (-3), CB+ Grade (-2), [extra (-1)]
+  CB: { playerCol: 1, scoreCol: -3, gradeCol: -2, seasonRankCol: -4, overallRankCol: -5, headerRows: 10 },
+  // LB: ...Ovr.Rank (-5), Season Rank (-4), LB+ (-3), LB+ Grade (-2), [extra (-1)]
+  LB: { playerCol: 2, scoreCol: -3, gradeCol: -2, seasonRankCol: -4, overallRankCol: -5, headerRows: 10 },
+  // EDGE: ...Ovr.Rank (-5), Season Rank (-4), EDGE+ (-3), EDGE+ Grade (-2), [extra (-1)]
+  EDGE: { playerCol: 1, scoreCol: -3, gradeCol: -2, seasonRankCol: -4, overallRankCol: -5, headerRows: 10 },
+  // DT: ...Ovr.Rank (-5), Season Rank (-4), DT+ (-3), DT+ Grade (-2), [extra (-1)]
+  DT: { playerCol: 1, scoreCol: -3, gradeCol: -2, seasonRankCol: -4, overallRankCol: -5, headerRows: 10 },
+  // OL: ...Ovr.Rank (-12), Season Rank (-11), Season Pos. Rank (-10), OL+ (-9), OL+ Grade (-8), Overall Pos Rank (-7), [empty (-6)], PassBlockCalc (-5), PassBlock (-4), RunBlockCalc (-3), RunBlock (-2), [extra (-1)]
+  OL: { playerCol: 3, scoreCol: -9, gradeCol: -8, seasonRankCol: -11, overallRankCol: -12, headerRows: 10 },
+  // TE: ...Ovr.Rank (-5), Season Rank (-4), TE+ (-3), TE+ Grade (-2), [extra (-1)]
+  TE: { playerCol: 1, scoreCol: -3, gradeCol: -2, seasonRankCol: -4, overallRankCol: -5, headerRows: 10 },
+  // WR: ...Ovr.Rank (-9), Name (-8), WR+ (-7), WR+ Grade (-6), Team (-5), Games (-4), Season (-3), Season Rank (-2), [extra (-1)]
+  WR: { playerCol: 1, scoreCol: -7, gradeCol: -6, seasonRankCol: -2, overallRankCol: -9, headerRows: 9 },
+  // RB: RB+ (col 0), Grade (col 1), player (col 2), ..., Overall Rank (-5), Season Rank (-4), [extra cols]
+  RB: { playerCol: 2, scoreCol: 0, gradeCol: 1, seasonRankCol: -4, overallRankCol: -5, headerRows: 10 },
 };
 
 async function fetchPositionGradesFromSheet(position: string): Promise<SheetPlayerRow[]> {
