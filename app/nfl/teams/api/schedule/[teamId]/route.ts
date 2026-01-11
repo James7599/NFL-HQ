@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { fetchPlayoffGames, TransformedGame as ESPNGame } from '@/lib/espn';
 
 interface SportsKeedaTeam {
   team_id: number;
@@ -180,10 +181,67 @@ export async function GET(
     // Add bye weeks for regular season
     const scheduleWithByeWeeks = addByeWeeks(transformedSchedule);
 
+    // Fetch playoff games from ESPN for this team
+    let playoffGames: any[] = [];
+    try {
+      const espnPlayoffGames = await fetchPlayoffGames();
+
+      // Filter for games involving this team
+      const teamPlayoffGames = espnPlayoffGames.filter(game =>
+        game.away_team.team_slug === teamId || game.home_team.team_slug === teamId
+      );
+
+      if (teamPlayoffGames.length > 0) {
+        // Transform ESPN playoff games to our schedule format
+        playoffGames = teamPlayoffGames.map(game => {
+          const isHome = game.home_team.team_slug === teamId;
+          const opponent = isHome ? game.away_team : game.home_team;
+
+          // Determine result if game is completed
+          let result: 'W' | 'L' | null = null;
+          let score: { home: number; away: number } | undefined;
+
+          if (game.status === 'Final' && game.has_score) {
+            const teamScore = isHome ? game.home_team.score : game.away_team.score;
+            const oppScore = isHome ? game.away_team.score : game.home_team.score;
+
+            if (teamScore !== undefined && oppScore !== undefined) {
+              result = teamScore > oppScore ? 'W' : 'L';
+              score = {
+                home: game.home_team.score!,
+                away: game.away_team.score!
+              };
+            }
+          }
+
+          return {
+            week: game.playoff_round || 'Playoff',
+            date: formatGameDate(game.start_date),
+            opponent: opponent.team_name,
+            opponentLogo: opponent.logo || getTeamLogo(opponent.abbr),
+            opponentAbbr: opponent.abbr,
+            isHome,
+            time: formatGameTime(game.start_date),
+            tv: game.tv_stations?.map(s => s.name).join(', ') || 'TBD',
+            venue: game.venue?.name || 'TBD',
+            result,
+            score,
+            eventType: 'Postseason'
+          };
+        });
+      }
+    } catch (error) {
+      console.error('Error fetching ESPN playoff games for team:', error);
+      // Continue without playoff games if ESPN fails
+    }
+
+    // Combine schedule with playoff games
+    const fullSchedule = [...scheduleWithByeWeeks, ...playoffGames];
+
     return NextResponse.json({
       teamId,
-      schedule: scheduleWithByeWeeks,
-      totalGames: scheduleWithByeWeeks.length,
+      schedule: fullSchedule,
+      totalGames: fullSchedule.length,
       lastUpdated: new Date().toISOString(),
       season: data.season
     });

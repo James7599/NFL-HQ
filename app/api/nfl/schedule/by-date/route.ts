@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { wildCardGames2026, StaticPlayoffGame } from '@/data/playoffGames2026';
 import { getAllTeams } from '@/data/teams';
+import { isPlayoffDate, fetchGamesByDate as fetchESPNGamesByDate, TransformedGame as ESPNTransformedGame } from '@/lib/espn';
 
 // Function to determine cache revalidation time based on NFL game schedule
 function getRevalidationTime(): number {
@@ -25,6 +26,54 @@ function getRevalidationTime(): number {
   //
   // // All other times: Update every 6 hours (less frequent)
   // return 21600; // 6 hours
+}
+
+// Function to convert ESPN games to local TransformedGame format
+function convertESPNGameToLocalFormat(game: ESPNTransformedGame): TransformedGame {
+  return {
+    event_id: game.event_id,
+    start_date: game.start_date,
+    status: game.status,
+    has_score: game.has_score,
+    away_team: {
+      team_slug: game.away_team.team_slug,
+      abbr: game.away_team.abbr,
+      team_name: game.away_team.team_name,
+      wins: game.away_team.wins,
+      losses: game.away_team.losses,
+      score: game.away_team.score,
+      is_winner: game.away_team.is_winner,
+    },
+    home_team: {
+      team_slug: game.home_team.team_slug,
+      abbr: game.home_team.abbr,
+      team_name: game.home_team.team_name,
+      wins: game.home_team.wins,
+      losses: game.home_team.losses,
+      score: game.home_team.score,
+      is_winner: game.home_team.is_winner,
+    },
+    venue: game.venue,
+    tv_stations: game.tv_stations,
+    hi_pass: game.hi_pass ? {
+      player_id: 0,
+      player_name: game.hi_pass.player_name,
+      player_slug: game.hi_pass.player_name.toLowerCase().replace(/\s+/g, '-'),
+      value: game.hi_pass.value,
+    } : undefined,
+    hi_rush: game.hi_rush ? {
+      player_id: 0,
+      player_name: game.hi_rush.player_name,
+      player_slug: game.hi_rush.player_name.toLowerCase().replace(/\s+/g, '-'),
+      value: game.hi_rush.value,
+    } : undefined,
+    hi_rec: game.hi_rec ? {
+      player_id: 0,
+      player_name: game.hi_rec.player_name,
+      player_slug: game.hi_rec.player_name.toLowerCase().replace(/\s+/g, '-'),
+      value: game.hi_rec.value,
+    } : undefined,
+  };
 }
 
 // Function to convert static playoff games to API format
@@ -213,6 +262,50 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    // Check if this is a playoff date - use ESPN API for live/accurate data
+    if (isPlayoffDate(requestedDate)) {
+      try {
+        const espnGames = await fetchESPNGamesByDate(requestedDate);
+
+        if (espnGames.length > 0) {
+          // Convert ESPN games to local format
+          const transformedGames = espnGames.map(convertESPNGameToLocalFormat);
+
+          // Determine cache time based on game status
+          const hasLiveGames = espnGames.some(g => g.is_live);
+          const revalidateTime = hasLiveGames ? 30 : 300; // 30s if live, 5min otherwise
+
+          return NextResponse.json({
+            schedule: transformedGames,
+            date: requestedDate,
+            season: parseInt(season),
+            totalGames: transformedGames.length,
+            source: 'espn',
+          }, {
+            headers: {
+              'Cache-Control': `s-maxage=${revalidateTime}, stale-while-revalidate`,
+            },
+          });
+        }
+      } catch (error) {
+        console.error('ESPN API error, falling back to static data:', error);
+      }
+
+      // Fall back to static playoff games if ESPN fails or returns no games
+      const staticPlayoffGames = wildCardGames2026.filter(game => game.date === requestedDate);
+      if (staticPlayoffGames.length > 0) {
+        const staticGames = staticPlayoffGames.map(convertStaticGameToAPIFormat);
+        return NextResponse.json({
+          schedule: staticGames,
+          date: requestedDate,
+          season: parseInt(season),
+          totalGames: staticGames.length,
+          source: 'static',
+        });
+      }
+    }
+
+    // For non-playoff dates, use cached SportsKeeda data
     // Determine if requested date is in the past
     const requestedDateObj = new Date(requestedDate + 'T12:00:00');
     const today = new Date();
@@ -378,25 +471,7 @@ export async function GET(request: NextRequest) {
       };
     }).filter(Boolean) as TransformedGame[];
 
-    // Check if we should use static playoff games for this date
-    const staticPlayoffGames = wildCardGames2026.filter(game => game.date === requestedDate);
-
-    // If we have static playoff games for this date, use them by default
-    // Only use API games if they have actual scores (meaning games have started)
-    if (staticPlayoffGames.length > 0) {
-      const hasGameWithScores = transformedGames.some(game =>
-        game.has_score &&
-        (game.away_team.score !== undefined && game.away_team.score !== null) &&
-        (game.home_team.score !== undefined && game.home_team.score !== null)
-      );
-
-      // If no games have actual scores yet, use our hardcoded playoff games
-      if (!hasGameWithScores) {
-        const staticGames = staticPlayoffGames.map(convertStaticGameToAPIFormat);
-        transformedGames = staticGames;
-      }
-      // Otherwise, keep the API games (they have actual scores)
-    }
+    // Note: Playoff games are now handled at the beginning of this function using ESPN API
 
     return NextResponse.json({
       schedule: transformedGames,

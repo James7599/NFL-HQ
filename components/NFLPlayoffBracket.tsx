@@ -64,11 +64,11 @@ const initialPlayoffData: { [key: string]: Matchup } = {
   // NFC Wild Card Round
   'nfc-wc-1': {
     id: 'nfc-wc-1',
-    team1: { seed: 4, name: 'Panthers', teamId: 'carolina-panthers' },
-    team2: { seed: 5, name: 'Rams', teamId: 'los-angeles-rams' },
+    team1: { seed: 4, name: 'Panthers', teamId: 'carolina-panthers', score: 31 },
+    team2: { seed: 5, name: 'Rams', teamId: 'los-angeles-rams', score: 34 },
     round: 'Wild Card',
     date: 'Jan 10',
-    completed: false,
+    completed: true,
   },
   'nfc-wc-2': {
     id: 'nfc-wc-2',
