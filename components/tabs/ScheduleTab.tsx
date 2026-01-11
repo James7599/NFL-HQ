@@ -19,6 +19,7 @@ interface ScheduleGame {
   result?: 'W' | 'L' | null;
   score?: { home: number; away: number };
   overallRecord?: string;
+  eventType?: string;
 }
 
 interface ScheduleTabProps {
@@ -26,7 +27,6 @@ interface ScheduleTabProps {
 }
 
 export default function ScheduleTab({ team }: ScheduleTabProps) {
-  const [selectedType, setSelectedType] = useState('regular');
   const [scheduleData, setScheduleData] = useState<ScheduleGame[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -88,57 +88,99 @@ export default function ScheduleTab({ team }: ScheduleTabProps) {
         throw new Error('Invalid schedule data received');
       }
 
-      // Filter by selected type
-      const filteredData = data.schedule.filter((game: any) => {
-        if (selectedType === 'preseason') return game.eventType === 'Preseason';
-        if (selectedType === 'regular') return game.eventType === 'Regular Season';
-        if (selectedType === 'postseason') return game.eventType === 'Postseason';
-        return false;
-      });
-
-      setScheduleData(filteredData);
+      setScheduleData(data.schedule);
     } catch (err) {
       console.error('Error fetching schedule:', err);
       setError(err instanceof Error ? err.message : 'Failed to load schedule');
     } finally {
       setLoading(false);
     }
-  }, [team.id, selectedType]);
+  }, [team.id]);
 
   useEffect(() => {
     fetchSchedule();
-  }, [selectedType, fetchSchedule]);
+  }, [fetchSchedule]);
 
-  const currentData = scheduleData;
+  // Group games by type
+  const preseasonGames = scheduleData.filter(game => game.eventType === 'Preseason');
+  const regularSeasonGames = scheduleData.filter(game => game.eventType === 'Regular Season');
+  const postseasonGames = scheduleData.filter(game => game.eventType === 'Postseason');
 
-  return (
-    <LayoutStabilizer className="bg-white rounded-lg shadow p-4 sm:p-6" minHeight={800}>
-      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 gap-4">
-        <div>
-          <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">{team.fullName} Schedule</h2>
-          <div className="h-1 rounded-full" style={{ backgroundColor: team.primaryColor, width: 'fit-content', minWidth: '260px' }}></div>
+  // Render a game row
+  const renderGameRow = (game: ScheduleGame, index: number) => (
+    <tr key={index} className="hover:bg-gray-50">
+      <td className="px-2 sm:px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900">{game.week}</td>
+      <td className="px-2 sm:px-4 py-3 whitespace-nowrap text-sm text-gray-900">{game.date}</td>
+      <td className="px-2 sm:px-4 py-3">
+        <div className="flex items-center min-w-0">
+          <span className="text-sm text-gray-600 mr-1 sm:mr-2 w-3 sm:w-4 flex-shrink-0">
+            {game.opponentAbbr === 'BYE' ? '' : (game.isHome ? 'vs' : '@')}
+          </span>
+          {game.opponentAbbr !== 'BYE' && (
+            <OptimizedImage
+              src={game.opponentLogo}
+              alt={game.opponentAbbr || ''}
+              width={20}
+              height={20}
+              className="w-5 h-5 mr-2 sm:mr-3 flex-shrink-0"
+              sizes="20px"
+            />
+          )}
+          {game.opponentAbbr === 'BYE' ? (
+            <span className="text-sm font-medium text-gray-600">
+
+            </span>
+          ) : (
+            <a
+              href={getTeamUrl(game.opponent, game.opponentAbbr)}
+              className="text-sm font-medium hover:underline transition-colors truncate cursor-pointer"
+              style={{
+                color: team.primaryColor
+              }}
+            >
+              {game.opponent}
+            </a>
+          )}
         </div>
-      </div>
+      </td>
+      <td className="px-2 sm:px-4 py-3 whitespace-nowrap text-sm text-gray-900 hidden sm:table-cell">{game.time}</td>
+      <td className="px-2 sm:px-4 py-3 whitespace-nowrap text-sm text-gray-900 hidden md:table-cell">{game.tv}</td>
+      <td className="px-2 sm:px-4 py-3 whitespace-nowrap">
+        {game.result ? (
+          <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+            <span className={`inline-flex px-1 py-0.5 sm:px-1.5 text-xs font-semibold rounded-full ${
+              game.result === 'W'
+                ? 'bg-green-100 text-green-800'
+                : 'bg-red-100 text-red-800'
+            }`}>
+              {game.result}
+            </span>
+            {game.score && (
+              <span className="text-xs sm:text-sm text-gray-600">
+                {Math.max(game.score.home, game.score.away)}-{Math.min(game.score.home, game.score.away)}
+              </span>
+            )}
+          </div>
+        ) : (
+          <span className="text-sm text-gray-600">-</span>
+        )}
+      </td>
+    </tr>
+  );
 
-      {/* Filters */}
-      <div className="flex flex-wrap gap-4 mb-6">
-        <div className="flex flex-col">
-          <label className="text-sm font-medium text-gray-700 mb-1">Type</label>
-          <select
-            value={selectedType}
-            onChange={(e) => setSelectedType(e.target.value)}
-            className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            <option value="preseason">Preseason</option>
-            <option value="regular">Regular Season</option>
-            <option value="postseason">Postseason</option>
-          </select>
+  // Render a section with header
+  const renderSection = (title: string, games: ScheduleGame[], bgColor: string) => {
+    if (games.length === 0) return null;
+
+    return (
+      <div className="mb-8">
+        <div
+          className="px-4 py-2 rounded-t-lg"
+          style={{ backgroundColor: bgColor }}
+        >
+          <h3 className="text-lg font-bold text-white">{title}</h3>
         </div>
-      </div>
-
-      {/* Schedule Content */}
-      {loading ? (
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto border border-t-0 border-gray-200 rounded-b-lg">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
@@ -151,34 +193,83 @@ export default function ScheduleTab({ team }: ScheduleTabProps) {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {[...Array(selectedType === 'preseason' ? 3 : selectedType === 'postseason' ? 4 : 17)].map((_, index) => (
-                <tr key={index}>
-                  <td className="px-2 sm:px-4 py-3 whitespace-nowrap">
-                    <div className="h-4 bg-gray-200 rounded animate-pulse w-8"></div>
-                  </td>
-                  <td className="px-2 sm:px-4 py-3 whitespace-nowrap">
-                    <div className="h-4 bg-gray-200 rounded animate-pulse w-16"></div>
-                  </td>
-                  <td className="px-2 sm:px-4 py-3">
-                    <div className="flex items-center">
-                      <div className="h-5 w-5 bg-gray-200 rounded-full animate-pulse mr-2"></div>
-                      <div className="h-4 bg-gray-200 rounded animate-pulse w-32"></div>
-                    </div>
-                  </td>
-                  <td className="px-2 sm:px-4 py-3 whitespace-nowrap hidden sm:table-cell">
-                    <div className="h-4 bg-gray-200 rounded animate-pulse w-16"></div>
-                  </td>
-                  <td className="px-2 sm:px-4 py-3 whitespace-nowrap hidden md:table-cell">
-                    <div className="h-4 bg-gray-200 rounded animate-pulse w-12"></div>
-                  </td>
-                  <td className="px-2 sm:px-4 py-3 whitespace-nowrap">
-                    <div className="h-4 bg-gray-200 rounded animate-pulse w-8"></div>
-                  </td>
-                </tr>
-              ))}
+              {games.map((game, index) => renderGameRow(game, index))}
             </tbody>
           </table>
         </div>
+      </div>
+    );
+  };
+
+  // Loading skeleton for a section
+  const renderLoadingSkeleton = (title: string, rowCount: number, bgColor: string) => (
+    <div className="mb-8">
+      <div
+        className="px-4 py-2 rounded-t-lg"
+        style={{ backgroundColor: bgColor }}
+      >
+        <h3 className="text-lg font-bold text-white">{title}</h3>
+      </div>
+      <div className="overflow-x-auto border border-t-0 border-gray-200 rounded-b-lg">
+        <table className="min-w-full divide-y divide-gray-200">
+          <thead className="bg-gray-50">
+            <tr>
+              <th className="px-2 sm:px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider w-16">Week</th>
+              <th className="px-2 sm:px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider w-20">Date</th>
+              <th className="px-2 sm:px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Opponent</th>
+              <th className="px-2 sm:px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider w-16 hidden sm:table-cell">Time</th>
+              <th className="px-2 sm:px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider w-16 hidden md:table-cell">TV</th>
+              <th className="px-2 sm:px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider w-24">Result</th>
+            </tr>
+          </thead>
+          <tbody className="bg-white divide-y divide-gray-200">
+            {[...Array(rowCount)].map((_, index) => (
+              <tr key={index}>
+                <td className="px-2 sm:px-4 py-3 whitespace-nowrap">
+                  <div className="h-4 bg-gray-200 rounded animate-pulse w-8"></div>
+                </td>
+                <td className="px-2 sm:px-4 py-3 whitespace-nowrap">
+                  <div className="h-4 bg-gray-200 rounded animate-pulse w-16"></div>
+                </td>
+                <td className="px-2 sm:px-4 py-3">
+                  <div className="flex items-center">
+                    <div className="h-5 w-5 bg-gray-200 rounded-full animate-pulse mr-2"></div>
+                    <div className="h-4 bg-gray-200 rounded animate-pulse w-32"></div>
+                  </div>
+                </td>
+                <td className="px-2 sm:px-4 py-3 whitespace-nowrap hidden sm:table-cell">
+                  <div className="h-4 bg-gray-200 rounded animate-pulse w-16"></div>
+                </td>
+                <td className="px-2 sm:px-4 py-3 whitespace-nowrap hidden md:table-cell">
+                  <div className="h-4 bg-gray-200 rounded animate-pulse w-12"></div>
+                </td>
+                <td className="px-2 sm:px-4 py-3 whitespace-nowrap">
+                  <div className="h-4 bg-gray-200 rounded animate-pulse w-8"></div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+
+  return (
+    <LayoutStabilizer className="bg-white rounded-lg shadow p-4 sm:p-6" minHeight={800}>
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 gap-4">
+        <div>
+          <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">{team.fullName} Schedule</h2>
+          <div className="h-1 rounded-full" style={{ backgroundColor: team.primaryColor, width: 'fit-content', minWidth: '260px' }}></div>
+        </div>
+      </div>
+
+      {/* Schedule Content */}
+      {loading ? (
+        <>
+          {renderLoadingSkeleton('Preseason', 4, '#6B7280')}
+          {renderLoadingSkeleton('Regular Season', 18, team.primaryColor)}
+          {renderLoadingSkeleton('Postseason', 1, '#0050A0')}
+        </>
       ) : error ? (
         <div className="text-center py-12">
           <div className="text-red-600 mb-4">
@@ -195,88 +286,19 @@ export default function ScheduleTab({ team }: ScheduleTabProps) {
             Try Again
           </button>
         </div>
-      ) : currentData.length === 0 ? (
-        <div className="text-center py-12">
-          <h3 className="text-lg font-medium text-gray-900 mb-2">No Games Available</h3>
-          <p className="text-gray-600">No schedule data found for the selected filters.</p>
-        </div>
       ) : (
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-2 sm:px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider w-16">Week</th>
-                <th className="px-2 sm:px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider w-20">Date</th>
-                <th className="px-2 sm:px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Opponent</th>
-                <th className="px-2 sm:px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider w-16 hidden sm:table-cell">Time</th>
-                <th className="px-2 sm:px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider w-16 hidden md:table-cell">TV</th>
-                <th className="px-2 sm:px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider w-24">Result</th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {currentData.map((game, index) => (
-                <tr key={index} className="hover:bg-gray-50">
-                  <td className="px-2 sm:px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900">{game.week}</td>
-                  <td className="px-2 sm:px-4 py-3 whitespace-nowrap text-sm text-gray-900">{game.date}</td>
-                  <td className="px-2 sm:px-4 py-3">
-                    <div className="flex items-center min-w-0">
-                      <span className="text-sm text-gray-600 mr-1 sm:mr-2 w-3 sm:w-4 flex-shrink-0">
-                        {game.opponentAbbr === 'BYE' ? '' : (game.isHome ? 'vs' : '@')}
-                      </span>
-                      {game.opponentAbbr !== 'BYE' && (
-                        <OptimizedImage
-                          src={game.opponentLogo}
-                          alt={game.opponentAbbr || ''}
-                          width={20}
-                          height={20}
-                          className="w-5 h-5 mr-2 sm:mr-3 flex-shrink-0"
-                          sizes="20px"
-                        />
-                      )}
-                      {game.opponentAbbr === 'BYE' ? (
-                        <span className="text-sm font-medium text-gray-600">
+        <>
+          {renderSection('Preseason', preseasonGames, '#6B7280')}
+          {renderSection('Regular Season', regularSeasonGames, team.primaryColor)}
+          {renderSection('Postseason', postseasonGames, '#0050A0')}
 
-                        </span>
-                      ) : (
-                        <a
-                          href={getTeamUrl(game.opponent, game.opponentAbbr)}
-                          className="text-sm font-medium hover:underline transition-colors truncate cursor-pointer"
-                          style={{
-                            color: team.primaryColor
-                          }}
-                        >
-                          {game.opponent}
-                        </a>
-                      )}
-                    </div>
-                  </td>
-                  <td className="px-2 sm:px-4 py-3 whitespace-nowrap text-sm text-gray-900 hidden sm:table-cell">{game.time}</td>
-                  <td className="px-2 sm:px-4 py-3 whitespace-nowrap text-sm text-gray-900 hidden md:table-cell">{game.tv}</td>
-                  <td className="px-2 sm:px-4 py-3 whitespace-nowrap">
-                    {game.result ? (
-                      <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
-                        <span className={`inline-flex px-1 py-0.5 sm:px-1.5 text-xs font-semibold rounded-full ${
-                          game.result === 'W'
-                            ? 'bg-green-100 text-green-800'
-                            : 'bg-red-100 text-red-800'
-                        }`}>
-                          {game.result}
-                        </span>
-                        {game.score && (
-                          <span className="text-xs sm:text-sm text-gray-600">
-                            {Math.max(game.score.home, game.score.away)}-{Math.min(game.score.home, game.score.away)}
-                          </span>
-                        )}
-                      </div>
-                    ) : (
-                      <span className="text-sm text-gray-600">-</span>
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+          {preseasonGames.length === 0 && regularSeasonGames.length === 0 && postseasonGames.length === 0 && (
+            <div className="text-center py-12">
+              <h3 className="text-lg font-medium text-gray-900 mb-2">No Games Available</h3>
+              <p className="text-gray-600">No schedule data found for this team.</p>
+            </div>
+          )}
+        </>
       )}
     </LayoutStabilizer>
   );
