@@ -245,7 +245,7 @@ const getMonthDays = (dateStr: string) => {
 
 type ViewMode = 'daily' | 'weekly' | 'monthly';
 
-function SchedulePageContent() {
+function SchedulePageInner() {
   const allTeams = getAllTeams();
   const searchParams = useSearchParams();
 
@@ -1266,7 +1266,7 @@ export default function SchedulePageContent() {
         </div>
       </div>
     }>
-      <SchedulePageContent />
+      <SchedulePageInner />
     </Suspense>
   );
 }
