@@ -38,6 +38,16 @@ export default function InjuriesClient() {
       .trim();
   }
 
+  // Generate player slug for linking to player pages
+  function generatePlayerSlug(name: string): string {
+    return name
+      .toLowerCase()
+      .replace(/[.\s]+/g, '-')
+      .replace(/[^\w-]/g, '')
+      .replace(/-+/g, '-')
+      .replace(/^-|-$/g, '');
+  }
+
   useEffect(() => {
     async function fetchInjuriesAndRosters() {
       setLoading(true);
@@ -390,7 +400,12 @@ export default function InjuriesClient() {
                         >
                           {/* Player */}
                           <td className="px-4 py-3">
-                            <span className="font-semibold text-gray-900 text-sm">{injury.player}</span>
+                            <Link
+                              href={`/players/${generatePlayerSlug(injury.player)}`}
+                              className="font-semibold text-blue-600 hover:underline text-sm"
+                            >
+                              {injury.player}
+                            </Link>
                           </td>
 
                           {/* Position */}
@@ -602,7 +617,12 @@ export default function InjuriesClient() {
                             >
                               {/* Player */}
                               <td className="px-4 py-3">
-                                <span className="font-semibold text-gray-900 text-sm">{injury.player}</span>
+                                <Link
+                                  href={`/players/${generatePlayerSlug(injury.player)}`}
+                                  className="font-semibold text-blue-600 hover:underline text-sm"
+                                >
+                                  {injury.player}
+                                </Link>
                               </td>
 
                               {/* Position */}

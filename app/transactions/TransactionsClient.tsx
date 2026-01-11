@@ -329,9 +329,12 @@ export default function TransactionsClient() {
 
                               {/* Player */}
                               <td className="px-6 py-3">
-                                <span className="font-medium text-gray-900 text-base">
+                                <Link
+                                  href={`/players/${transaction.playerSlug}`}
+                                  className="font-medium text-blue-600 hover:underline text-base"
+                                >
                                   {transaction.player}
-                                </span>
+                                </Link>
                               </td>
 
                               {/* Position */}
