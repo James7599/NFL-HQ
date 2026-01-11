@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import Script from 'next/script';
 import NFLTeamsSidebar from '@/components/NFLTeamsSidebar';
 import { getApiPath } from '@/utils/api';
 import SkeletonLoader from '@/components/SkeletonLoader';
@@ -227,8 +228,45 @@ export default function PlayerProfileClient({ playerSlug }: Props) {
 
   const gradeColors = player.pfsnImpact ? getGradeColor(player.pfsnImpact.grade) : null;
 
+  // JSON-LD structured data for SEO
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    name: player.name,
+    jobTitle: player.positionFull,
+    affiliation: {
+      '@type': 'SportsTeam',
+      name: player.team.name,
+      sport: 'American Football',
+      memberOf: {
+        '@type': 'SportsOrganization',
+        name: 'National Football League',
+      },
+    },
+    height: player.height,
+    weight: `${player.weight} lbs`,
+    birthDate: player.birthDate || undefined,
+    birthPlace: player.birthPlace ? {
+      '@type': 'Place',
+      name: player.birthPlace,
+    } : undefined,
+    alumniOf: player.college ? {
+      '@type': 'CollegeOrUniversity',
+      name: player.college,
+    } : undefined,
+    image: player.headshotUrl,
+    url: `https://www.profootballnetwork.com/nfl-hq/players/${player.slug}`,
+  };
+
   return (
     <div className="flex min-h-screen bg-gray-50">
+      {/* JSON-LD Structured Data */}
+      <Script
+        id="player-jsonld"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+
       {/* Desktop sidebar */}
       <div className="hidden lg:block">
         <div className="fixed top-0 left-0 w-64 h-screen z-10">
