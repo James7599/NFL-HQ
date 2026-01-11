@@ -299,22 +299,92 @@ async function fetchESPNAthleteStats(athleteId: string): Promise<ESPNStats | nul
   }
 }
 
+// Google Sheets configuration for PFSN Impact Grades
+const GOOGLE_SHEETS_CONFIG = {
+  QB: {
+    spreadsheetId: '17d7EIFBHLChlSoi6vRFArwviQRTJn0P0TOvQUNx8hU8',
+    gid: '1456950409',
+  },
+  // Add more positions as sheets become available
+};
+
+interface SheetQBRow {
+  rank: number;
+  player: string;
+  grade: string;
+  score: number;
+  overallRank?: number;
+}
+
+async function fetchQBGradesFromSheet(): Promise<SheetQBRow[]> {
+  try {
+    const config = GOOGLE_SHEETS_CONFIG.QB;
+    const csvUrl = `https://docs.google.com/spreadsheets/d/${config.spreadsheetId}/export?format=csv&gid=${config.gid}`;
+
+    const response = await fetch(csvUrl, {
+      headers: { 'User-Agent': 'NFL-HQ/1.0' },
+      next: { revalidate: 3600 }, // Cache for 1 hour
+    });
+
+    if (!response.ok) {
+      console.error('Failed to fetch QB grades sheet:', response.status);
+      return [];
+    }
+
+    const csvText = await response.text();
+    const lines = csvText.split('\n').filter(line => line.trim());
+
+    // Skip header row and parse data
+    const players: SheetQBRow[] = [];
+    for (let i = 1; i < lines.length; i++) {
+      const line = lines[i];
+      // Parse CSV properly (handle commas in quoted fields)
+      const values = parseCSVLine(line);
+
+      // Expected columns: Season, Rank, Player, Grade, Score, OVR. Rank, L4W
+      if (values.length >= 5) {
+        const rank = parseInt(values[1]) || 0;
+        const player = values[2]?.trim() || '';
+        const grade = values[3]?.trim() || '';
+        const score = parseFloat(values[4]) || 0;
+        const overallRank = parseInt(values[5]) || rank;
+
+        if (player && rank > 0) {
+          players.push({ rank, player, grade, score, overallRank });
+        }
+      }
+    }
+
+    return players;
+  } catch (error) {
+    console.error('Error fetching QB grades from sheet:', error);
+    return [];
+  }
+}
+
+function parseCSVLine(line: string): string[] {
+  const result: string[] = [];
+  let current = '';
+  let inQuotes = false;
+
+  for (let i = 0; i < line.length; i++) {
+    const char = line[i];
+    if (char === '"') {
+      inQuotes = !inQuotes;
+    } else if (char === ',' && !inQuotes) {
+      result.push(current);
+      current = '';
+    } else {
+      current += char;
+    }
+  }
+  result.push(current);
+
+  return result;
+}
+
 async function fetchPFSNImpact(): Promise<PFSNResponse | null> {
   try {
-    // Fetch directly from PFSN GitHub repos
-    const PFSN_REPOS = [
-      { position: 'QB', repo: 'PFSN-QB-Impact', scoreField: 'qbIndex' },
-      { position: 'RB', repo: 'PFSN-RB-Impact', scoreField: 'rbIndex' },
-      { position: 'WR', repo: 'PFSN-WR-Impact', scoreField: 'wrIndex' },
-      { position: 'TE', repo: 'PFSN-TE-Impact', scoreField: 'teIndex' },
-      { position: 'OL', repo: 'PFSN-PlayerOL-Impact', scoreField: 'olIndex' },
-      { position: 'DT', repo: 'PFSN-DT-Impact', scoreField: 'dtIndex' },
-      { position: 'EDGE', repo: 'PFSN-EDGE-Impact', scoreField: 'edgeIndex' },
-      { position: 'LB', repo: 'NFL-LB-Impact', scoreField: 'lbIndex' },
-      { position: 'CB', repo: 'NFL-CB-Impact', scoreField: 'cbIndex' },
-      { position: 'SAF', repo: 'NFL-Saf-Impact', scoreField: 'safIndex' },
-    ];
-
     const POSITION_MAP: Record<string, string> = {
       'QB': 'QB', 'RB': 'RB', 'FB': 'RB', 'WR': 'WR', 'TE': 'TE',
       'OT': 'OL', 'OG': 'OL', 'OC': 'OL', 'C': 'OL', 'G': 'OL', 'T': 'OL', 'OL': 'OL',
@@ -323,59 +393,27 @@ async function fetchPFSNImpact(): Promise<PFSNResponse | null> {
       'S': 'SAF', 'FS': 'SAF', 'SS': 'SAF', 'SAF': 'SAF', 'DB': 'CB',
     };
 
-    interface RawPFSNPlayer extends Record<string, unknown> {
-      playerName?: string;
-      team?: string;
-      grade?: string;
-      seasonRank?: number;
-      overallRank?: number;
-      season?: number;
-      _position: string;
-      _scoreField: string;
-    }
-
-    const fetchPromises = PFSN_REPOS.map(async ({ position, repo, scoreField }) => {
-      try {
-        const url = `https://raw.githubusercontent.com/pfsn365/${repo}/main/data/players.json`;
-        const response = await fetch(url, {
-          headers: { 'User-Agent': 'NFL-HQ/1.0' },
-          next: { revalidate: 86400 },
-        });
-        if (!response.ok) return [];
-        const data = await response.json();
-        return (Array.isArray(data) ? data : []).map((player: Record<string, unknown>): RawPFSNPlayer => ({
-          ...player,
-          _position: position,
-          _scoreField: scoreField,
-        }));
-      } catch {
-        return [];
-      }
-    });
-
-    const allResults = await Promise.all(fetchPromises);
-    const allPlayers: RawPFSNPlayer[] = allResults.flat();
-
-    const currentSeason = 2024;
+    const currentSeason = 2025;
     const playersMap: Record<string, PFSNPlayer> = {};
 
-    for (const player of allPlayers) {
-      if (player.season !== currentSeason) continue;
-      const normalizedName = normalizePlayerName(String(player.playerName || ''));
-      const score = Number(player[player._scoreField]) || 0;
+    // Fetch QB grades from Google Sheet
+    const qbGrades = await fetchQBGradesFromSheet();
+
+    for (const qb of qbGrades) {
+      const normalizedName = normalizePlayerName(qb.player);
 
       playersMap[normalizedName] = {
-        playerName: String(player.playerName || ''),
+        playerName: qb.player,
         normalizedName,
-        position: player._position,
-        team: String(player.team || ''),
-        score,
-        grade: String(player.grade || '—'),
-        seasonRank: Number(player.seasonRank) || 0,
-        overallRank: Number(player.overallRank) || 0,
-        season: player.season || currentSeason,
-        weeklyData: extractWeeklyData(player),
-        stats: extractStats(player, player._position),
+        position: 'QB',
+        team: '', // Not available in current sheet
+        score: qb.score,
+        grade: qb.grade,
+        seasonRank: qb.rank,
+        overallRank: qb.overallRank || qb.rank,
+        season: currentSeason,
+        weeklyData: [], // Weekly data not included in current sheet
+        stats: {}, // Stats not included in current sheet
       };
     }
 
@@ -386,7 +424,8 @@ async function fetchPFSNImpact(): Promise<PFSNResponse | null> {
   }
 }
 
-function extractWeeklyData(player: Record<string, unknown>): Array<{ week: number; score: number; grade: string; opponent: string }> {
+// Helper functions for extracting data from raw player objects (preserved for future use with other positions)
+function _extractWeeklyData(player: Record<string, unknown>): Array<{ week: number; score: number; grade: string; opponent: string }> {
   const weeklyData: Array<{ week: number; score: number; grade: string; opponent: string }> = [];
   for (let week = 1; week <= 18; week++) {
     const scoreKey = `week${week}Score`;
@@ -404,7 +443,7 @@ function extractWeeklyData(player: Record<string, unknown>): Array<{ week: numbe
   return weeklyData;
 }
 
-function extractStats(player: Record<string, unknown>, position: string): Record<string, string | number> {
+function _extractStats(player: Record<string, unknown>, position: string): Record<string, string | number> {
   const stats: Record<string, string | number> = {};
   if (player.games) stats.games = Number(player.games);
 
@@ -430,8 +469,12 @@ function extractStats(player: Record<string, unknown>, position: string): Record
   return stats;
 }
 
+// Suppress unused warnings - these will be used when more position sheets are added
+void _extractWeeklyData;
+void _extractStats;
+
 export async function GET(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: Promise<{ playerSlug: string }> }
 ) {
   try {
@@ -478,11 +521,11 @@ export async function GET(
     // Get team info
     const team = teams[foundTeamId];
 
-    // Fetch ESPN stats
-    let espnStats: ESPNStats | null = null;
+    // Fetch ESPN stats (currently unused, but available for future use)
+    let _espnStats: ESPNStats | null = null;
     const espnAthleteId = await fetchESPNAthleteId(foundTeamId, foundPlayer.name);
     if (espnAthleteId) {
-      espnStats = await fetchESPNAthleteStats(espnAthleteId);
+      _espnStats = await fetchESPNAthleteStats(espnAthleteId);
     }
 
     // Fetch PFSN Impact data (may fail if repos don't exist)
