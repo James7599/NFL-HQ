@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import Image from 'next/image';
 import { getApiPath } from '@/utils/api';
 
 interface TickerGame {
@@ -22,110 +23,20 @@ interface TickerGame {
   isFinal: boolean;
 }
 
-function PossessionIndicator() {
-  return (
-    <span className="inline-block w-0 h-0 border-l-[5px] border-l-yellow-400 border-y-[4px] border-y-transparent ml-1" />
-  );
-}
-
-function TickerGameCard({ game }: { game: TickerGame }) {
-  const isPreGame = !game.isLive && !game.isFinal;
-
-  return (
-    <div
-      className={`flex-shrink-0 flex items-center gap-3 px-4 py-2 border-r border-gray-700 last:border-r-0
-        ${game.isLive ? 'bg-green-900/30' : ''}`}
-    >
-      {/* Away Team */}
-      <div className="flex items-center gap-1.5">
-        <img
-          src={game.awayTeam.logo}
-          alt={game.awayTeam.abbr}
-          className="w-6 h-6 object-contain"
-          onError={(e) => {
-            (e.target as HTMLImageElement).src = 'https://a.espncdn.com/i/teamlogos/nfl/500/default-team-logo-500.png';
-          }}
-        />
-        <span className="text-sm font-medium text-white">{game.awayTeam.abbr}</span>
-        {game.awayTeam.hasPossession && <PossessionIndicator />}
-        {!isPreGame && (
-          <span className={`text-sm font-bold ml-1 ${
-            game.isFinal && game.awayTeam.score! > game.homeTeam.score!
-              ? 'text-green-400'
-              : 'text-gray-300'
-          }`}>
-            {game.awayTeam.score}
-          </span>
-        )}
-      </div>
-
-      {/* Separator / Status */}
-      <div className="flex flex-col items-center min-w-[50px]">
-        {isPreGame ? (
-          <span className="text-xs text-gray-400">{game.statusDetail}</span>
-        ) : (
-          <>
-            <span className="text-xs text-gray-500">@</span>
-            {game.isLive && (
-              <span className="text-xs font-medium text-green-400 flex items-center gap-1">
-                <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
-                {game.statusDetail}
-              </span>
-            )}
-            {game.isFinal && (
-              <span className="text-xs text-gray-400">Final</span>
-            )}
-          </>
-        )}
-      </div>
-
-      {/* Home Team */}
-      <div className="flex items-center gap-1.5">
-        {!isPreGame && (
-          <span className={`text-sm font-bold mr-1 ${
-            game.isFinal && game.homeTeam.score! > game.awayTeam.score!
-              ? 'text-green-400'
-              : 'text-gray-300'
-          }`}>
-            {game.homeTeam.score}
-          </span>
-        )}
-        {game.homeTeam.hasPossession && <PossessionIndicator />}
-        <span className="text-sm font-medium text-white">{game.homeTeam.abbr}</span>
-        <img
-          src={game.homeTeam.logo}
-          alt={game.homeTeam.abbr}
-          className="w-6 h-6 object-contain"
-          onError={(e) => {
-            (e.target as HTMLImageElement).src = 'https://a.espncdn.com/i/teamlogos/nfl/500/default-team-logo-500.png';
-          }}
-        />
-      </div>
-    </div>
-  );
-}
-
 export default function NFLScoreTicker() {
   const [games, setGames] = useState<TickerGame[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
   const fetchGames = useCallback(async () => {
     try {
       const response = await fetch(getApiPath('api/nfl/espn-scoreboard?ticker=true'));
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch scores');
-      }
-
+      if (!response.ok) throw new Error('Failed to fetch');
       const data = await response.json();
       setGames(data.games || []);
       setLastUpdated(new Date());
-      setError(null);
-    } catch (err) {
-      console.error('Error fetching ticker data:', err);
-      setError('Unable to load scores');
+    } catch (error) {
+      console.error('Error fetching live scores:', error);
     } finally {
       setLoading(false);
     }
@@ -133,56 +44,136 @@ export default function NFLScoreTicker() {
 
   useEffect(() => {
     fetchGames();
-
-    // Refresh every 30 seconds
     const interval = setInterval(fetchGames, 30000);
-
     return () => clearInterval(interval);
   }, [fetchGames]);
 
   if (loading) {
     return (
-      <div className="bg-[#111827] border-b border-gray-700 py-2 px-4 lg:pl-64">
-        <div className="flex items-center justify-center">
-          <div className="animate-pulse flex items-center gap-2">
-            <div className="w-6 h-6 bg-gray-700 rounded-full" />
-            <div className="w-16 h-4 bg-gray-700 rounded" />
-            <div className="w-8 h-4 bg-gray-700 rounded" />
-            <div className="w-16 h-4 bg-gray-700 rounded" />
-            <div className="w-6 h-6 bg-gray-700 rounded-full" />
+      <>
+        <div className="fixed top-0 right-0 left-0 lg:left-64 bg-black text-white py-2 px-4 z-40">
+          <div className="flex items-center justify-center gap-2">
+            <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+            <span className="text-sm">Loading scores...</span>
           </div>
         </div>
-      </div>
+        <div className="h-10" /> {/* Spacer for fixed ticker */}
+      </>
     );
   }
 
-  if (error || games.length === 0) {
-    return null; // Hide ticker if no games or error
+  if (games.length === 0) {
+    return (
+      <>
+        <div className="fixed top-0 right-0 left-0 lg:left-64 bg-black text-white py-2 px-4 z-40">
+          <div className="flex items-center justify-center gap-2">
+            <span className="text-sm">No games scheduled today</span>
+          </div>
+        </div>
+        <div className="h-10" /> {/* Spacer for fixed ticker */}
+      </>
+    );
   }
 
-  const hasLiveGames = games.some(g => g.isLive);
-
   return (
-    <div className="bg-[#111827] border-b border-gray-700 relative lg:pl-64">
-      {/* Live indicator */}
-      {hasLiveGames && (
-        <div className="absolute left-2 lg:left-[calc(16rem+0.5rem)] top-1/2 -translate-y-1/2 z-10 flex items-center gap-1 bg-[#111827] pr-2">
-          <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
-          <span className="text-xs font-semibold text-red-400">LIVE</span>
-        </div>
-      )}
+    <>
+      <div className="fixed top-0 right-0 left-0 lg:left-64 bg-black text-white z-40">
+        <div className="flex items-center">
+          {/* Scrollable Games Container */}
+          <div className="overflow-x-auto scrollbar-hide flex-1">
+            <div className="flex items-stretch min-w-max">
+              {games.map((game, index) => {
+                const isPreGame = !game.isLive && !game.isFinal;
 
-      {/* Scrolling ticker */}
-      <div className="overflow-x-auto scrollbar-hide">
-        <div className={`flex ${hasLiveGames ? 'pl-16' : ''}`}>
-          {games.map(game => (
-            <TickerGameCard key={game.id} game={game} />
-          ))}
+                return (
+                  <div
+                    key={game.id}
+                    className={`flex items-center px-3 py-2 ${
+                      index === 0 ? 'pl-4' : ''
+                    } ${
+                      index !== games.length - 1 ? 'border-r border-white/20' : 'pr-4'
+                    }`}
+                  >
+                    {/* Away Team */}
+                    <div className="flex items-center gap-2 min-w-[80px]">
+                      {game.awayTeam.hasPossession && game.isLive && (
+                        <span className="w-1.5 h-1.5 bg-yellow-400 rounded-full animate-pulse" title="Possession" />
+                      )}
+                      <div className="relative w-6 h-6 flex-shrink-0">
+                        <Image
+                          src={game.awayTeam.logo}
+                          alt={game.awayTeam.abbr}
+                          fill
+                          className="object-contain"
+                          unoptimized
+                        />
+                      </div>
+                      <span className="font-semibold text-sm">{game.awayTeam.abbr}</span>
+                      <span className={`font-bold text-sm min-w-[24px] text-right ${
+                        game.isFinal && game.awayTeam.score! > game.homeTeam.score!
+                          ? 'text-green-400'
+                          : ''
+                      }`}>
+                        {isPreGame ? '' : game.awayTeam.score}
+                      </span>
+                    </div>
+
+                    {/* Status */}
+                    <div className="mx-3 text-center min-w-[70px]">
+                      {game.isLive ? (
+                        <div className="flex flex-col items-center">
+                          <span className="text-[10px] bg-green-500 text-white px-1.5 py-0.5 rounded font-medium animate-pulse">
+                            LIVE
+                          </span>
+                          <span className="text-xs mt-0.5">{game.statusDetail}</span>
+                        </div>
+                      ) : game.isFinal ? (
+                        <span className="text-xs font-medium text-gray-300">Final</span>
+                      ) : (
+                        <span className="text-xs text-gray-300">{game.statusDetail}</span>
+                      )}
+                    </div>
+
+                    {/* Home Team */}
+                    <div className="flex items-center gap-2 min-w-[80px]">
+                      <span className={`font-bold text-sm min-w-[24px] ${
+                        game.isFinal && game.homeTeam.score! > game.awayTeam.score!
+                          ? 'text-green-400'
+                          : ''
+                      }`}>
+                        {isPreGame ? '' : game.homeTeam.score}
+                      </span>
+                      <span className="font-semibold text-sm">{game.homeTeam.abbr}</span>
+                      <div className="relative w-6 h-6 flex-shrink-0">
+                        <Image
+                          src={game.homeTeam.logo}
+                          alt={game.homeTeam.abbr}
+                          fill
+                          className="object-contain"
+                          unoptimized
+                        />
+                      </div>
+                      {game.homeTeam.hasPossession && game.isLive && (
+                        <span className="w-1.5 h-1.5 bg-yellow-400 rounded-full animate-pulse" title="Possession" />
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
         </div>
+        <style jsx>{`
+          .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+          }
+          .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+          }
+        `}</style>
       </div>
-
-      {/* Gradient fade on edges */}
-      <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-[#111827] to-transparent pointer-events-none" />
-    </div>
+      <div className="h-10" /> {/* Spacer for fixed ticker */}
+    </>
   );
 }
