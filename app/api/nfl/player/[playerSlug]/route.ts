@@ -74,6 +74,29 @@ interface ESPNGameLog {
   statLabels: Array<{ name: string; label: string }>;
 }
 
+interface ESPNCareerStatsSeason {
+  year: number;
+  displayName: string;
+  teamId: string;
+  teamSlug: string;
+  stats: Record<string, string>;
+}
+
+interface ESPNCareerStatsCategory {
+  name: string;
+  displayName: string;
+  labels: string[];
+  names: string[];
+  displayNames: string[];
+  seasons: ESPNCareerStatsSeason[];
+  totals: Record<string, string>;
+}
+
+interface ESPNCareerStats {
+  categories: ESPNCareerStatsCategory[];
+  availableSeasons: number[];
+}
+
 // ESPN Team ID mapping
 const espnTeamIdMap: Record<string, string> = {
   'arizona-cardinals': '22',
@@ -287,7 +310,7 @@ async function fetchESPNAthleteStats(athleteId: string): Promise<ESPNStats | nul
       `https://site.api.espn.com/apis/common/v3/sports/football/nfl/athletes/${athleteId}`,
       {
         headers: { 'User-Agent': 'Mozilla/5.0 (compatible; NFL-HQ/1.0)' },
-        next: { revalidate: 3600 }, // Cache for 1 hour
+        next: { revalidate: 604800 }, // Cache for 1 week (season is over)
       }
     );
 
@@ -321,7 +344,7 @@ async function fetchESPNGameLog(athleteId: string): Promise<ESPNGameLog | null> 
       `https://site.web.api.espn.com/apis/common/v3/sports/football/nfl/athletes/${athleteId}/gamelog`,
       {
         headers: { 'User-Agent': 'Mozilla/5.0 (compatible; NFL-HQ/1.0)' },
-        next: { revalidate: 3600 },
+        next: { revalidate: 604800 }, // Cache for 1 week (season is over)
       }
     );
 
@@ -386,6 +409,83 @@ async function fetchESPNGameLog(athleteId: string): Promise<ESPNGameLog | null> 
     };
   } catch (error) {
     console.error('Error fetching ESPN game log:', error);
+    return null;
+  }
+}
+
+async function fetchESPNCareerStats(athleteId: string): Promise<ESPNCareerStats | null> {
+  try {
+    const response = await fetch(
+      `https://site.web.api.espn.com/apis/common/v3/sports/football/nfl/athletes/${athleteId}/stats`,
+      {
+        headers: { 'User-Agent': 'Mozilla/5.0 (compatible; NFL-HQ/1.0)' },
+        next: { revalidate: 604800 }, // Cache for 1 week (season is over)
+      }
+    );
+
+    if (!response.ok) return null;
+
+    const data = await response.json();
+
+    if (!data.categories || !Array.isArray(data.categories)) return null;
+
+    const categories: ESPNCareerStatsCategory[] = [];
+    const allSeasons = new Set<number>();
+
+    for (const category of data.categories) {
+      if (!category.statistics || category.statistics.length === 0) continue;
+
+      const seasons: ESPNCareerStatsSeason[] = [];
+      const totalsMap: Record<string, string> = {};
+
+      // Parse season-by-season stats
+      for (const seasonData of category.statistics) {
+        const year = seasonData.season?.year;
+        if (!year) continue;
+
+        allSeasons.add(year);
+
+        const statsMap: Record<string, string> = {};
+        const names = category.names || [];
+        const stats = seasonData.stats || [];
+
+        names.forEach((name: string, index: number) => {
+          statsMap[name] = stats[index] || '-';
+        });
+
+        seasons.push({
+          year,
+          displayName: seasonData.season?.displayName || String(year),
+          teamId: seasonData.teamId || '',
+          teamSlug: seasonData.teamSlug || '',
+          stats: statsMap,
+        });
+      }
+
+      // Parse career totals
+      const totals = category.totals || [];
+      const names = category.names || [];
+      names.forEach((name: string, index: number) => {
+        totalsMap[name] = totals[index] || '-';
+      });
+
+      categories.push({
+        name: category.name || '',
+        displayName: category.displayName || '',
+        labels: category.labels || [],
+        names: category.names || [],
+        displayNames: category.displayNames || [],
+        seasons: seasons.sort((a, b) => b.year - a.year), // Most recent first
+        totals: totalsMap,
+      });
+    }
+
+    return {
+      categories,
+      availableSeasons: Array.from(allSeasons).sort((a, b) => b - a), // Most recent first
+    };
+  } catch (error) {
+    console.error('Error fetching ESPN career stats:', error);
     return null;
   }
 }
@@ -733,18 +833,21 @@ export async function GET(
     // Get team info
     const team = teams[foundTeamId];
 
-    // Fetch ESPN stats and game log
+    // Fetch ESPN stats, game log, and career stats
     let espnStats: ESPNStats | null = null;
     let espnGameLog: ESPNGameLog | null = null;
+    let espnCareerStats: ESPNCareerStats | null = null;
     const espnAthleteId = await fetchESPNAthleteId(foundTeamId, foundPlayer.name);
     if (espnAthleteId) {
-      // Fetch stats and game log in parallel
-      const [statsResult, gameLogResult] = await Promise.all([
+      // Fetch stats, game log, and career stats in parallel
+      const [statsResult, gameLogResult, careerStatsResult] = await Promise.all([
         fetchESPNAthleteStats(espnAthleteId),
         fetchESPNGameLog(espnAthleteId),
+        fetchESPNCareerStats(espnAthleteId),
       ]);
       espnStats = statsResult;
       espnGameLog = gameLogResult;
+      espnCareerStats = careerStatsResult;
     }
 
     // Fetch PFSN Impact data (may fail if repos don't exist)
@@ -829,6 +932,20 @@ export async function GET(
           result: game.result,
           stats: game.stats,
         })),
+      } : null,
+
+      // Career Stats (season-by-season + totals)
+      careerStats: espnCareerStats ? {
+        categories: espnCareerStats.categories.map(cat => ({
+          name: cat.name,
+          displayName: cat.displayName,
+          labels: cat.labels,
+          names: cat.names,
+          displayNames: cat.displayNames,
+          seasons: cat.seasons,
+          totals: cat.totals,
+        })),
+        availableSeasons: espnCareerStats.availableSeasons,
       } : null,
     };
 

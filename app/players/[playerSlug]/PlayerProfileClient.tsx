@@ -70,6 +70,24 @@ interface PlayerProfile {
       stats: Record<string, string>;
     }>;
   } | null;
+  careerStats: {
+    categories: Array<{
+      name: string;
+      displayName: string;
+      labels: string[];
+      names: string[];
+      displayNames: string[];
+      seasons: Array<{
+        year: number;
+        displayName: string;
+        teamId: string;
+        teamSlug: string;
+        stats: Record<string, string>;
+      }>;
+      totals: Record<string, string>;
+    }>;
+    availableSeasons: number[];
+  } | null;
 }
 
 interface Props {
@@ -171,6 +189,7 @@ export default function PlayerProfileClient({ playerSlug }: Props) {
   const [imageError, setImageError] = useState(false);
   const [articles, setArticles] = useState<Article[]>([]);
   const [visibleArticles, setVisibleArticles] = useState(3);
+  const [selectedSeason, setSelectedSeason] = useState<number | 'career'>('career');
 
   useEffect(() => {
     async function fetchPlayer() {
@@ -591,6 +610,70 @@ export default function PlayerProfileClient({ playerSlug }: Props) {
                 </tbody>
               </table>
             </div>
+          </div>
+        )}
+
+        {/* Career Stats Section */}
+        {player.careerStats && player.careerStats.categories.length > 0 && (
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-5 mb-6">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
+              <h2 className="text-lg font-semibold text-gray-900">
+                {selectedSeason === 'career' ? 'Career Stats' : `${selectedSeason} Season Stats`}
+              </h2>
+              <select
+                value={selectedSeason}
+                onChange={(e) => setSelectedSeason(e.target.value === 'career' ? 'career' : parseInt(e.target.value))}
+                className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+              >
+                <option value="career">Career Totals</option>
+                {player.careerStats.availableSeasons.map((year) => (
+                  <option key={year} value={year}>{year}</option>
+                ))}
+              </select>
+            </div>
+
+            {player.careerStats.categories.map((category) => {
+              // Get the stats to display based on selection
+              const statsToShow = selectedSeason === 'career'
+                ? category.totals
+                : category.seasons.find(s => s.year === selectedSeason)?.stats;
+
+              if (!statsToShow) return null;
+
+              // Filter out stats that are just "-" or empty
+              const hasData = Object.values(statsToShow).some(v => v !== '-' && v !== '' && v !== '0');
+              if (!hasData) return null;
+
+              return (
+                <div key={category.name} className="mb-6 last:mb-0">
+                  <h3 className="text-sm font-semibold text-gray-600 uppercase tracking-wide mb-3">
+                    {category.displayName}
+                  </h3>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr className="border-b-2 border-gray-200">
+                          {category.labels.map((label, index) => (
+                            <th key={index} className="text-center py-2 px-3 font-semibold text-gray-600 bg-gray-50 whitespace-nowrap">
+                              {label}
+                            </th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr className="border-b border-gray-100">
+                          {category.names.map((name, index) => (
+                            <td key={index} className="py-3 px-3 text-center text-gray-900 font-medium whitespace-nowrap">
+                              {statsToShow[name] || '-'}
+                            </td>
+                          ))}
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         )}
 
