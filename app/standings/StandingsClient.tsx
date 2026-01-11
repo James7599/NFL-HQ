@@ -22,6 +22,10 @@ interface StandingData {
   divRecord: string;
   streak: string;
   last10: string;
+  clincher?: {
+    code: string;
+    description: string;
+  } | null;
 }
 
 // Map API team slugs to our team IDs (already defined in teams data)
@@ -171,7 +175,7 @@ export default function StandingsClient() {
 
   const allTeams = getAllTeams();
 
-  // Fetch standings from API - only runs once on mount
+  // Fetch standings from ESPN API - only runs once on mount
   useEffect(() => {
     // Prevent re-fetching if already loaded
     if (hasLoaded) return;
@@ -183,7 +187,7 @@ export default function StandingsClient() {
 
         // Use getApiPath for proper basePath handling
         const { getApiPath } = await import('@/utils/api');
-        const response = await fetch(getApiPath('nfl/teams/api/standings?season=2025'));
+        const response = await fetch(getApiPath('api/nfl/standings'));
 
         if (!response.ok) {
           throw new Error('Failed to fetch standings');
@@ -191,9 +195,8 @@ export default function StandingsClient() {
 
         const data = await response.json();
 
-        // Transform API data to our format
+        // Transform ESPN API data to our format
         const transformedData: StandingData[] = [];
-        const teams = getAllTeams();
 
         if (data.standings && Array.isArray(data.standings)) {
           for (const team of data.standings) {
@@ -202,17 +205,18 @@ export default function StandingsClient() {
               teamName: team.fullName,
               conference: team.conference as 'AFC' | 'NFC',
               division: team.division,
-              wins: team.record.wins,
-              losses: team.record.losses,
-              ties: team.record.ties,
-              winPct: team.winPercentage,
-              gamesBack: 0, // Calculate this if needed
+              wins: team.wins,
+              losses: team.losses,
+              ties: team.ties,
+              winPct: team.winPct,
+              gamesBack: team.gamesBack || 0,
               homeRecord: team.homeRecord || '0-0',
               awayRecord: team.awayRecord || '0-0',
               confRecord: team.confRecord || '0-0',
               divRecord: team.divRecord || '0-0',
               streak: team.streak || '-',
-              last10: team.last10 || '0-0',
+              last10: '0-0', // ESPN doesn't provide this, could calculate
+              clincher: team.clincher || null,
             });
           }
         }
@@ -245,6 +249,62 @@ export default function StandingsClient() {
       return { abbreviation: team.abbreviation, logoUrl: team.logoUrl, primaryColor: team.primaryColor };
     }
     return null;
+  };
+
+  // Render clincher badge based on status
+  const ClincherBadge = ({ clincher }: { clincher: StandingData['clincher'] }) => {
+    if (!clincher) return null;
+
+    const { code, description } = clincher;
+
+    // Determine badge style based on code
+    let bgColor = '';
+    let textColor = '';
+    let label = '';
+
+    switch (code) {
+      case '*':
+        // Clinched #1 seed + bye
+        bgColor = 'bg-yellow-100';
+        textColor = 'text-yellow-800';
+        label = '#1';
+        break;
+      case 'z':
+        // Clinched division
+        bgColor = 'bg-green-100';
+        textColor = 'text-green-800';
+        label = 'z';
+        break;
+      case 'y':
+        // Clinched wild card / playoff berth
+        bgColor = 'bg-blue-100';
+        textColor = 'text-blue-800';
+        label = 'y';
+        break;
+      case 'x':
+        // Clinched playoff berth
+        bgColor = 'bg-blue-100';
+        textColor = 'text-blue-800';
+        label = 'x';
+        break;
+      case 'e':
+        // Eliminated
+        bgColor = 'bg-red-100';
+        textColor = 'text-red-800';
+        label = 'e';
+        break;
+      default:
+        return null;
+    }
+
+    return (
+      <span
+        className={`inline-flex items-center justify-center w-5 h-5 text-[10px] font-bold rounded-full ${bgColor} ${textColor}`}
+        title={description}
+      >
+        {label}
+      </span>
+    );
   };
 
   const handleSort = (key: SortKey) => {
@@ -432,7 +492,7 @@ export default function StandingsClient() {
         {teams.map((team, index) => {
           const teamInfo = getTeamInfo(team.teamName);
           return (
-            <div key={team.teamId} className="bg-white rounded-lg border border-gray-200 p-4">
+            <div key={team.teamId} className={`bg-white rounded-lg border p-4 ${team.clincher?.code === 'e' ? 'border-red-200 bg-red-50/30' : 'border-gray-200'}`}>
               {/* Team header with logo/name */}
               <Link href={`/teams/${team.teamId}`} className="flex items-center gap-3 mb-3">
                 <span className="text-lg font-bold text-gray-900">#{index + 1}</span>
@@ -440,7 +500,10 @@ export default function StandingsClient() {
                   <>
                     <img src={teamInfo.logoUrl} alt={teamInfo.abbreviation} className="w-8 h-8" />
                     <div className="flex-1">
-                      <div className="font-bold text-gray-900">{teamInfo.abbreviation}</div>
+                      <div className="font-bold text-gray-900 flex items-center gap-2">
+                        {teamInfo.abbreviation}
+                        <ClincherBadge clincher={team.clincher} />
+                      </div>
                       <div className="text-sm text-gray-600">{getAllTeams().find(t => t.id === team.teamId)?.name}</div>
                     </div>
                   </>
@@ -568,8 +631,9 @@ export default function StandingsClient() {
           <tbody className="divide-y divide-gray-200">
             {teams.map((team, index) => {
               const teamInfo = getTeamInfo(team.teamName);
+              const isEliminated = team.clincher?.code === 'e';
               return (
-                <tr key={team.teamId} className="hover:bg-gray-50 transition-colors">
+                <tr key={team.teamId} className={`hover:bg-gray-50 transition-colors ${isEliminated ? 'bg-red-50/30' : ''}`}>
                   <td className="pl-4 sm:pl-6 pr-2 sm:pr-4 py-3 sm:py-4 text-sm sm:text-base text-gray-900 font-semibold">{index + 1}</td>
                   <td className="px-2 sm:px-4 py-3 sm:py-4">
                     <Link href={`/teams/${team.teamId}`} className="flex items-center gap-2 sm:gap-3 hover:opacity-80 transition-opacity">
@@ -583,7 +647,10 @@ export default function StandingsClient() {
                             className="w-6 h-6 sm:w-8 sm:h-8"
                           />
                           <div className="flex flex-col">
-                            <span className="text-sm sm:text-base font-bold text-gray-900 leading-tight">{teamInfo.abbreviation}</span>
+                            <span className="text-sm sm:text-base font-bold text-gray-900 leading-tight flex items-center gap-1.5">
+                              {teamInfo.abbreviation}
+                              <ClincherBadge clincher={team.clincher} />
+                            </span>
                             <span className="text-xs sm:text-sm text-gray-600 leading-tight">{getAllTeams().find(t => t.id === team.teamId)?.name}</span>
                           </div>
                         </>
@@ -667,8 +734,8 @@ export default function StandingsClient() {
             </div>
           )}
 
-          {/* Conference Filter */}
-          <div className="mb-6">
+          {/* Conference Filter and Legend */}
+          <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div className="inline-flex flex-wrap sm:flex-nowrap rounded-lg border border-gray-300 bg-white p-1 gap-1 sm:gap-0">
               <button
                 onClick={() => setConferenceView('all')}
@@ -710,6 +777,27 @@ export default function StandingsClient() {
               >
                 NFC
               </button>
+            </div>
+
+            {/* Legend */}
+            <div className="flex flex-wrap items-center gap-3 text-xs">
+              <span className="text-gray-500 font-medium">Legend:</span>
+              <div className="flex items-center gap-1">
+                <span className="inline-flex items-center justify-center w-5 h-5 text-[10px] font-bold rounded-full bg-yellow-100 text-yellow-800">#1</span>
+                <span className="text-gray-600">Clinched Bye</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <span className="inline-flex items-center justify-center w-5 h-5 text-[10px] font-bold rounded-full bg-green-100 text-green-800">z</span>
+                <span className="text-gray-600">Clinched Division</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <span className="inline-flex items-center justify-center w-5 h-5 text-[10px] font-bold rounded-full bg-blue-100 text-blue-800">y</span>
+                <span className="text-gray-600">Clinched Playoff</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <span className="inline-flex items-center justify-center w-5 h-5 text-[10px] font-bold rounded-full bg-red-100 text-red-800">e</span>
+                <span className="text-gray-600">Eliminated</span>
+              </div>
             </div>
           </div>
 
