@@ -641,7 +641,11 @@ export default function PlayerProfileClient({ playerSlug }: Props) {
             {visibleArticles < articles.length && (
               <div className="mt-8 text-center">
                 <button
-                  onClick={() => setVisibleArticles(prev => Math.min(prev + 3, articles.length))}
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setVisibleArticles(prev => Math.min(prev + 3, articles.length));
+                  }}
                   className="text-white px-8 py-4 rounded-lg font-medium transition-colors hover:opacity-90 text-base min-h-[48px]"
                   style={{ backgroundColor: player.team.primaryColor }}
                 >
