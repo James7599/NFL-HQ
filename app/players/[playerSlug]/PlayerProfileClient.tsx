@@ -370,7 +370,7 @@ export default function PlayerProfileClient({ playerSlug }: Props) {
       />
 
       {/* Hero Section with Blue Background */}
-      <div style={{ backgroundColor: '#0050A0' }} className="text-white pt-[57px] lg:pt-0">
+      <div style={{ backgroundColor: '#0050A0' }} className="text-white pt-[57px] lg:pt-6">
         <div className="container mx-auto px-4 py-4 lg:py-5">
           <div className="flex flex-col lg:flex-row items-center justify-between">
             {/* Player Info */}
