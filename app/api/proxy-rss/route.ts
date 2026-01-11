@@ -6,6 +6,7 @@ interface Article {
   pubDate: string;
   description: string;
   image?: string;
+  featuredImage?: string;
 }
 
 function extractImageFromContent(content: string): string | undefined {
@@ -73,6 +74,7 @@ function parseRSSItems(xmlText: string): Article[] {
         pubDate,
         description,
         image,
+        featuredImage: image, // Also include as featuredImage for compatibility
       });
     }
   }

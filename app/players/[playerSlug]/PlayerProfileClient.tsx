@@ -82,6 +82,7 @@ interface Article {
   pubDate: string;
   description: string;
   image?: string;
+  featuredImage?: string;
 }
 
 function getGradeColor(grade: string): { bg: string; text: string; border: string } {
@@ -169,7 +170,7 @@ export default function PlayerProfileClient({ playerSlug }: Props) {
   const [error, setError] = useState<string | null>(null);
   const [imageError, setImageError] = useState(false);
   const [articles, setArticles] = useState<Article[]>([]);
-  const [showAllArticles, setShowAllArticles] = useState(false);
+  const [visibleArticles, setVisibleArticles] = useState(3);
 
   useEffect(() => {
     async function fetchPlayer() {
@@ -212,7 +213,7 @@ export default function PlayerProfileClient({ playerSlug }: Props) {
 
         const data = await response.json();
         if (data.articles && Array.isArray(data.articles)) {
-          setArticles(data.articles.slice(0, 6)); // Max 6 articles
+          setArticles(data.articles);
         }
       } catch (err) {
         console.error('Error fetching articles:', err);
@@ -592,7 +593,7 @@ export default function PlayerProfileClient({ playerSlug }: Props) {
               <h2 className="text-xl font-bold text-gray-900">Latest {player.name.split(' ').pop()} Articles</h2>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {articles.slice(0, showAllArticles ? 6 : 3).map((article, index) => (
+              {articles.slice(0, visibleArticles).map((article, index) => (
                 <a
                   key={index}
                   href={article.link}
@@ -600,10 +601,10 @@ export default function PlayerProfileClient({ playerSlug }: Props) {
                   rel="noopener noreferrer"
                   className="block bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer"
                 >
-                  {article.image && (
+                  {(article.featuredImage || article.image) && (
                     <div className="w-full aspect-video overflow-hidden bg-gray-200">
                       <img
-                        src={article.image}
+                        src={article.featuredImage || article.image}
                         alt={article.title}
                         className="w-full h-full object-cover"
                         loading="lazy"
@@ -629,10 +630,10 @@ export default function PlayerProfileClient({ playerSlug }: Props) {
                 </a>
               ))}
             </div>
-            {articles.length > 3 && !showAllArticles && (
+            {visibleArticles < articles.length && (
               <div className="mt-8 text-center">
                 <button
-                  onClick={() => setShowAllArticles(true)}
+                  onClick={() => setVisibleArticles(prev => Math.min(prev + 3, articles.length))}
                   className="text-white px-8 py-4 rounded-lg font-medium transition-colors hover:opacity-90 text-base min-h-[48px]"
                   style={{ backgroundColor: player.team.primaryColor }}
                 >
