@@ -703,7 +703,7 @@ export default function PlayerProfileClient({ playerSlug }: Props) {
                     </div>
                   )}
                   <div className="p-4">
-                    <h3 className="text-lg font-semibold mb-2 line-clamp-2" style={{ color: player.team.primaryColor }}>
+                    <h3 className="text-lg font-semibold mb-2 line-clamp-2 text-[#0050A0]">
                       {article.title}
                     </h3>
                     <p className="text-base text-gray-600 mb-4 line-clamp-3">
@@ -713,7 +713,7 @@ export default function PlayerProfileClient({ playerSlug }: Props) {
                       <span className="text-gray-600">
                         {getRelativeTime(article.pubDate)}
                       </span>
-                      <span className="font-medium" style={{ color: player.team.primaryColor }}>
+                      <span className="font-medium text-[#0050A0]">
                         Read More →
                       </span>
                     </div>
@@ -729,8 +729,7 @@ export default function PlayerProfileClient({ playerSlug }: Props) {
                     e.preventDefault();
                     setVisibleArticles(prev => Math.min(prev + 3, articles.length));
                   }}
-                  className="text-white px-8 py-4 rounded-lg font-medium transition-colors hover:opacity-90 text-base min-h-[48px]"
-                  style={{ backgroundColor: player.team.primaryColor }}
+                  className="text-white px-8 py-4 rounded-lg font-medium transition-colors hover:opacity-90 text-base min-h-[48px] bg-[#0050A0]"
                 >
                   Show More Articles
                 </button>
