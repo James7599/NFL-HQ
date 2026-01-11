@@ -87,6 +87,55 @@ interface ImpactGrade {
   score: number;
 }
 
+// ESPN Team ID mapping
+const ESPN_TEAM_IDS: Record<string, string> = {
+  'arizona-cardinals': '22', 'atlanta-falcons': '1', 'baltimore-ravens': '33', 'buffalo-bills': '2',
+  'carolina-panthers': '29', 'chicago-bears': '3', 'cincinnati-bengals': '4', 'cleveland-browns': '5',
+  'dallas-cowboys': '6', 'denver-broncos': '7', 'detroit-lions': '8', 'green-bay-packers': '9',
+  'houston-texans': '34', 'indianapolis-colts': '11', 'jacksonville-jaguars': '30', 'kansas-city-chiefs': '12',
+  'las-vegas-raiders': '13', 'los-angeles-chargers': '24', 'los-angeles-rams': '14', 'miami-dolphins': '15',
+  'minnesota-vikings': '16', 'new-england-patriots': '17', 'new-orleans-saints': '18', 'new-york-giants': '19',
+  'new-york-jets': '20', 'philadelphia-eagles': '21', 'pittsburgh-steelers': '23', 'san-francisco-49ers': '25',
+  'seattle-seahawks': '26', 'tampa-bay-buccaneers': '27', 'tennessee-titans': '10', 'washington-commanders': '28',
+};
+
+// Fetch ESPN roster for college names
+async function fetchESPNCollegeNames(teamId: string): Promise<Map<string, string>> {
+  const collegeMap = new Map<string, string>();
+  const espnTeamId = ESPN_TEAM_IDS[teamId];
+
+  if (!espnTeamId) return collegeMap;
+
+  try {
+    const response = await fetch(
+      `https://site.api.espn.com/apis/site/v2/sports/football/nfl/teams/${espnTeamId}/roster`,
+      {
+        headers: { 'User-Agent': 'Mozilla/5.0 (compatible; NFL-HQ/1.0)' },
+        next: { revalidate: 604800 }, // Cache for 1 week
+      }
+    );
+
+    if (!response.ok) return collegeMap;
+
+    const data = await response.json();
+
+    // Process all athlete groups
+    for (const group of data.athletes || []) {
+      for (const player of group.items || []) {
+        if (player.displayName && player.college?.name) {
+          // Store with normalized name for matching
+          const normalizedName = player.displayName.toLowerCase().replace(/[^a-z0-9]/g, '');
+          collegeMap.set(normalizedName, player.college.name);
+        }
+      }
+    }
+  } catch (error) {
+    console.error('Error fetching ESPN college names:', error);
+  }
+
+  return collegeMap;
+}
+
 // Cache for impact grades
 let impactGradesCache: Map<string, number> | null = null;
 let cacheTimestamp = 0;
@@ -346,8 +395,11 @@ export async function GET(
       );
     }
 
-    // Fetch all impact grades from Google Sheets
-    const impactGrades = await getAllImpactGrades();
+    // Fetch impact grades and ESPN college names in parallel
+    const [impactGrades, espnCollegeNames] = await Promise.all([
+      getAllImpactGrades(),
+      fetchESPNCollegeNames(teamId),
+    ]);
 
     // Transform the data to our format
     const transformedRoster = data.squad
@@ -363,6 +415,10 @@ export async function GET(
           }
         }
 
+        // Get ESPN college name (cleaner than SportsKeeda)
+        const normalizedName = player.name.toLowerCase().replace(/[^a-z0-9]/g, '');
+        const espnCollege = espnCollegeNames.get(normalizedName);
+
         return {
           name: player.name,
           slug: player.slug,
@@ -372,7 +428,7 @@ export async function GET(
           age: player.age,
           height: formatHeight(player.height_in_inch),
           weight: player.weight_in_lbs,
-          college: player.college?.replace('University of ', '').replace(' University', '') || 'N/A',
+          college: espnCollege || player.college?.replace('University of ', '').replace(' University', '') || 'N/A',
           experience: player.experience,
           impactPlus: impactScore, // Real PFSN Impact grade from Google Sheets
           isActive: player.is_active,
