@@ -96,9 +96,9 @@ export async function GET(
       );
     }
 
-    // Fetch data from Sportskeeda API
+    // Fetch data from Sportskeeda API (include=squad is required to get roster data)
     const response = await fetch(
-      `https://api.sportskeeda.com/v1/taxonomy/${sportsKeedaSlug}`,
+      `https://api.sportskeeda.com/v1/taxonomy/${sportsKeedaSlug}?include=squad`,
       {
         headers: {
           'User-Agent': 'Mozilla/5.0 (compatible; NFL-HQ/1.0)',

@@ -138,7 +138,7 @@ async function fetchTeamRosterDirect(teamId: string): Promise<{ players: RosterP
     if (!sportsKeedaSlug) return null;
 
     const response = await fetch(
-      `https://api.sportskeeda.com/v1/taxonomy/${sportsKeedaSlug}`,
+      `https://api.sportskeeda.com/v1/taxonomy/${sportsKeedaSlug}?include=squad`,
       {
         headers: {
           'User-Agent': 'Mozilla/5.0 (compatible; NFL-HQ/1.0)',
