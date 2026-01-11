@@ -391,64 +391,153 @@ async function fetchESPNGameLog(athleteId: string): Promise<ESPNGameLog | null> 
 }
 
 // Google Sheets configuration for PFSN Impact Grades
-const GOOGLE_SHEETS_CONFIG = {
+const GOOGLE_SHEETS_CONFIG: Record<string, { spreadsheetId: string; gid: string }> = {
   QB: {
     spreadsheetId: '17d7EIFBHLChlSoi6vRFArwviQRTJn0P0TOvQUNx8hU8',
     gid: '1456950409',
   },
-  // Add more positions as sheets become available
+  SAF: {
+    spreadsheetId: '1SKr25H4brSE4dRf7JGpkytwLAKvt4jH-_wlCoqbFPXE',
+    gid: '1216441503',
+  },
+  CB: {
+    spreadsheetId: '1fUwD_rShGMrn7ypJyQsy4mCofqP7Q6J0Un8rsGW7h7U',
+    gid: '1146203009',
+  },
+  LB: {
+    spreadsheetId: '1mNCbJ8RxNZOSp_DuocR_5C7e_wqfiIPy4Rb9fS7GTBE',
+    gid: '519296058',
+  },
+  EDGE: {
+    spreadsheetId: '1RLSAJusOAcjnA1VDROtWFdfKUF4VYUV9JQ6tPinuGAQ',
+    gid: '0',
+  },
+  DT: {
+    spreadsheetId: '1N_V-cyIhROKXNatG1F_uPXTyP6BhuoNu_TebgjMQ6YM',
+    gid: '0',
+  },
+  OL: {
+    spreadsheetId: '1bKmYM1QyPSsJ9FyPtVZuxV0_HiUBw1o2loyU_55pXKA',
+    gid: '1321084176',
+  },
+  TE: {
+    spreadsheetId: '16LsyT1QLP-2ZdG_WNdHjn6ZMrFFu7q13qxDkKyTuseM',
+    gid: '53851653',
+  },
+  WR: {
+    spreadsheetId: '1h-HIZVjq1TM8FZ_5FYfxEZ3lPwtw_9ZWeqLzAi0EUIM',
+    gid: '1964031106',
+  },
+  RB: {
+    spreadsheetId: '1lXXHd9OzHA6Zp4yW1HZKsIJybLthW7tS93l4y4yCBzE',
+    gid: '0',
+  },
 };
 
-interface SheetQBRow {
-  rank: number;
+interface SheetPlayerRow {
+  seasonRank: number;
+  overallRank: number;
   player: string;
   grade: string;
   score: number;
-  overallRank?: number;
+  position: string;
 }
 
-async function fetchQBGradesFromSheet(): Promise<SheetQBRow[]> {
+// Column mappings for each position sheet
+// Each position has different column structures
+const POSITION_COLUMN_MAPPINGS: Record<string, {
+  playerCol: number;
+  scoreCol: number;
+  gradeCol: number;
+  seasonRankCol: number;
+  overallRankCol: number;
+  headerRows: number;
+}> = {
+  // QB: Season, Rank, Player, Grade, Score, OVR. Rank
+  QB: { playerCol: 2, scoreCol: 4, gradeCol: 3, seasonRankCol: 1, overallRankCol: 5, headerRows: 1 },
+  // SAF: Season, Player, Team, ..., Ovr. Rank, Season Rank, SAF+, SAF+ Grade (columns from end: -4, -3, -2, -1)
+  SAF: { playerCol: 1, scoreCol: -2, gradeCol: -1, seasonRankCol: -3, overallRankCol: -4, headerRows: 10 },
+  // CB: Season, Player, ID, Pos, Team, ..., Ovr. Rank, Season Rank, CB+, CB+ Grade
+  CB: { playerCol: 1, scoreCol: -2, gradeCol: -1, seasonRankCol: -3, overallRankCol: -4, headerRows: 10 },
+  // LB: Season, Player Season ID, Player, Team, ..., Ovr. Rank, Season Rank, LB+, LB+ Grade
+  LB: { playerCol: 2, scoreCol: -2, gradeCol: -1, seasonRankCol: -3, overallRankCol: -4, headerRows: 10 },
+  // EDGE: Season, Player, Team, ..., Ovr. Rank, Season Rank, EDGE+, EDGE+ Grade
+  EDGE: { playerCol: 1, scoreCol: -2, gradeCol: -1, seasonRankCol: -3, overallRankCol: -4, headerRows: 10 },
+  // DT: Season, Player, Team, ..., Ovr. Rank, Season Rank, DT+, DT+ Grade
+  DT: { playerCol: 1, scoreCol: -2, gradeCol: -1, seasonRankCol: -3, overallRankCol: -4, headerRows: 10 },
+  // OL: Season, Player Season ID, pffPosGeneral, Player, Team, ..., Ovr. Rank, Season Rank, Season Pos. Rank, OL+, OL+ Grade
+  OL: { playerCol: 3, scoreCol: -2, gradeCol: -1, seasonRankCol: -4, overallRankCol: -5, headerRows: 10 },
+  // TE: Season, Player, Team, ..., Ovr. Rank, Season Rank, TE+, TE+ Grade
+  TE: { playerCol: 1, scoreCol: -2, gradeCol: -1, seasonRankCol: -3, overallRankCol: -4, headerRows: 10 },
+  // WR: Season, Player, Team, ..., Ovr. Rank, Name, WR+, WR+ Grade, Team, Games, Season, Season Rank
+  WR: { playerCol: 1, scoreCol: -6, gradeCol: -5, seasonRankCol: -1, overallRankCol: -8, headerRows: 10 },
+  // RB: RB+, Grade, player, Team Name, ..., Overall Rank, Season Rank (score is col 0, grade is col 1)
+  RB: { playerCol: 2, scoreCol: 0, gradeCol: 1, seasonRankCol: -1, overallRankCol: -3, headerRows: 10 },
+};
+
+async function fetchPositionGradesFromSheet(position: string): Promise<SheetPlayerRow[]> {
   try {
-    const config = GOOGLE_SHEETS_CONFIG.QB;
+    const config = GOOGLE_SHEETS_CONFIG[position];
+    if (!config) return [];
+
+    const mapping = POSITION_COLUMN_MAPPINGS[position];
+    if (!mapping) return [];
+
     const csvUrl = `https://docs.google.com/spreadsheets/d/${config.spreadsheetId}/export?format=csv&gid=${config.gid}`;
 
     const response = await fetch(csvUrl, {
       headers: { 'User-Agent': 'NFL-HQ/1.0' },
-      next: { revalidate: 3600 }, // Cache for 1 hour
+      next: { revalidate: 86400 }, // Cache for 24 hours
     });
 
     if (!response.ok) {
-      console.error('Failed to fetch QB grades sheet:', response.status);
+      console.error(`Failed to fetch ${position} grades sheet:`, response.status);
       return [];
     }
 
     const csvText = await response.text();
     const lines = csvText.split('\n').filter(line => line.trim());
 
-    // Skip header row and parse data
-    const players: SheetQBRow[] = [];
-    for (let i = 1; i < lines.length; i++) {
+    const players: SheetPlayerRow[] = [];
+
+    // Skip header rows
+    for (let i = mapping.headerRows; i < lines.length; i++) {
       const line = lines[i];
-      // Parse CSV properly (handle commas in quoted fields)
       const values = parseCSVLine(line);
 
-      // Expected columns: Season, Rank, Player, Grade, Score, OVR. Rank, L4W
-      if (values.length >= 5) {
-        const rank = parseInt(values[1]) || 0;
-        const player = values[2]?.trim() || '';
-        const grade = values[3]?.trim() || '';
-        const score = parseFloat(values[4]) || 0;
-        const overallRank = parseInt(values[5]) || rank;
+      if (values.length < 5) continue;
 
-        if (player && rank > 0) {
-          players.push({ rank, player, grade, score, overallRank });
-        }
-      }
+      // Get column values (handle negative indices for columns from end)
+      const getCol = (col: number) => col < 0 ? values[values.length + col] : values[col];
+
+      const player = getCol(mapping.playerCol)?.trim() || '';
+      const scoreStr = getCol(mapping.scoreCol)?.trim() || '0';
+      const grade = getCol(mapping.gradeCol)?.trim() || '';
+      const seasonRankStr = getCol(mapping.seasonRankCol)?.trim() || '0';
+      const overallRankStr = getCol(mapping.overallRankCol)?.trim() || '0';
+
+      // Parse score (remove % if present)
+      const score = parseFloat(scoreStr.replace('%', '')) || 0;
+      const seasonRank = parseInt(seasonRankStr) || 0;
+      const overallRank = parseInt(overallRankStr) || seasonRank;
+
+      // Skip invalid rows (header rows that slipped through, or empty player names)
+      if (!player || player.toLowerCase() === 'player' || player.toLowerCase().includes('season')) continue;
+      if (seasonRank <= 0 && overallRank <= 0) continue;
+
+      players.push({
+        player,
+        score,
+        grade,
+        seasonRank: seasonRank || overallRank,
+        overallRank: overallRank || seasonRank,
+        position,
+      });
     }
 
     return players;
   } catch (error) {
-    console.error('Error fetching QB grades from sheet:', error);
+    console.error(`Error fetching ${position} grades from sheet:`, error);
     return [];
   }
 }
@@ -487,25 +576,33 @@ async function fetchPFSNImpact(): Promise<PFSNResponse | null> {
     const currentSeason = 2025;
     const playersMap: Record<string, PFSNPlayer> = {};
 
-    // Fetch QB grades from Google Sheet
-    const qbGrades = await fetchQBGradesFromSheet();
+    // Fetch all position grades in parallel
+    const positions = Object.keys(GOOGLE_SHEETS_CONFIG);
+    const allGradesPromises = positions.map(pos => fetchPositionGradesFromSheet(pos));
+    const allGradesResults = await Promise.all(allGradesPromises);
 
-    for (const qb of qbGrades) {
-      const normalizedName = normalizePlayerName(qb.player);
+    // Combine all position grades into playersMap
+    for (let i = 0; i < positions.length; i++) {
+      const position = positions[i];
+      const grades = allGradesResults[i];
 
-      playersMap[normalizedName] = {
-        playerName: qb.player,
-        normalizedName,
-        position: 'QB',
-        team: '', // Not available in current sheet
-        score: qb.score,
-        grade: qb.grade,
-        seasonRank: qb.rank,
-        overallRank: qb.overallRank || qb.rank,
-        season: currentSeason,
-        weeklyData: [], // Weekly data not included in current sheet
-        stats: {}, // Stats not included in current sheet
-      };
+      for (const playerGrade of grades) {
+        const normalizedName = normalizePlayerName(playerGrade.player);
+
+        playersMap[normalizedName] = {
+          playerName: playerGrade.player,
+          normalizedName,
+          position: position,
+          team: '', // Not available in current sheets
+          score: playerGrade.score,
+          grade: playerGrade.grade,
+          seasonRank: playerGrade.seasonRank,
+          overallRank: playerGrade.overallRank,
+          season: currentSeason,
+          weeklyData: [], // Weekly data not included in current sheets
+          stats: {}, // Stats not included in current sheets
+        };
+      }
     }
 
     return { players: playersMap, positionMap: POSITION_MAP };
@@ -677,7 +774,14 @@ export async function GET(
 
       // ESPN Stats
       seasonStats: espnStats ? {
-        season: espnStats.displayName,
+        season: (() => {
+          const match = espnStats.displayName?.match(/^(\d{4}) Regular Season$/);
+          if (match) {
+            const year = parseInt(match[1]);
+            return `${year}-${(year + 1).toString().slice(-2)} Regular Season Stats`;
+          }
+          return '2025-26 Regular Season Stats';
+        })(),
         stats: espnStats.statistics.map(stat => ({
           name: stat.name,
           label: stat.displayName,
