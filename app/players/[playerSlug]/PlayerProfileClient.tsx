@@ -440,13 +440,13 @@ export default function PlayerProfileClient({ playerSlug }: Props) {
       />
 
       {/* Hero Section with Blue Background */}
-      <div style={{ backgroundColor: '#0050A0' }} className="text-white pt-[57px] lg:pt-5 lg:pb-4">
-        <div className="container mx-auto px-4 py-4 lg:py-5">
+      <div style={{ backgroundColor: '#0050A0' }} className="text-white pt-[57px] lg:pt-3 lg:pb-3">
+        <div className="container mx-auto px-4 py-3 lg:py-3">
           <div className="flex flex-col lg:flex-row items-center justify-between">
             {/* Player Info */}
             <div className="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-8 mb-4 lg:mb-0">
               {/* Headshot */}
-              <div className="w-36 h-36 lg:w-44 lg:h-44 rounded-full flex items-center justify-center shadow-lg overflow-hidden flex-shrink-0 bg-white mt-2">
+              <div className="w-28 h-28 lg:w-32 lg:h-32 rounded-full flex items-center justify-center shadow-lg overflow-hidden flex-shrink-0 bg-white">
                 {!imageError ? (
                   <Image
                     src={player.headshotUrl}
@@ -468,19 +468,19 @@ export default function PlayerProfileClient({ playerSlug }: Props) {
 
               {/* Name and Details */}
               <div className="text-center sm:text-left">
-                <div className="flex items-center justify-center sm:justify-start gap-3 mb-2">
-                  <h1 className="text-3xl lg:text-5xl font-bold">{player.name}</h1>
-                  <span className="text-2xl lg:text-4xl opacity-70">#{player.jerseyNumber}</span>
+                <div className="flex items-center justify-center sm:justify-start gap-2 mb-1">
+                  <h1 className="text-2xl lg:text-4xl font-bold">{player.name}</h1>
+                  <span className="text-xl lg:text-3xl opacity-70">#{player.jerseyNumber}</span>
                 </div>
 
-                <div className="flex items-center justify-center sm:justify-start gap-3 text-lg lg:text-xl">
+                <div className="flex items-center justify-center sm:justify-start gap-2 text-base lg:text-lg">
                   <Link href={`/teams/${player.team.id}`} className="flex items-center gap-2 hover:opacity-80">
                     <Image
                       src={player.team.logo}
                       alt={player.team.name}
-                      width={28}
-                      height={28}
-                      className="w-7 h-7"
+                      width={24}
+                      height={24}
+                      className="w-6 h-6"
                     />
                     <span className="font-medium">{player.team.name}</span>
                   </Link>
@@ -490,7 +490,7 @@ export default function PlayerProfileClient({ playerSlug }: Props) {
 
                 {/* Status Badge */}
                 {player.status !== 'Active' && (
-                  <span className="inline-block mt-3 px-4 py-1.5 rounded-full text-sm font-medium bg-white/20 text-white">
+                  <span className="inline-block mt-2 px-3 py-1 rounded-full text-xs font-medium bg-white/20 text-white">
                     {player.status}
                   </span>
                 )}
@@ -498,23 +498,23 @@ export default function PlayerProfileClient({ playerSlug }: Props) {
             </div>
 
             {/* PFSN Impact Card */}
-            <div className="bg-white text-gray-800 rounded-lg p-4 lg:p-5 w-full sm:w-auto min-w-[200px] shadow-lg flex flex-col justify-between">
-              <h3 className="text-base font-semibold text-center text-gray-600">PFSN Impact Grade</h3>
+            <div className="bg-white text-gray-800 rounded-lg px-5 py-3 w-full sm:w-auto min-w-[220px] shadow-lg">
+              <h3 className="text-sm font-semibold text-center text-gray-600 mb-2">PFSN Impact Grade</h3>
               {player.pfsnImpact ? (
                 <>
-                  <div className="flex items-center justify-center gap-4 py-4">
+                  <div className="flex items-center justify-center gap-3 mb-2">
                     <div
-                      className={`w-14 h-14 rounded-full flex items-center justify-center text-2xl font-bold ${gradeColors?.bg} ${gradeColors?.text} border-2 ${gradeColors?.border}`}
+                      className={`w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold ${gradeColors?.bg} ${gradeColors?.text} border-2 ${gradeColors?.border}`}
                     >
                       {player.pfsnImpact.grade}
                     </div>
                     <div className="text-left">
-                      <div className={`text-3xl font-bold ${getScoreColor(player.pfsnImpact.score)}`}>
+                      <div className={`text-2xl font-bold ${getScoreColor(player.pfsnImpact.score)}`}>
                         {player.pfsnImpact.score}
                       </div>
                     </div>
                   </div>
-                  <div className="flex justify-center pt-3 border-t border-gray-100 text-base">
+                  <div className="flex justify-center pt-2 border-t border-gray-100 text-sm">
                     <div>
                       <span className="text-gray-500">Season Rank</span>
                       <span className="font-bold text-gray-900 ml-1.5">#{player.pfsnImpact.seasonRank}</span>
@@ -522,8 +522,8 @@ export default function PlayerProfileClient({ playerSlug }: Props) {
                   </div>
                 </>
               ) : (
-                <div className="text-center py-2">
-                  <div className="w-14 h-14 mx-auto rounded-full bg-gray-100 flex items-center justify-center text-2xl font-bold text-gray-400 mb-2">
+                <div className="text-center py-1">
+                  <div className="w-12 h-12 mx-auto rounded-full bg-gray-100 flex items-center justify-center text-xl font-bold text-gray-400 mb-1">
                     —
                   </div>
                   <p className="text-gray-500 text-xs">Not available</p>
