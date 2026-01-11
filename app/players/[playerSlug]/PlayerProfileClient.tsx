@@ -111,6 +111,20 @@ function getScoreColor(score: number): string {
   return 'text-red-500';
 }
 
+function getRelativeTime(dateString: string): string {
+  const date = new Date(dateString);
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffMins = Math.floor(diffMs / 60000);
+  const diffHours = Math.floor(diffMs / 3600000);
+  const diffDays = Math.floor(diffMs / 86400000);
+
+  if (diffMins < 60) return `${diffMins}m ago`;
+  if (diffHours < 24) return `${diffHours}h ago`;
+  if (diffDays < 7) return `${diffDays}d ago`;
+  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+}
+
 function formatStatLabel(key: string): string {
   const labels: Record<string, string> = {
     passYards: 'Pass Yards',
@@ -582,53 +596,56 @@ export default function PlayerProfileClient({ playerSlug }: Props) {
 
         {/* Latest Articles Section */}
         {articles.length > 0 && (
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-5 mt-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-              <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
-              </svg>
-              Latest Articles
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mt-6">
+            <div className="mb-6">
+              <h2 className="text-xl font-bold text-gray-900">Latest {player.name.split(' ').pop()} Articles</h2>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {articles.slice(0, showAllArticles ? 6 : 3).map((article, index) => (
                 <a
                   key={index}
                   href={article.link}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group block bg-gray-50 rounded-lg overflow-hidden hover:shadow-md transition-shadow"
+                  className="block bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer"
                 >
                   {article.image && (
-                    <div className="aspect-video bg-gray-200 overflow-hidden">
+                    <div className="w-full aspect-video overflow-hidden bg-gray-200">
                       <img
                         src={article.image}
                         alt={article.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                        className="w-full h-full object-cover"
+                        loading="lazy"
                       />
                     </div>
                   )}
-                  <div className="p-3">
-                    <h3 className="font-medium text-gray-900 text-sm line-clamp-2 group-hover:text-blue-600 transition-colors">
+                  <div className="p-4">
+                    <h3 className="text-lg font-semibold mb-2 line-clamp-2" style={{ color: player.team.primaryColor }}>
                       {article.title}
                     </h3>
-                    <p className="text-xs text-gray-500 mt-1">
-                      {new Date(article.pubDate).toLocaleDateString('en-US', {
-                        month: 'short',
-                        day: 'numeric',
-                        year: 'numeric',
-                      })}
+                    <p className="text-base text-gray-600 mb-4 line-clamp-3">
+                      {article.description}
                     </p>
+                    <div className="flex items-center justify-between text-base">
+                      <span className="text-gray-600">
+                        {getRelativeTime(article.pubDate)}
+                      </span>
+                      <span className="font-medium" style={{ color: player.team.primaryColor }}>
+                        Read More →
+                      </span>
+                    </div>
                   </div>
                 </a>
               ))}
             </div>
             {articles.length > 3 && !showAllArticles && (
-              <div className="mt-4 text-center">
+              <div className="mt-8 text-center">
                 <button
                   onClick={() => setShowAllArticles(true)}
-                  className="px-4 py-2 text-sm font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-colors"
+                  className="text-white px-8 py-4 rounded-lg font-medium transition-colors hover:opacity-90 text-base min-h-[48px]"
+                  style={{ backgroundColor: player.team.primaryColor }}
                 >
-                  More Articles →
+                  Show More Articles
                 </button>
               </div>
             )}
