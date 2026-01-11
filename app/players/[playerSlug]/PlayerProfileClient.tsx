@@ -480,11 +480,11 @@ export default function PlayerProfileClient({ playerSlug }: Props) {
             </div>
 
             {/* PFSN Impact Card */}
-            <div className="bg-white text-gray-800 rounded-lg p-4 lg:p-5 w-full sm:w-auto min-w-[200px] shadow-lg">
-              <h3 className="text-sm font-semibold mb-3 text-center text-gray-600">PFSN IMPACT GRADE</h3>
+            <div className="bg-white text-gray-800 rounded-lg p-4 lg:p-5 w-full sm:w-auto min-w-[200px] shadow-lg flex flex-col">
+              <h3 className="text-sm font-semibold text-center text-gray-600">PFSN IMPACT GRADE</h3>
               {player.pfsnImpact ? (
-                <div className="text-center">
-                  <div className="flex items-center justify-center gap-4">
+                <div className="flex flex-col flex-1">
+                  <div className="flex items-center justify-center gap-4 flex-1 py-3">
                     <div
                       className={`w-14 h-14 rounded-full flex items-center justify-center text-2xl font-bold ${gradeColors?.bg} ${gradeColors?.text} border-2 ${gradeColors?.border}`}
                     >
@@ -496,7 +496,7 @@ export default function PlayerProfileClient({ playerSlug }: Props) {
                       </div>
                     </div>
                   </div>
-                  <div className="flex justify-center mt-3 pt-3 border-t border-gray-100 text-base">
+                  <div className="flex justify-center pt-3 border-t border-gray-100 text-base">
                     <div>
                       <span className="text-gray-500">Season Rank</span>
                       <span className="font-bold text-gray-900 ml-1.5">#{player.pfsnImpact.seasonRank}</span>
