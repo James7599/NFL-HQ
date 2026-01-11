@@ -418,6 +418,7 @@ export async function fetchESPNScoreboard(options?: {
   dates?: string;  // YYYYMMDD format
   seasontype?: number;  // 2 = regular, 3 = postseason
   week?: number;
+  revalidate?: number;  // Custom revalidation time in seconds
 }): Promise<ESPNScoreboardResponse | null> {
   try {
     const url = new URL('https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard');
@@ -432,11 +433,22 @@ export async function fetchESPNScoreboard(options?: {
       url.searchParams.set('week', String(options.week));
     }
 
+    // Use short cache (15s) during typical game windows, or custom value if provided
+    // Game windows: Sat/Sun all day, Mon/Thu evenings
+    const now = new Date();
+    const day = now.getUTCDay(); // 0=Sun, 1=Mon, 4=Thu, 6=Sat
+    const hour = now.getUTCHours();
+    const isDuringGames = day === 0 || day === 6 || // Weekend
+                          (day === 1 && hour >= 23) || (day === 2 && hour < 6) || // Monday night
+                          (day === 4 && hour >= 23) || (day === 5 && hour < 6);   // Thursday night
+
+    const cacheTime = options?.revalidate ?? (isDuringGames ? 15 : 60);
+
     const response = await fetch(url.toString(), {
       headers: {
         'User-Agent': 'Mozilla/5.0 (compatible; NFL-HQ/1.0)',
       },
-      next: { revalidate: 60 }, // Cache for 1 minute during games
+      next: { revalidate: cacheTime },
     });
 
     if (!response.ok) {

@@ -361,6 +361,17 @@ function SchedulePageContent() {
     }
 
     fetchScheduleData();
+
+    // Poll for updates every 30 seconds during live games
+    const pollInterval = setInterval(() => {
+      // Only poll if we're looking at today's games (likely live)
+      const today = new Date().toISOString().split('T')[0];
+      if (selectedDate === today) {
+        fetchScheduleData();
+      }
+    }, 30000);
+
+    return () => clearInterval(pollInterval);
   }, [viewMode, selectedDate]);
 
   // Navigate dates
