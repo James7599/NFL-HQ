@@ -426,6 +426,11 @@ export default function PlayerProfileClient({ playerSlug }: Props) {
         </div>
       </div>
 
+      {/* Raptive Header Ad */}
+      <div className="container mx-auto px-4 min-h-[150px]">
+        <div className="raptive-pfn-header"></div>
+      </div>
+
       {/* Content Area */}
       <div className="container mx-auto px-4 py-6">
         {/* Bio Section */}
