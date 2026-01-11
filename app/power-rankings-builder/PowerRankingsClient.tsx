@@ -136,42 +136,20 @@ export default function PowerRankingsClient() {
     fetchStandings();
   }, [standingsLoaded]);
 
-  // Fetch team stats for all teams
+  // Fetch team stats for all teams in a single bulk request
   useEffect(() => {
     async function fetchAllTeamStats() {
       try {
-        const allTeams = getAllTeams();
-        const statsPromises = allTeams.map(async (team) => {
-          try {
-            const response = await fetch(getApiPath(`api/nfl/team-stats/${team.id}?season=2025&event=regular`));
-            if (!response.ok) return { teamId: team.id, stats: {} };
+        const response = await fetch(getApiPath('api/nfl/team-stats/all'));
+        if (!response.ok) {
+          throw new Error(`Failed to fetch team stats: ${response.status}`);
+        }
 
-            const data = await response.json();
-            const ppgOwn = data?.data?.team_stats?.points_per_game?.own || '0.0';
-            const ppgOpp = data?.data?.team_stats?.points_per_game?.opponent || '0.0';
-
-            return {
-              teamId: team.id,
-              stats: {
-                ppg: ppgOwn,
-                oppPpg: ppgOpp,
-              }
-            };
-          } catch (error) {
-            console.error(`Failed to fetch stats for ${team.id}:`, error);
-            return { teamId: team.id, stats: {} };
-          }
-        });
-
-        const results = await Promise.all(statsPromises);
-        const statsMap: Record<string, TeamStats> = {};
-        results.forEach(({ teamId, stats }) => {
-          statsMap[teamId] = stats;
-        });
-
-        setTeamStats(statsMap);
+        const data = await response.json();
+        setTeamStats(data.stats || {});
       } catch (error) {
         console.error('Failed to fetch team stats:', error);
+        setTeamStats({});
       }
     }
 
