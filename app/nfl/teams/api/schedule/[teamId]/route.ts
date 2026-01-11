@@ -126,8 +126,10 @@ export async function GET(
       );
     }
 
-    // Transform the data to our format
-    const transformedSchedule = data.schedule.map(game => {
+    // Transform the data to our format - exclude postseason games since we get those from ESPN
+    const transformedSchedule = data.schedule
+      .filter(game => game.event_type !== 2) // Exclude SportsKeeda postseason games
+      .map(game => {
       // Find the target team and opponent
       const targetTeam = game.teams.find(team => team.team_id === sportsKeedaTeamId);
       const opponent = game.teams.find(team => team.team_id !== sportsKeedaTeamId);
