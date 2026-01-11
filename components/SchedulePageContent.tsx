@@ -689,7 +689,7 @@ function SchedulePageInner() {
                 });
                 const gameDayOfWeek = gameDate.toLocaleDateString('en-US', { weekday: 'short' });
 
-                const isLive = game.status !== 'Pre-Game' && game.status !== 'Final' && game.has_score;
+                const isLive = game.is_live || (game.status !== 'Pre-Game' && game.status !== 'Final' && game.has_score);
                 const isFinal = game.status === 'Final';
                 const isExpanded = expandedGame === game.event_id;
                 const hasDetails = game.venue || game.tv_stations?.length || game.hi_pass || game.hi_rush || game.hi_rec;
@@ -1023,7 +1023,7 @@ function SchedulePageInner() {
                                 const awayTeam = allTeams.find(t => t.id === teamSlugMapping[game.away_team.team_slug] || t.id === game.away_team.team_slug);
                                 const homeTeam = allTeams.find(t => t.id === teamSlugMapping[game.home_team.team_slug] || t.id === game.home_team.team_slug);
                                 const isFinal = game.status === 'Final';
-                                const isLive = game.status !== 'Pre-Game' && game.status !== 'Final' && (game.has_score || (game.away_team.score !== undefined && game.away_team.score !== null));
+                                const isLive = game.is_live || (game.status !== 'Pre-Game' && game.status !== 'Final' && (game.has_score || (game.away_team.score !== undefined && game.away_team.score !== null)));
                                 const isExpanded = expandedWeeklyGame === game.event_id;
                                 const hasDetails = game.venue || game.tv_stations?.length || game.hi_pass || game.hi_rush || game.hi_rec;
 

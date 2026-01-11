@@ -35,6 +35,7 @@ function convertESPNGameToLocalFormat(game: ESPNTransformedGame): TransformedGam
     start_date: game.start_date,
     status: game.status,
     has_score: game.has_score,
+    is_live: game.is_live,
     away_team: {
       team_slug: game.away_team.team_slug,
       abbr: game.away_team.abbr,
@@ -43,6 +44,7 @@ function convertESPNGameToLocalFormat(game: ESPNTransformedGame): TransformedGam
       losses: game.away_team.losses,
       score: game.away_team.score,
       is_winner: game.away_team.is_winner,
+      has_possession: game.away_team.has_possession,
     },
     home_team: {
       team_slug: game.home_team.team_slug,
@@ -52,7 +54,9 @@ function convertESPNGameToLocalFormat(game: ESPNTransformedGame): TransformedGam
       losses: game.home_team.losses,
       score: game.home_team.score,
       is_winner: game.home_team.is_winner,
+      has_possession: game.home_team.has_possession,
     },
+    situation: game.situation,
     venue: game.venue,
     tv_stations: game.tv_stations,
     hi_pass: game.hi_pass ? {
@@ -199,6 +203,7 @@ interface TransformedGame {
   start_date: string;
   status: string;
   has_score: boolean;
+  is_live?: boolean;
   away_team: {
     team_slug: string;
     abbr: string;
@@ -207,6 +212,7 @@ interface TransformedGame {
     losses: number;
     score?: number;
     is_winner?: boolean;
+    has_possession?: boolean;
   };
   home_team: {
     team_slug: string;
@@ -216,6 +222,11 @@ interface TransformedGame {
     losses: number;
     score?: number;
     is_winner?: boolean;
+    has_possession?: boolean;
+  };
+  situation?: {
+    down_distance?: string;
+    is_red_zone?: boolean;
   };
   venue?: {
     name: string;
