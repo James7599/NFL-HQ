@@ -1,5 +1,187 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+// Google Sheets configuration for PFSN Impact Grades
+const GOOGLE_SHEETS_CONFIG: Record<string, { spreadsheetId: string; gid: string }> = {
+  QB: {
+    spreadsheetId: '17d7EIFBHLChlSoi6vRFArwviQRTJn0P0TOvQUNx8hU8',
+    gid: '1456950409',
+  },
+  SAF: {
+    spreadsheetId: '1SKr25H4brSE4dRf7JGpkytwLAKvt4jH-_wlCoqbFPXE',
+    gid: '1216441503',
+  },
+  CB: {
+    spreadsheetId: '1fUwD_rShGMrn7ypJyQsy4mCofqP7Q6J0Un8rsGW7h7U',
+    gid: '1146203009',
+  },
+  LB: {
+    spreadsheetId: '1mNCbJ8RxNZOSp_DuocR_5C7e_wqfiIPy4Rb9fS7GTBE',
+    gid: '519296058',
+  },
+  EDGE: {
+    spreadsheetId: '1RLSAJusOAcjnA1VDROtWFdfKUF4VYUV9JQ6tPinuGAQ',
+    gid: '0',
+  },
+  DT: {
+    spreadsheetId: '1N_V-cyIhROKXNatG1F_uPXTyP6BhuoNu_TebgjMQ6YM',
+    gid: '0',
+  },
+  OL: {
+    spreadsheetId: '1bKmYM1QyPSsJ9FyPtVZuxV0_HiUBw1o2loyU_55pXKA',
+    gid: '1321084176',
+  },
+  TE: {
+    spreadsheetId: '16LsyT1QLP-2ZdG_WNdHjn6ZMrFFu7q13qxDkKyTuseM',
+    gid: '53851653',
+  },
+  WR: {
+    spreadsheetId: '1h-HIZVjq1TM8FZ_5FYfxEZ3lPwtw_9ZWeqLzAi0EUIM',
+    gid: '1964031106',
+  },
+  RB: {
+    spreadsheetId: '1lXXHd9OzHA6Zp4yW1HZKsIJybLthW7tS93l4y4yCBzE',
+    gid: '0',
+  },
+};
+
+// Column mappings for each position sheet
+const POSITION_COLUMN_MAPPINGS: Record<string, {
+  playerCol: number;
+  scoreCol: number;
+  headerRows: number;
+}> = {
+  QB: { playerCol: 2, scoreCol: 4, headerRows: 1 },
+  SAF: { playerCol: 1, scoreCol: -2, headerRows: 10 },
+  CB: { playerCol: 1, scoreCol: -2, headerRows: 10 },
+  LB: { playerCol: 2, scoreCol: -2, headerRows: 10 },
+  EDGE: { playerCol: 1, scoreCol: -2, headerRows: 10 },
+  DT: { playerCol: 1, scoreCol: -2, headerRows: 10 },
+  OL: { playerCol: 3, scoreCol: -2, headerRows: 10 },
+  TE: { playerCol: 1, scoreCol: -2, headerRows: 10 },
+  WR: { playerCol: 1, scoreCol: -6, headerRows: 10 },
+  RB: { playerCol: 2, scoreCol: 0, headerRows: 10 },
+};
+
+// Position to sheet mapping
+const POSITION_TO_SHEET: Record<string, string> = {
+  'QB': 'QB', 'RB': 'RB', 'FB': 'RB', 'WR': 'WR', 'TE': 'TE',
+  'OT': 'OL', 'OG': 'OL', 'OC': 'OL', 'C': 'OL', 'G': 'OL', 'T': 'OL', 'OL': 'OL',
+  'DT': 'DT', 'NT': 'DT', 'DE': 'EDGE', 'EDGE': 'EDGE', 'OLB': 'EDGE',
+  'LB': 'LB', 'ILB': 'LB', 'MLB': 'LB', 'CB': 'CB',
+  'S': 'SAF', 'FS': 'SAF', 'SS': 'SAF', 'SAF': 'SAF', 'DB': 'CB',
+};
+
+interface ImpactGrade {
+  player: string;
+  score: number;
+}
+
+// Cache for impact grades
+let impactGradesCache: Map<string, number> | null = null;
+let cacheTimestamp = 0;
+const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 hours
+
+function normalizePlayerName(name: string): string {
+  return name
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, '')
+    .replace(/(jr|sr|ii|iii|iv)$/g, '');
+}
+
+function parseCSVLine(line: string): string[] {
+  const result: string[] = [];
+  let current = '';
+  let inQuotes = false;
+
+  for (let i = 0; i < line.length; i++) {
+    const char = line[i];
+    if (char === '"') {
+      inQuotes = !inQuotes;
+    } else if (char === ',' && !inQuotes) {
+      result.push(current);
+      current = '';
+    } else {
+      current += char;
+    }
+  }
+  result.push(current);
+
+  return result;
+}
+
+async function fetchPositionGrades(position: string): Promise<ImpactGrade[]> {
+  try {
+    const config = GOOGLE_SHEETS_CONFIG[position];
+    if (!config) return [];
+
+    const mapping = POSITION_COLUMN_MAPPINGS[position];
+    if (!mapping) return [];
+
+    const csvUrl = `https://docs.google.com/spreadsheets/d/${config.spreadsheetId}/export?format=csv&gid=${config.gid}`;
+
+    const response = await fetch(csvUrl, {
+      headers: { 'User-Agent': 'NFL-HQ/1.0' },
+      next: { revalidate: 86400 },
+    });
+
+    if (!response.ok) return [];
+
+    const csvText = await response.text();
+    const lines = csvText.split('\n').filter(line => line.trim());
+    const grades: ImpactGrade[] = [];
+
+    for (let i = mapping.headerRows; i < lines.length; i++) {
+      const values = parseCSVLine(lines[i]);
+      if (values.length < 5) continue;
+
+      const getCol = (col: number) => col < 0 ? values[values.length + col] : values[col];
+
+      const player = getCol(mapping.playerCol)?.trim() || '';
+      const scoreStr = getCol(mapping.scoreCol)?.trim() || '0';
+      const score = parseFloat(scoreStr.replace('%', '')) || 0;
+
+      if (!player || player.toLowerCase() === 'player' || player.toLowerCase().includes('season')) continue;
+      if (score <= 0) continue;
+
+      grades.push({ player, score });
+    }
+
+    return grades;
+  } catch (error) {
+    console.error(`Error fetching ${position} grades:`, error);
+    return [];
+  }
+}
+
+async function getAllImpactGrades(): Promise<Map<string, number>> {
+  // Return cached data if still valid
+  if (impactGradesCache && Date.now() - cacheTimestamp < CACHE_DURATION) {
+    return impactGradesCache;
+  }
+
+  const gradesMap = new Map<string, number>();
+
+  // Fetch all position grades in parallel
+  const positions = Object.keys(GOOGLE_SHEETS_CONFIG);
+  const allGradesResults = await Promise.all(
+    positions.map(pos => fetchPositionGrades(pos))
+  );
+
+  // Combine all grades into map
+  for (const grades of allGradesResults) {
+    for (const grade of grades) {
+      const normalizedName = normalizePlayerName(grade.player);
+      gradesMap.set(normalizedName, grade.score);
+    }
+  }
+
+  // Update cache
+  impactGradesCache = gradesMap;
+  cacheTimestamp = Date.now();
+
+  return gradesMap;
+}
+
 interface SportsKeedaPlayer {
   name: string;
   slug: string;
@@ -120,36 +302,44 @@ export async function GET(
       );
     }
 
+    // Fetch all impact grades from Google Sheets
+    const impactGrades = await getAllImpactGrades();
+
     // Transform the data to our format
     const transformedRoster = data.squad
-      .map(player => ({
-        name: player.name,
-        slug: player.slug,
-        jerseyNumber: parseInt(player.jersey_no) || 0,
-        position: player.positions?.[0]?.abbreviation || 'N/A',
-        positionFull: player.positions?.[0]?.name || 'Not Available',
-        age: player.age,
-        height: formatHeight(player.height_in_inch),
-        weight: player.weight_in_lbs,
-        college: player.college?.replace('University of ', '').replace(' University', '') || 'N/A',
-        experience: player.experience,
-        impactPlus: generateImpactPlus(player), // Generate placeholder Impact+ rating
-        isActive: player.is_active,
-        isInjured: player.is_injured,
-        isSuspended: player.is_suspended,
-        isPracticeSquad: player.is_practice_squad,
-        isPhysicallyUnable: player.is_physically_unable,
-        isNonFootballInjuryReserve: player.is_non_football_injury_reserve,
-        isExempt: player.is_exempt,
-        status: getPlayerStatus(player),
-        draft: player.draft.year > 0 ? {
-          year: player.draft.year,
-          round: player.draft.round,
-          pick: player.draft.overallPickNumber
-        } : null,
-        birthDate: player.birth_date,
-        birthPlace: player.birth_place
-      }))
+      .map(player => {
+        const normalizedName = normalizePlayerName(player.name);
+        const impactScore = impactGrades.get(normalizedName) || 0;
+
+        return {
+          name: player.name,
+          slug: player.slug,
+          jerseyNumber: parseInt(player.jersey_no) || 0,
+          position: player.positions?.[0]?.abbreviation || 'N/A',
+          positionFull: player.positions?.[0]?.name || 'Not Available',
+          age: player.age,
+          height: formatHeight(player.height_in_inch),
+          weight: player.weight_in_lbs,
+          college: player.college?.replace('University of ', '').replace(' University', '') || 'N/A',
+          experience: player.experience,
+          impactPlus: impactScore, // Real PFSN Impact grade from Google Sheets
+          isActive: player.is_active,
+          isInjured: player.is_injured,
+          isSuspended: player.is_suspended,
+          isPracticeSquad: player.is_practice_squad,
+          isPhysicallyUnable: player.is_physically_unable,
+          isNonFootballInjuryReserve: player.is_non_football_injury_reserve,
+          isExempt: player.is_exempt,
+          status: getPlayerStatus(player),
+          draft: player.draft.year > 0 ? {
+            year: player.draft.year,
+            round: player.draft.round,
+            pick: player.draft.overallPickNumber
+          } : null,
+          birthDate: player.birth_date,
+          birthPlace: player.birth_place
+        };
+      })
       .sort((a, b) => a.jerseyNumber - b.jerseyNumber); // Sort by jersey number
 
     // Organize players by status
@@ -206,26 +396,5 @@ function getPlayerStatus(player: SportsKeedaPlayer): string {
   return 'Active';
 }
 
-function generateImpactPlus(player: SportsKeedaPlayer): number {
-  // Generate a realistic Impact+ rating based on experience, draft position, etc.
-  let baseRating = 75;
-
-  // Adjust based on experience
-  if (player.experience >= 5) baseRating += 10;
-  else if (player.experience >= 3) baseRating += 5;
-  else if (player.experience === 0) baseRating -= 5; // Rookies
-
-  // Adjust based on draft position (if available)
-  if (player.draft.year > 0) {
-    if (player.draft.round === 1) baseRating += 15;
-    else if (player.draft.round === 2) baseRating += 10;
-    else if (player.draft.round === 3) baseRating += 5;
-  }
-
-  // Add some randomization to make it feel realistic
-  const randomAdjustment = Math.floor(Math.random() * 20) - 10; // -10 to +10
-  baseRating += randomAdjustment;
-
-  // Keep within reasonable bounds
-  return Math.max(60, Math.min(140, baseRating));
-}
+// Suppress unused warning - kept for reference
+void POSITION_TO_SHEET;

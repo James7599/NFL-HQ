@@ -270,6 +270,7 @@ export default function RosterTab({ team }: RosterTabProps) {
                         <tr className="text-white" style={{ backgroundColor: team.primaryColor }}>
                           <th className="text-center px-4 py-3 font-medium whitespace-nowrap">#</th>
                           <th className="text-left px-4 py-3 font-medium whitespace-nowrap min-w-[200px]">Name</th>
+                          <th className="text-center px-4 py-3 font-medium whitespace-nowrap">Impact Grade</th>
                           <th className="text-center px-4 py-3 font-medium whitespace-nowrap">Experience</th>
                           <th className="text-center px-4 py-3 font-medium whitespace-nowrap">Age</th>
                           <th className="text-center px-4 py-3 font-medium whitespace-nowrap">Height</th>
@@ -324,6 +325,22 @@ export default function RosterTab({ team }: RosterTabProps) {
                                   )}
                                 </div>
                               </div>
+                            </td>
+                            <td className="px-4 py-3 whitespace-nowrap text-center">
+                              {player.impactPlus > 0 ? (
+                                <Link
+                                  href={`/players/${player.slug}`}
+                                  className={`font-semibold hover:underline ${
+                                    player.impactPlus >= 80 ? 'text-green-600' :
+                                    player.impactPlus >= 70 ? 'text-blue-600' :
+                                    'text-gray-700'
+                                  }`}
+                                >
+                                  {player.impactPlus.toFixed(1)}
+                                </Link>
+                              ) : (
+                                <span className="text-gray-400">-</span>
+                              )}
                             </td>
                             <td className="px-4 py-3 text-gray-700 whitespace-nowrap text-center">{player.experience === 0 ? 'R' : player.experience}</td>
                             <td className="px-4 py-3 text-gray-700 whitespace-nowrap text-center">{player.age}</td>
