@@ -21,8 +21,24 @@ export async function GET(request: NextRequest) {
     if (ticker) {
       // Ticker format: lightweight data for scrolling ticker
       const tickerGames = await fetchTickerGames();
-      games = tickerGames;
       hasLiveGames = tickerGames.some(g => g.isLive);
+
+      // Sort games: Live first, then Final (if no live), then upcoming
+      const sortedGames = [...tickerGames].sort((a, b) => {
+        // Live games always first
+        if (a.isLive && !b.isLive) return -1;
+        if (!a.isLive && b.isLive) return 1;
+
+        // If no live games, Final games come before upcoming
+        if (!hasLiveGames) {
+          if (a.isFinal && !b.isFinal) return -1;
+          if (!a.isFinal && b.isFinal) return 1;
+        }
+
+        return 0; // Keep original order within same category
+      });
+
+      games = sortedGames;
     } else if (playoffsOnly) {
       // Fetch all playoff games
       const playoffGames = await fetchPlayoffGames();
