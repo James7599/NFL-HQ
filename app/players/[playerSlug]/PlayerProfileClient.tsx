@@ -422,7 +422,7 @@ export default function PlayerProfileClient({ playerSlug }: Props) {
       />
 
       {/* Hero Section with Blue Background */}
-      <div style={{ backgroundColor: '#0050A0' }} className="text-white pt-[57px] lg:pt-6 lg:pb-6">
+      <div style={{ backgroundColor: '#0050A0' }} className="text-white pt-[57px] lg:pt-4 lg:pb-4">
         <div className="container mx-auto px-4 py-4 lg:py-5">
           <div className="flex flex-col lg:flex-row items-center justify-between">
             {/* Player Info */}
@@ -435,7 +435,7 @@ export default function PlayerProfileClient({ playerSlug }: Props) {
                     alt={player.name}
                     width={160}
                     height={160}
-                    className="w-full h-full object-cover object-[center_10%] scale-[1.35]"
+                    className="w-full h-full object-cover object-[center_15%] scale-[1.4]"
                     onError={() => setImageError(true)}
                   />
                 ) : (
