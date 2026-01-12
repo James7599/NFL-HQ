@@ -5,6 +5,7 @@ interface SportsKeedaPlayer {
   name: string;
   slug: string;
   jersey_no: string;
+  age: number;
   is_active: boolean;
   is_practice_squad: boolean;
   positions: Array<{
@@ -207,6 +208,7 @@ async function fetchTeamRoster(teamId: string, teamName: string, impactGrades: M
   position: string;
   team: string;
   teamId: string;
+  age: number;
   impactGrade: number;
 }>> {
   try {
@@ -245,6 +247,7 @@ async function fetchTeamRoster(teamId: string, teamName: string, impactGrades: M
           position: player.positions?.[0]?.abbreviation || 'N/A',
           team: teamName,
           teamId: teamId,
+          age: player.age || 0,
           impactGrade
         };
       });

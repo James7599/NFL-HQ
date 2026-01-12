@@ -10,6 +10,7 @@ interface Player {
   position: string;
   team: string;
   teamId: string;
+  age?: number;
   impactGrade?: number;
   headshotUrl?: string;
 }
@@ -1028,6 +1029,7 @@ export default function PlayerRankingsClient() {
                     <th className="px-2 sm:px-4 py-3 text-left text-xs sm:text-sm font-bold">Player</th>
                     <th className="hidden sm:table-cell px-4 py-3 text-left text-sm font-bold w-20">Pos</th>
                     <th className="hidden md:table-cell px-4 py-3 text-left text-sm font-bold">Team</th>
+                    <th className="hidden lg:table-cell px-4 py-3 text-center text-sm font-bold w-16">Age</th>
                     <th className="hidden lg:table-cell px-4 py-3 text-center text-sm font-bold w-24">Impact Grade</th>
                     <th className="px-4 py-3 text-center text-sm font-bold w-16">Actions</th>
                   </tr>
@@ -1090,6 +1092,31 @@ export default function PlayerRankingsClient() {
                         {/* Player Info */}
                         <td className="px-2 sm:px-4 py-3 sm:py-4">
                           <div className="flex items-center gap-2 sm:gap-3">
+                            {/* Player Headshot */}
+                            <div className="relative flex-shrink-0">
+                              <img
+                                src={`https://staticd.profootballnetwork.com/skm/assets/player-images/nfl/${rankedPlayer.player.id}.png?w=80`}
+                                alt={rankedPlayer.player.name}
+                                className="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover bg-gray-100"
+                                onError={(e) => {
+                                  const target = e.target as HTMLImageElement;
+                                  target.style.display = 'none';
+                                  const fallback = target.nextElementSibling as HTMLElement;
+                                  if (fallback) fallback.style.display = 'flex';
+                                }}
+                              />
+                              <div
+                                className="w-10 h-10 sm:w-12 sm:h-12 rounded-full items-center justify-center flex-shrink-0 hidden"
+                                style={{ backgroundColor: `${team?.primaryColor || '#0050A0'}20` }}
+                              >
+                                <span
+                                  className="font-semibold text-sm"
+                                  style={{ color: team?.primaryColor || '#0050A0' }}
+                                >
+                                  {rankedPlayer.player.name.split(' ').map(n => n[0]).join('')}
+                                </span>
+                              </div>
+                            </div>
                             <div className="min-w-0">
                               <div className="font-semibold text-gray-900 text-sm sm:text-base truncate">
                                 {rankedPlayer.player.name}
@@ -1120,6 +1147,13 @@ export default function PlayerRankingsClient() {
                             )}
                             <span className="text-sm text-gray-700">{rankedPlayer.player.team}</span>
                           </div>
+                        </td>
+
+                        {/* Age */}
+                        <td className="hidden lg:table-cell px-4 py-4 text-center">
+                          <span className="text-sm text-gray-700">
+                            {rankedPlayer.player.age || '-'}
+                          </span>
                         </td>
 
                         {/* Impact Grade */}
