@@ -10,6 +10,7 @@ interface Player {
   position: string;
   team: string;
   teamId: string;
+  impactGrade?: number;
   headshotUrl?: string;
 }
 
@@ -185,12 +186,9 @@ export default function PlayerRankingsClient() {
   }, [allTeams]);
 
   // State
-  const [rankings, setRankings] = useState<RankedPlayer[]>(() => {
-    return TOP_100_PLAYERS.map((player, index) => ({
-      rank: index + 1,
-      player
-    }));
-  });
+  const [rankings, setRankings] = useState<RankedPlayer[]>([]);
+  const [initialTop100, setInitialTop100] = useState<Player[]>([]);
+  const [loadingInitial, setLoadingInitial] = useState(true);
   const [availablePlayers, setAvailablePlayers] = useState<Player[]>([]);
   const [selectedPosition, setSelectedPosition] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState('');
@@ -306,12 +304,42 @@ export default function PlayerRankingsClient() {
     loadSavedRankings();
   }, []);
 
-  // Initialize history
+  // Load initial top 100 players from API
   useEffect(() => {
-    if (history.length === 0) {
-      setHistory([rankings]);
-      setHistoryIndex(0);
-    }
+    const fetchInitialRankings = async () => {
+      try {
+        const response = await fetch('/nfl-hq/api/nfl/all-players');
+        if (response.ok) {
+          const data = await response.json();
+          const top100 = data.top100 || [];
+          setInitialTop100(top100);
+          setAllNFLPlayers(data.players || []);
+          setPlayersLoaded(true);
+
+          // Set initial rankings from top 100
+          const initialRankings = top100.map((player: Player, index: number) => ({
+            rank: index + 1,
+            player
+          }));
+          setRankings(initialRankings);
+          setHistory([initialRankings]);
+          setHistoryIndex(0);
+        }
+      } catch (error) {
+        console.error('Error fetching initial rankings:', error);
+        // Fall back to static list if API fails
+        const fallbackRankings = TOP_100_PLAYERS.map((player, index) => ({
+          rank: index + 1,
+          player
+        }));
+        setRankings(fallbackRankings);
+        setHistory([fallbackRankings]);
+        setHistoryIndex(0);
+      } finally {
+        setLoadingInitial(false);
+      }
+    };
+    fetchInitialRankings();
   }, []);
 
   // Pre-load team logos
@@ -729,7 +757,9 @@ export default function PlayerRankingsClient() {
   };
 
   const resetRankings = () => {
-    const newRankings = TOP_100_PLAYERS.map((player, index) => ({
+    // Use initialTop100 from API, or fall back to static list
+    const sourceList = initialTop100.length > 0 ? initialTop100 : TOP_100_PLAYERS;
+    const newRankings = sourceList.map((player, index) => ({
       rank: index + 1,
       player
     }));
@@ -807,6 +837,16 @@ export default function PlayerRankingsClient() {
 
         {/* Content */}
         <div className="mx-auto px-4 sm:px-6 lg:px-8 py-6 max-w-7xl">
+          {loadingInitial ? (
+            <div className="bg-white rounded-lg shadow-sm p-12 text-center">
+              <svg className="animate-spin w-12 h-12 mx-auto text-[#0050A0] mb-4" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              <p className="text-gray-600 text-lg">Loading top 100 players by PFSN Impact Grade...</p>
+            </div>
+          ) : (
+          <>
           {/* Instructions */}
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
             <p className="text-sm text-blue-900">
@@ -816,38 +856,35 @@ export default function PlayerRankingsClient() {
 
           {/* Filters */}
           <div className="bg-white rounded-lg shadow-sm p-4 mb-6">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {/* Position Filter */}
-              <div>
-                <label htmlFor="position-filter" className="block text-sm font-semibold text-gray-700 mb-2">
-                  Filter by Position:
-                </label>
-                <select
-                  id="position-filter"
-                  value={selectedPosition}
-                  onChange={(e) => setSelectedPosition(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0050A0] bg-white text-sm"
-                >
-                  {Object.keys(POSITION_GROUPS).map(group => (
-                    <option key={group} value={group}>
-                      {group === 'All' ? 'All Positions' : group}
-                    </option>
-                  ))}
-                </select>
+            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+              {/* Position Filter Buttons */}
+              <div className="flex flex-wrap gap-2">
+                {Object.keys(POSITION_GROUPS).map(group => (
+                  <button
+                    key={group}
+                    onClick={() => setSelectedPosition(group)}
+                    className={`px-3 py-1.5 text-sm font-medium rounded-lg transition-colors ${
+                      selectedPosition === group
+                        ? 'bg-[#0050A0] text-white'
+                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    }`}
+                  >
+                    {group}
+                  </button>
+                ))}
               </div>
 
               {/* Search */}
-              <div>
-                <label htmlFor="search" className="block text-sm font-semibold text-gray-700 mb-2">
-                  Search Players:
-                </label>
+              <div className="relative w-full lg:w-64">
+                <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
                 <input
                   type="text"
-                  id="search"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search by name, team, or position..."
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0050A0] bg-white text-sm"
+                  placeholder="Search Player"
+                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0050A0] bg-white text-sm"
                 />
               </div>
             </div>
@@ -991,6 +1028,7 @@ export default function PlayerRankingsClient() {
                     <th className="px-2 sm:px-4 py-3 text-left text-xs sm:text-sm font-bold">Player</th>
                     <th className="hidden sm:table-cell px-4 py-3 text-left text-sm font-bold w-20">Pos</th>
                     <th className="hidden md:table-cell px-4 py-3 text-left text-sm font-bold">Team</th>
+                    <th className="hidden lg:table-cell px-4 py-3 text-center text-sm font-bold w-24">Impact Grade</th>
                     <th className="px-4 py-3 text-center text-sm font-bold w-16">Actions</th>
                   </tr>
                 </thead>
@@ -1084,6 +1122,17 @@ export default function PlayerRankingsClient() {
                           </div>
                         </td>
 
+                        {/* Impact Grade */}
+                        <td className="hidden lg:table-cell px-4 py-4 text-center">
+                          {rankedPlayer.player.impactGrade && rankedPlayer.player.impactGrade > 0 ? (
+                            <span className="font-semibold text-blue-600">
+                              {rankedPlayer.player.impactGrade.toFixed(1)}
+                            </span>
+                          ) : (
+                            <span className="text-gray-400">-</span>
+                          )}
+                        </td>
+
                         {/* Actions */}
                         <td className="px-4 py-4 text-center">
                           <button
@@ -1106,6 +1155,8 @@ export default function PlayerRankingsClient() {
               </table>
             </div>
           </div>
+          </>
+          )}
         </div>
       </main>
 
