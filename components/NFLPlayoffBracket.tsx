@@ -72,11 +72,11 @@ const initialPlayoffData: { [key: string]: Matchup } = {
   },
   'nfc-wc-2': {
     id: 'nfc-wc-2',
-    team1: { seed: 3, name: 'Eagles', teamId: 'philadelphia-eagles' },
-    team2: { seed: 6, name: '49ers', teamId: 'san-francisco-49ers' },
+    team1: { seed: 3, name: 'Eagles', teamId: 'philadelphia-eagles', score: 19 },
+    team2: { seed: 6, name: '49ers', teamId: 'san-francisco-49ers', score: 23 },
     round: 'Wild Card',
     date: 'Jan 11',
-    completed: false,
+    completed: true,
   },
   'nfc-wc-3': {
     id: 'nfc-wc-3',
