@@ -1285,11 +1285,6 @@ export default function PlayerRankingsClient() {
                           <div className="font-semibold text-gray-900">{player.name}</div>
                           <div className="text-sm text-gray-500">
                             {player.position} - {player.team}
-                            {player.impactGrade && player.impactGrade > 0 && (
-                              <span className="ml-2 text-blue-600 font-medium">
-                                ({player.impactGrade.toFixed(1)})
-                              </span>
-                            )}
                           </div>
                         </div>
                       </div>
