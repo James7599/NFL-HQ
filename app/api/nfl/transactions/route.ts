@@ -198,6 +198,10 @@ export async function GET(request: NextRequest) {
       availableMonths,
       lastUpdated: new Date().toISOString(),
       season: 2025
+    }, {
+      headers: {
+        'Cache-Control': 'public, s-maxage=10800, stale-while-revalidate=1800',
+      },
     });
 
   } catch (error) {

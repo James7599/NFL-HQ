@@ -209,11 +209,9 @@ export default function PlayerProfileClient({ playerSlug }: Props) {
     return teamsByName[name.toLowerCase()] || null;
   };
 
+  // Fetch player data and articles in parallel for faster loading
   useEffect(() => {
-    async function fetchPlayer() {
-      setLoading(true);
-      setError(null);
-
+    async function fetchPlayerData() {
       try {
         const response = await fetch(getApiPath(`api/nfl/player/${playerSlug}`));
         if (!response.ok) {
@@ -222,20 +220,61 @@ export default function PlayerProfileClient({ playerSlug }: Props) {
           } else {
             throw new Error('Failed to fetch player');
           }
-          return;
+          return null;
         }
-
         const data = await response.json();
-        setPlayer(data.player);
+        return data.player;
       } catch (err) {
         console.error('Error fetching player:', err);
         setError('Failed to load player data. Please try again later.');
-      } finally {
-        setLoading(false);
+        return null;
       }
     }
 
-    fetchPlayer();
+    async function fetchArticlesData() {
+      try {
+        // Clean the slug for players like "a-j-brown" -> "aj-brown"
+        const cleanedSlug = playerSlug.replace(/([a-z])-([a-z])-/g, '$1$2-');
+
+        // Try cleaned slug first (e.g., "aj-brown")
+        let rssUrl = `https://www.profootballnetwork.com/tag/${cleanedSlug}/feed/`;
+        let response = await fetch(getApiPath(`api/proxy-rss?url=${encodeURIComponent(rssUrl)}`));
+        let data = response.ok ? await response.json() : null;
+
+        // If no articles found and slug was cleaned, try original slug
+        if ((!data?.articles || data.articles.length === 0) && cleanedSlug !== playerSlug) {
+          rssUrl = `https://www.profootballnetwork.com/tag/${playerSlug}/feed/`;
+          response = await fetch(getApiPath(`api/proxy-rss?url=${encodeURIComponent(rssUrl)}`));
+          data = response.ok ? await response.json() : null;
+        }
+
+        return data?.articles && Array.isArray(data.articles) ? data.articles : [];
+      } catch (err) {
+        console.error('Error fetching articles:', err);
+        return [];
+      }
+    }
+
+    async function loadAllData() {
+      setLoading(true);
+      setError(null);
+
+      // Fetch player and articles in parallel
+      const [playerData, articlesData] = await Promise.all([
+        fetchPlayerData(),
+        fetchArticlesData(),
+      ]);
+
+      if (playerData) {
+        setPlayer(playerData);
+      }
+      setArticles(articlesData);
+      setLoading(false);
+    }
+
+    if (playerSlug) {
+      loadAllData();
+    }
   }, [playerSlug]);
 
   // Initialize game log data from player and handle season changes
@@ -285,39 +324,6 @@ export default function PlayerProfileClient({ playerSlug }: Props) {
 
     fetchGameLog();
   }, [selectedGameLogSeason, player, playerSlug]);
-
-  // Fetch articles from RSS feed
-  useEffect(() => {
-    async function fetchArticles() {
-      try {
-        // Clean the slug for players like "a-j-brown" -> "aj-brown"
-        const cleanedSlug = playerSlug.replace(/([a-z])-([a-z])-/g, '$1$2-');
-
-        // Try cleaned slug first (e.g., "aj-brown")
-        let rssUrl = `https://www.profootballnetwork.com/tag/${cleanedSlug}/feed/`;
-        let response = await fetch(getApiPath(`api/proxy-rss?url=${encodeURIComponent(rssUrl)}`));
-        let data = response.ok ? await response.json() : null;
-
-        // If no articles found and slug was cleaned, try original slug
-        if ((!data?.articles || data.articles.length === 0) && cleanedSlug !== playerSlug) {
-          rssUrl = `https://www.profootballnetwork.com/tag/${playerSlug}/feed/`;
-          response = await fetch(getApiPath(`api/proxy-rss?url=${encodeURIComponent(rssUrl)}`));
-          data = response.ok ? await response.json() : null;
-        }
-
-        if (data?.articles && Array.isArray(data.articles)) {
-          setArticles(data.articles);
-        }
-      } catch (err) {
-        console.error('Error fetching articles:', err);
-        // Silently fail - articles section just won't show
-      }
-    }
-
-    if (playerSlug) {
-      fetchArticles();
-    }
-  }, [playerSlug]);
 
   const getInitials = (name: string) => {
     return name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();

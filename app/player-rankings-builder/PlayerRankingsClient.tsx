@@ -450,8 +450,8 @@ export default function PlayerRankingsClient() {
       );
     }
 
-    // Limit results to 100 for performance
-    return available.slice(0, 100);
+    // Limit results to 25 for better UX - users can search for specific players
+    return available.slice(0, 25);
   }, [rankings, addPlayerSearch, allNFLPlayers, playersLoaded]);
 
   // Drag handlers
@@ -1265,15 +1265,9 @@ export default function PlayerRankingsClient() {
                 {addPlayerSearch.trim() ? 'No players found matching your search.' : 'No available players to add.'}
               </p>
             ) : (
-              <>
-                {playersLoaded && (
-                  <p className="text-xs text-gray-500 mb-2">
-                    Showing {filteredAvailablePlayers.length} players{filteredAvailablePlayers.length === 100 ? ' (search to find more)' : ''} from {allNFLPlayers.length} total NFL players
-                  </p>
-                )}
-                <div className="space-y-2 max-h-96 overflow-y-auto">
-                  {filteredAvailablePlayers.map((player) => {
-                    const team = teamsById[player.teamId];
+              <div className="space-y-2 max-h-96 overflow-y-auto">
+                {filteredAvailablePlayers.map((player) => {
+                  const team = teamsById[player.teamId];
                   return (
                     <div
                       key={player.id}
@@ -1291,6 +1285,11 @@ export default function PlayerRankingsClient() {
                           <div className="font-semibold text-gray-900">{player.name}</div>
                           <div className="text-sm text-gray-500">
                             {player.position} - {player.team}
+                            {player.impactGrade && player.impactGrade > 0 && (
+                              <span className="ml-2 text-blue-600 font-medium">
+                                ({player.impactGrade.toFixed(1)})
+                              </span>
+                            )}
                           </div>
                         </div>
                       </div>
@@ -1302,9 +1301,8 @@ export default function PlayerRankingsClient() {
                       </button>
                     </div>
                   );
-                  })}
-                </div>
-              </>
+                })}
+              </div>
             )}
           </div>
         </div>

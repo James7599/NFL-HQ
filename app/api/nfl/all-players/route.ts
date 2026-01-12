@@ -1,22 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getAllTeams } from '@/data/teams';
-
-interface SportsKeedaPlayer {
-  name: string;
-  slug: string;
-  jersey_no: string;
-  age: number;
-  is_active: boolean;
-  is_practice_squad: boolean;
-  positions: Array<{
-    name: string;
-    abbreviation: string;
-  }>;
-}
-
-interface SportsKeedaResponse {
-  squad: SportsKeedaPlayer[];
-}
+import { getAllRosters } from '@/app/api/nfl/rosters/route';
 
 // Google Sheets configuration for PFSN Impact Grades
 const GOOGLE_SHEETS_CONFIG: Record<string, { spreadsheetId: string; gid: string }> = {
@@ -44,15 +27,6 @@ const POSITION_COLUMN_MAPPINGS: Record<string, { playerCol: number; scoreCol: nu
   TE: { playerCol: 1, scoreCol: -3, rankCol: -4, headerRows: 10 },
   WR: { playerCol: 1, scoreCol: -7, rankCol: -2, headerRows: 9 },
   RB: { playerCol: 2, scoreCol: 0, rankCol: -4, headerRows: 10 },
-};
-
-// Position to sheet mapping
-const POSITION_TO_SHEET: Record<string, string> = {
-  'QB': 'QB', 'RB': 'RB', 'FB': 'RB', 'WR': 'WR', 'TE': 'TE',
-  'OT': 'OL', 'OG': 'OL', 'OC': 'OL', 'C': 'OL', 'G': 'OL', 'T': 'OL', 'OL': 'OL',
-  'DT': 'DT', 'NT': 'DT', 'DE': 'EDGE', 'EDGE': 'EDGE', 'OLB': 'EDGE',
-  'LB': 'LB', 'ILB': 'LB', 'MLB': 'LB', 'CB': 'CB',
-  'S': 'SAF', 'FS': 'SAF', 'SS': 'SAF', 'SAF': 'SAF', 'DB': 'CB',
 };
 
 interface ImpactGrade {
@@ -166,70 +140,30 @@ async function getAllImpactGrades(): Promise<Map<string, number>> {
   return gradesMap;
 }
 
-// Team ID to Sportskeeda slug mapping
-const teamSlugMap: Record<string, string> = {
-  'arizona-cardinals': 'arizona-cardinals',
-  'atlanta-falcons': 'atlanta-falcons',
-  'baltimore-ravens': 'baltimore-ravens',
-  'buffalo-bills': 'buffalo-bills',
-  'carolina-panthers': 'carolina-panthers',
-  'chicago-bears': 'chicago-bears',
-  'cincinnati-bengals': 'cincinnati-bengals',
-  'cleveland-browns': 'cleveland-browns',
-  'dallas-cowboys': 'dallas-cowboys',
-  'denver-broncos': 'denver-broncos',
-  'detroit-lions': 'detroit-lions',
-  'green-bay-packers': 'green-bay-packers',
-  'houston-texans': 'houston-texans',
-  'indianapolis-colts': 'indianapolis-colts',
-  'jacksonville-jaguars': 'jacksonville-jaguars',
-  'kansas-city-chiefs': 'kansas-city-chiefs',
-  'las-vegas-raiders': 'las-vegas-raiders',
-  'los-angeles-chargers': 'los-angeles-chargers',
-  'los-angeles-rams': 'los-angeles-rams',
-  'miami-dolphins': 'miami-dolphins',
-  'minnesota-vikings': 'minnesota-vikings',
-  'new-england-patriots': 'new-england-patriots',
-  'new-orleans-saints': 'new-orleans-saints',
-  'new-york-giants': 'new-york-giants',
-  'new-york-jets': 'new-york-jets',
-  'philadelphia-eagles': 'philadelphia-eagles',
-  'pittsburgh-steelers': 'pittsburgh-steelers',
-  'san-francisco-49ers': 'san-francisco-49ers',
-  'seattle-seahawks': 'seattle-seahawks',
-  'tampa-bay-buccaneers': 'tampa-bay-buccaneers',
-  'tennessee-titans': 'tennessee-titans',
-  'washington-commanders': 'washington-commanders'
-};
-
-async function fetchTeamRoster(teamId: string, teamName: string, impactGrades: Map<string, number>): Promise<Array<{
-  id: string;
-  name: string;
-  position: string;
-  team: string;
-  teamId: string;
-  age: number;
-  impactGrade: number;
-}>> {
+export async function GET() {
   try {
-    const sportsKeedaSlug = teamSlugMap[teamId];
-    if (!sportsKeedaSlug) return [];
+    // Fetch rosters and impact grades in parallel
+    const [rostersMap, impactGrades] = await Promise.all([
+      getAllRosters(),
+      getAllImpactGrades(),
+    ]);
 
-    const response = await fetch(
-      `https://api.sportskeeda.com/v1/taxonomy/${sportsKeedaSlug}?include=squad`,
-      {
-        headers: { 'User-Agent': 'Mozilla/5.0 (compatible; NFL-HQ/1.0)' },
-        next: { revalidate: 86400 }
-      }
-    );
+    // Convert rosters to flat player list with impact grades
+    const allPlayers: Array<{
+      id: string;
+      name: string;
+      position: string;
+      team: string;
+      teamId: string;
+      age: number;
+      impactGrade: number;
+    }> = [];
 
-    if (!response.ok) return [];
-    const data: SportsKeedaResponse = await response.json();
-    if (!data.squad || !Array.isArray(data.squad)) return [];
+    rostersMap.forEach((roster, teamId) => {
+      for (const player of roster.players) {
+        // Only include active roster players (not practice squad)
+        if (!player.isActive || player.isPracticeSquad) continue;
 
-    return data.squad
-      .filter(player => player.is_active && !player.is_practice_squad)
-      .map(player => {
         // Get impact grade
         const nameVariations = generateNameVariations(player.name);
         let impactGrade = 0;
@@ -241,36 +175,17 @@ async function fetchTeamRoster(teamId: string, teamName: string, impactGrades: M
           }
         }
 
-        return {
+        allPlayers.push({
           id: player.slug || player.name.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
           name: player.name,
-          position: player.positions?.[0]?.abbreviation || 'N/A',
-          team: teamName,
+          position: player.position,
+          team: roster.teamName,
           teamId: teamId,
           age: player.age || 0,
           impactGrade
-        };
-      });
-  } catch (error) {
-    console.error(`Error fetching roster for ${teamId}:`, error);
-    return [];
-  }
-}
-
-export async function GET() {
-  try {
-    const allTeams = getAllTeams();
-
-    // Fetch impact grades first
-    const impactGrades = await getAllImpactGrades();
-
-    // Fetch all team rosters in parallel
-    const rosterPromises = allTeams.map(team =>
-      fetchTeamRoster(team.id, team.fullName, impactGrades)
-    );
-
-    const allRosters = await Promise.all(rosterPromises);
-    const allPlayers = allRosters.flat();
+        });
+      }
+    });
 
     // Sort by impact grade (highest first), then by name for ties
     allPlayers.sort((a, b) => {
@@ -288,6 +203,10 @@ export async function GET() {
       top100: top100,
       totalPlayers: allPlayers.length,
       lastUpdated: new Date().toISOString()
+    }, {
+      headers: {
+        'Cache-Control': 'public, s-maxage=86400, stale-while-revalidate=3600',
+      },
     });
 
   } catch (error) {
@@ -298,6 +217,3 @@ export async function GET() {
     );
   }
 }
-
-// Suppress unused warning
-void POSITION_TO_SHEET;

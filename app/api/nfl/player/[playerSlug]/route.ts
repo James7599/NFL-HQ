@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { teams } from '@/data/teams';
-
-const ALL_TEAM_IDS = Object.keys(teams);
+import { getAllRosters, type RosterPlayer } from '@/app/api/nfl/rosters/route';
 
 // State abbreviation to full name mapping
 const STATE_ABBREVIATIONS: Record<string, string> = {
@@ -32,26 +31,7 @@ function expandStateAbbreviation(location: string): string {
   return location;
 }
 
-interface RosterPlayer {
-  name: string;
-  slug: string;
-  jerseyNumber: number;
-  position: string;
-  positionFull: string;
-  age: number;
-  height: string;
-  weight: number;
-  college: string;
-  experience: number;
-  status: string;
-  draft: {
-    year: number;
-    round: number;
-    pick: number;
-  } | null;
-  birthDate: string;
-  birthPlace: string;
-}
+// RosterPlayer interface imported from rosters route
 
 
 interface PFSNPlayer {
@@ -173,134 +153,7 @@ function normalizePlayerName(name: string): string {
     .replace(/(jr|sr|ii|iii|iv)$/g, '');
 }
 
-// Team ID to Sportskeeda slug mapping
-const teamSlugMap: Record<string, string> = {
-  'arizona-cardinals': 'arizona-cardinals',
-  'atlanta-falcons': 'atlanta-falcons',
-  'baltimore-ravens': 'baltimore-ravens',
-  'buffalo-bills': 'buffalo-bills',
-  'carolina-panthers': 'carolina-panthers',
-  'chicago-bears': 'chicago-bears',
-  'cincinnati-bengals': 'cincinnati-bengals',
-  'cleveland-browns': 'cleveland-browns',
-  'dallas-cowboys': 'dallas-cowboys',
-  'denver-broncos': 'denver-broncos',
-  'detroit-lions': 'detroit-lions',
-  'green-bay-packers': 'green-bay-packers',
-  'houston-texans': 'houston-texans',
-  'indianapolis-colts': 'indianapolis-colts',
-  'jacksonville-jaguars': 'jacksonville-jaguars',
-  'kansas-city-chiefs': 'kansas-city-chiefs',
-  'las-vegas-raiders': 'las-vegas-raiders',
-  'los-angeles-chargers': 'los-angeles-chargers',
-  'los-angeles-rams': 'los-angeles-rams',
-  'miami-dolphins': 'miami-dolphins',
-  'minnesota-vikings': 'minnesota-vikings',
-  'new-england-patriots': 'new-england-patriots',
-  'new-orleans-saints': 'new-orleans-saints',
-  'new-york-giants': 'new-york-giants',
-  'new-york-jets': 'new-york-jets',
-  'philadelphia-eagles': 'philadelphia-eagles',
-  'pittsburgh-steelers': 'pittsburgh-steelers',
-  'san-francisco-49ers': 'san-francisco-49ers',
-  'seattle-seahawks': 'seattle-seahawks',
-  'tampa-bay-buccaneers': 'tampa-bay-buccaneers',
-  'tennessee-titans': 'tennessee-titans',
-  'washington-commanders': 'washington-commanders'
-};
-
-interface SportsKeedaPlayer {
-  name: string;
-  slug: string;
-  jersey_no: string;
-  is_active: boolean;
-  is_injured: boolean;
-  is_suspended: boolean;
-  is_practice_squad: boolean;
-  is_physically_unable: boolean;
-  is_non_football_injury_reserve: boolean;
-  is_exempt: boolean;
-  height_in_inch: number;
-  weight_in_lbs: number;
-  college: string;
-  experience: number;
-  draft: {
-    year: number;
-    round: number;
-    roundPickNumber: number;
-    overallPickNumber: number;
-  };
-  age: number;
-  birth_date: string;
-  birth_place: string;
-  positions: Array<{ name: string; abbreviation: string }>;
-}
-
-function formatHeight(heightInInches: number): string {
-  if (!heightInInches) return 'N/A';
-  const feet = Math.floor(heightInInches / 12);
-  const inches = heightInInches % 12;
-  return `${feet}'${inches}"`;
-}
-
-function getPlayerStatus(player: SportsKeedaPlayer): string {
-  if (player.is_suspended) return 'Suspended';
-  if (player.is_exempt) return 'Exempt';
-  if (player.is_injured) return 'Injured Reserve';
-  if (player.is_physically_unable) return 'Physically Unable to Perform';
-  if (player.is_non_football_injury_reserve) return 'Non-Football Injury Reserve';
-  if (player.is_practice_squad) return 'Practice Squad';
-  if (player.is_active) return 'Active';
-  return 'Active';
-}
-
-async function fetchTeamRosterDirect(teamId: string): Promise<{ players: RosterPlayer[]; teamId: string } | null> {
-  try {
-    const sportsKeedaSlug = teamSlugMap[teamId];
-    if (!sportsKeedaSlug) return null;
-
-    const response = await fetch(
-      `https://api.sportskeeda.com/v1/taxonomy/${sportsKeedaSlug}?include=squad`,
-      {
-        headers: {
-          'User-Agent': 'Mozilla/5.0 (compatible; NFL-HQ/1.0)',
-        },
-        next: { revalidate: 86400 }
-      }
-    );
-
-    if (!response.ok) return null;
-
-    const data = await response.json();
-    if (!data.squad || !Array.isArray(data.squad)) return null;
-
-    const players: RosterPlayer[] = data.squad.map((player: SportsKeedaPlayer) => ({
-      name: player.name,
-      slug: player.slug,
-      jerseyNumber: parseInt(player.jersey_no) || 0,
-      position: player.positions?.[0]?.abbreviation || 'N/A',
-      positionFull: player.positions?.[0]?.name || 'Not Available',
-      age: player.age,
-      height: formatHeight(player.height_in_inch),
-      weight: player.weight_in_lbs,
-      college: player.college?.replace('University of ', '').replace(' University', '') || 'N/A',
-      experience: player.experience,
-      status: getPlayerStatus(player),
-      draft: player.draft.year > 0 ? {
-        year: player.draft.year,
-        round: player.draft.round,
-        pick: player.draft.overallPickNumber
-      } : null,
-      birthDate: player.birth_date,
-      birthPlace: player.birth_place
-    }));
-
-    return { players, teamId };
-  } catch (error) {
-    console.error(`Error fetching roster for ${teamId}:`, error);
-    return null;
-  }
-}
+// Team roster fetching is now handled by unified rosters API
 
 async function fetchESPNAthleteId(teamId: string, playerName: string): Promise<string | null> {
   try {
@@ -863,28 +716,20 @@ export async function GET(
       );
     }
 
+    // Use unified roster cache instead of fetching each team individually
+    const allRosters = await getAllRosters();
+
     // Search all team rosters for the player
     let foundPlayer: RosterPlayer | null = null;
     let foundTeamId: string | null = null;
 
-    // Fetch all rosters in parallel using direct SportsKeeda API
-    const rosterPromises = ALL_TEAM_IDS.map(async (teamId) => {
-      const result = await fetchTeamRosterDirect(teamId);
-      if (!result) return null;
-
-      const player = result.players.find(p => p.slug === playerSlug);
+    for (const [teamId, roster] of allRosters) {
+      const player = roster.players.find(p => p.slug === playerSlug);
       if (player) {
-        return { player, teamId: result.teamId };
+        foundPlayer = player;
+        foundTeamId = teamId;
+        break;
       }
-      return null;
-    });
-
-    const results = await Promise.all(rosterPromises);
-    const found = results.find(r => r !== null);
-
-    if (found) {
-      foundPlayer = found.player;
-      foundTeamId = found.teamId;
     }
 
     if (!foundPlayer || !foundTeamId) {
@@ -897,14 +742,18 @@ export async function GET(
     // Get team info
     const team = teams[foundTeamId];
 
-    // Fetch ESPN stats, game log, and career stats
+    // Fetch ESPN athlete ID and PFSN Impact data in parallel (both are independent)
+    const seasonParam = gameLogSeason ? parseInt(gameLogSeason) : undefined;
+    const [espnAthleteId, pfsnData] = await Promise.all([
+      fetchESPNAthleteId(foundTeamId, foundPlayer.name),
+      fetchPFSNImpact(),
+    ]);
+
+    // Fetch ESPN stats, game log, and career stats in parallel (depend on athlete ID)
     let espnStats: ESPNStats | null = null;
     let espnGameLog: ESPNGameLog | null = null;
     let espnCareerStats: ESPNCareerStats | null = null;
-    const espnAthleteId = await fetchESPNAthleteId(foundTeamId, foundPlayer.name);
     if (espnAthleteId) {
-      // Fetch stats, game log, and career stats in parallel
-      const seasonParam = gameLogSeason ? parseInt(gameLogSeason) : undefined;
       const [statsResult, gameLogResult, careerStatsResult] = await Promise.all([
         fetchESPNAthleteStats(espnAthleteId),
         fetchESPNGameLog(espnAthleteId, seasonParam),
@@ -914,9 +763,6 @@ export async function GET(
       espnGameLog = gameLogResult;
       espnCareerStats = careerStatsResult;
     }
-
-    // Fetch PFSN Impact data (may fail if repos don't exist)
-    const pfsnData = await fetchPFSNImpact();
 
     // Try to match player to PFSN data
     const normalizedName = normalizePlayerName(foundPlayer.name);

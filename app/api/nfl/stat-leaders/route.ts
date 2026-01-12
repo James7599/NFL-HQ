@@ -440,6 +440,10 @@ export async function GET(request: NextRequest) {
       allPlayerStats: includeAllStats ? allPlayerStats : undefined,
       season: parseInt(season),
       lastUpdated: new Date().toISOString(),
+    }, {
+      headers: {
+        'Cache-Control': 'public, s-maxage=86400, stale-while-revalidate=3600',
+      },
     });
 
   } catch (error) {
