@@ -47,6 +47,7 @@ const NFLTeamsSidebar: React.FC<NFLTeamsSidebarProps> = ({ currentTeam, currentT
   };
 
   const nflTools = [
+    { title: 'NFL Ultimate GM Simulator', url: 'https://www.profootballnetwork.com/cta-ultimate-gm-simulator-nfl/', external: true },
     { title: 'NFL Schedule', url: '/nfl-hq/schedule', external: false },
     { title: 'NFL Standings', url: '/nfl-hq/standings', external: false },
     { title: 'NFL Injury Report', url: '/nfl-hq/injuries', external: false },
@@ -59,7 +60,6 @@ const NFLTeamsSidebar: React.FC<NFLTeamsSidebarProps> = ({ currentTeam, currentT
     { title: 'NFL Transactions', url: '/nfl-hq/transactions', external: false },
     { title: 'NFL Mock Draft Simulator', url: 'https://www.profootballnetwork.com/mockdraft', external: true },
     { title: 'NFL Salary Cap Tracker', url: '/nfl-hq/salary-cap-tracker', external: false },
-    { title: 'NFL Ultimate GM Simulator', url: 'https://www.profootballnetwork.com/cta-ultimate-gm-simulator-nfl/', external: true },
     { title: 'NFL Player Pages', url: '/nfl-hq/players', external: false },
   ];
 
