@@ -4,6 +4,7 @@ import { useState, useMemo, useEffect, useCallback } from 'react';
 import { TeamData } from '@/data/teams';
 import { getApiPath } from '@/utils/api';
 import LayoutStabilizer from '@/components/LayoutStabilizer';
+import { getContrastTextColor } from '@/utils/colorHelpers';
 
 // Helper function to generate PFSN URL
 const getPFSNUrl = (playerName: string | undefined | null) => {
@@ -740,9 +741,9 @@ export default function StatsTab({ team }: StatsTabProps) {
 
       {/* Stats Table */}
       <div className="overflow-x-auto mb-8">
-        <table className="w-full text-sm">
+        <table className={`w-full text-sm ${viewType === 'players' && sortColumn ? 'sort-animation' : ''}`} key={`${sortColumn}-${sortDirection}`}>
           <thead>
-            <tr className="text-white" style={{ backgroundColor: team.primaryColor }}>
+            <tr style={{ backgroundColor: team.primaryColor, color: getContrastTextColor(team.primaryColor) }}>
               {Object.entries(currentHeaders).map(([key, header]) => (
                 <th key={key} className="text-left p-2 sm:p-3 font-medium whitespace-nowrap">
                   {viewType === 'players' && key !== 'player' ? (

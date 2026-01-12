@@ -177,7 +177,7 @@ export default function PlayersDirectoryClient() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {/* Search */}
               <div>
-                <label htmlFor="search" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="search" className="block text-sm font-semibold text-gray-700 mb-2">
                   Search Players
                 </label>
                 <input
@@ -192,7 +192,7 @@ export default function PlayersDirectoryClient() {
 
               {/* Team Filter */}
               <div>
-                <label htmlFor="team" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="team" className="block text-sm font-semibold text-gray-700 mb-2">
                   Team
                 </label>
                 <select
@@ -210,7 +210,7 @@ export default function PlayersDirectoryClient() {
 
               {/* Position Filter */}
               <div>
-                <label htmlFor="position" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="position" className="block text-sm font-semibold text-gray-700 mb-2">
                   Position
                 </label>
                 <select

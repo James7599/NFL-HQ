@@ -4,6 +4,7 @@ import { useState, useMemo, useEffect, useCallback } from 'react';
 import LayoutStabilizer from '@/components/LayoutStabilizer';
 import { TeamData } from '@/data/teams';
 import { getApiPath } from '@/utils/api';
+import { getContrastTextColor } from '@/utils/colorHelpers';
 import futureDraftPicksData from '@/data/futureDraftPicks.json';
 
 // Helper function to generate PFSN URL
@@ -209,7 +210,7 @@ export default function DraftPicksTab({ team }: DraftPicksTabProps) {
           <p className="text-gray-600 mb-4">{error}</p>
           <button
             onClick={fetchDraftPicks}
-            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2"
+            className="inline-flex items-center px-4 py-2 min-h-[44px] border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2"
             style={{ backgroundColor: team.primaryColor }}
           >
             Try Again
@@ -298,7 +299,7 @@ export default function DraftPicksTab({ team }: DraftPicksTabProps) {
                 {/* Picks Table for this year */}
                 <table className="w-full text-sm mb-6">
                   <thead>
-                    <tr className="text-white" style={{ backgroundColor: team.primaryColor }}>
+                    <tr style={{ backgroundColor: team.primaryColor, color: getContrastTextColor(team.primaryColor) }}>
                       <th className="text-left p-3 font-medium">Name</th>
                       <th className="text-left p-3 font-medium">POS</th>
                       <th className="text-left p-3 font-medium">Round</th>

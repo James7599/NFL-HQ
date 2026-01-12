@@ -1,6 +1,7 @@
 'use client';
 
 import { TeamData } from '@/data/teams';
+import { getContrastTextColor } from '@/utils/colorHelpers';
 
 interface LiveStandings {
   record: string;
@@ -17,9 +18,10 @@ export default function TeamHero({ team, liveStandings }: TeamHeroProps) {
   const record = liveStandings?.record || team.record;
   const conferenceRank = liveStandings?.conferenceRank || '0th';
   const divisionRank = liveStandings?.divisionRank || '0th';
+  const textColor = getContrastTextColor(team.primaryColor);
 
   return (
-    <div style={{ backgroundColor: team.primaryColor }} className="text-white pt-[57px] lg:pt-0">
+    <div style={{ backgroundColor: team.primaryColor, color: textColor }} className="pt-[57px] lg:pt-0">
       <div className="container mx-auto px-4 py-4 sm:py-8">
         <div className="flex flex-col lg:flex-row items-center justify-between gap-4 sm:gap-6">
           <div className="flex items-center space-x-3 sm:space-x-6">

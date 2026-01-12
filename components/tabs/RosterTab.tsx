@@ -1,10 +1,14 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState } from 'react';
+import useSWR from 'swr';
 import Link from 'next/link';
 import { TeamData } from '@/data/teams';
 import { getApiPath } from '@/utils/api';
+import { getContrastTextColor } from '@/utils/colorHelpers';
 import LayoutStabilizer from '@/components/LayoutStabilizer';
+import { SWRErrorFallback } from '@/components/ErrorBoundary';
+import { fetcher, defaultSWROptions } from '@/lib/fetcher';
 
 interface Player {
   name: string;
@@ -109,45 +113,34 @@ interface RosterTabProps {
 }
 
 export default function RosterTab({ team }: RosterTabProps) {
-  const [rosterData, setRosterData] = useState<RosterResponse['roster'] | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [activeSection, setActiveSection] = useState<string>('activeRoster');
 
-  const fetchRosterData = useCallback(async () => {
-    try {
-      setLoading(true);
-      setError(null);
+  // SWR fetch - replaces useState/useCallback/useEffect boilerplate
+  const { data, error, isLoading, mutate } = useSWR<RosterResponse>(
+    getApiPath(`nfl/teams/api/roster/${team.id}`),
+    fetcher,
+    defaultSWROptions
+  );
 
-      const response = await fetch(getApiPath(`nfl/teams/api/roster/${team.id}`));
+  const rosterData = data?.roster;
 
-      if (!response.ok) {
-        throw new Error(`Failed to fetch roster: ${response.status}`);
-      }
+  // Tab header component - reused across loading/error/data states
+  const TabHeader = () => (
+    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 gap-4">
+      <div>
+        <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">{team.fullName} Roster</h2>
+        <div className="h-1 rounded-full" style={{ backgroundColor: team.primaryColor, width: 'fit-content', minWidth: '230px' }}></div>
+      </div>
+      <div className="text-sm text-gray-600">
+        2025 Season
+      </div>
+    </div>
+  );
 
-      const data: RosterResponse = await response.json();
-      setRosterData(data.roster);
-    } catch (err) {
-      console.error('Error fetching roster:', err);
-      setError(err instanceof Error ? err.message : 'Failed to load roster');
-    } finally {
-      setLoading(false);
-    }
-  }, [team.id]);
-
-  useEffect(() => {
-    fetchRosterData();
-  }, [fetchRosterData]);
-
-  if (loading) {
+  if (isLoading) {
     return (
       <LayoutStabilizer className="bg-white rounded-lg shadow p-4 sm:p-6" minHeight={800}>
-        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 gap-4">
-          <div>
-            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">{team.fullName} Roster</h2>
-            <div className="h-1 rounded-full" style={{ backgroundColor: team.primaryColor, width: 'fit-content', minWidth: '230px' }}></div>
-          </div>
-        </div>
+        <TabHeader />
         <div className="text-center py-12">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto mb-4"></div>
           <p className="text-gray-600">Loading roster...</p>
@@ -159,28 +152,13 @@ export default function RosterTab({ team }: RosterTabProps) {
   if (error) {
     return (
       <LayoutStabilizer className="bg-white rounded-lg shadow p-4 sm:p-6" minHeight={800}>
-        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 gap-4">
-          <div>
-            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">{team.fullName} Roster</h2>
-            <div className="h-1 rounded-full" style={{ backgroundColor: team.primaryColor, width: 'fit-content', minWidth: '230px' }}></div>
-          </div>
-        </div>
-        <div className="text-center py-12">
-          <div className="text-red-600 mb-4">
-            <svg className="mx-auto h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
-            </svg>
-          </div>
-          <h3 className="text-lg font-medium text-gray-900 mb-2">Error Loading Roster</h3>
-          <p className="text-gray-600 mb-4">{error}</p>
-          <button
-            onClick={fetchRosterData}
-            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2"
-            style={{ backgroundColor: team.primaryColor }}
-          >
-            Try Again
-          </button>
-        </div>
+        <TabHeader />
+        <SWRErrorFallback
+          error={error}
+          onRetry={() => mutate()}
+          teamColor={team.primaryColor}
+          title="Error Loading Roster"
+        />
       </LayoutStabilizer>
     );
   }
@@ -227,15 +205,7 @@ export default function RosterTab({ team }: RosterTabProps) {
 
   return (
     <LayoutStabilizer className="bg-white rounded-lg shadow p-4 sm:p-6 pb-24" minHeight={800}>
-      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 gap-4">
-        <div>
-          <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">{team.fullName} Roster</h2>
-          <div className="h-1 rounded-full" style={{ backgroundColor: team.primaryColor, width: 'fit-content', minWidth: '230px' }}></div>
-        </div>
-        <div className="text-sm text-gray-600">
-          2025 Season
-        </div>
-      </div>
+      <TabHeader />
 
       {/* Section Tabs */}
       <div className="mb-6">
@@ -286,7 +256,7 @@ export default function RosterTab({ team }: RosterTabProps) {
                   <div className="overflow-x-auto">
                     <table className="min-w-full text-sm">
                       <thead>
-                        <tr className="text-white" style={{ backgroundColor: team.primaryColor }}>
+                        <tr style={{ backgroundColor: team.primaryColor, color: getContrastTextColor(team.primaryColor) }}>
                           <th className="text-center px-3 py-3 font-medium whitespace-nowrap w-12">#</th>
                           <th className="text-left px-3 py-3 font-medium whitespace-nowrap min-w-[200px]">Name</th>
                           <th className="text-center px-3 py-3 font-medium whitespace-nowrap w-24">Impact Grade</th>

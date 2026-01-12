@@ -1,7 +1,13 @@
-import { useState, useEffect, useCallback } from 'react';
+'use client';
+
+import { useState, useMemo } from 'react';
+import useSWR from 'swr';
 import LayoutStabilizer from '@/components/LayoutStabilizer';
+import { SWRErrorFallback } from '@/components/ErrorBoundary';
 import { TeamData } from '@/data/teams';
 import { getApiPath } from '@/utils/api';
+import { getContrastTextColor } from '@/utils/colorHelpers';
+import { fetcher, defaultSWROptions } from '@/lib/fetcher';
 
 // Helper function to generate PFSN URL
 const getPFSNUrl = (playerName: string) => {
@@ -51,43 +57,16 @@ interface SalaryCapTabProps {
 export default function SalaryCapTab({ team }: SalaryCapTabProps) {
   const [sortField, setSortField] = useState<SortField>('capHit');
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
-  const [salaryCapData, setSalaryCapData] = useState<{teamSummary: TeamSummary, players: CapPlayer[]} | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [showPotentialSavings, setShowPotentialSavings] = useState(false);
 
-  const fetchSalaryCap = useCallback(async () => {
-    try {
-      setLoading(true);
-      setError(null);
+  // SWR fetch - replaces useState/useCallback/useEffect boilerplate
+  const { data, error, isLoading, mutate } = useSWR<SalaryCapResponse>(
+    getApiPath(`nfl/teams/api/salary-cap/${team.id}`),
+    fetcher,
+    defaultSWROptions
+  );
 
-      const response = await fetch(getApiPath(`nfl/teams/api/salary-cap/${team.id}`));
-
-      if (!response.ok) {
-        if (response.status === 404) {
-          throw new Error('Salary cap data not available for this team yet');
-        }
-        throw new Error(`Failed to fetch salary cap: ${response.status}`);
-      }
-
-      const data: SalaryCapResponse = await response.json();
-
-      if (!data.salaryCapData) {
-        throw new Error('Invalid salary cap data received');
-      }
-
-      setSalaryCapData(data.salaryCapData);
-    } catch (err) {
-      console.error('Error fetching salary cap:', err);
-      setError(err instanceof Error ? err.message : 'Failed to load salary cap');
-    } finally {
-      setLoading(false);
-    }
-  }, [team.id]);
-
-  useEffect(() => {
-    fetchSalaryCap();
-  }, [fetchSalaryCap]);
+  const salaryCapData = data?.salaryCapData;
 
   const handleSort = (field: SortField) => {
     if (sortField === field) {
@@ -98,21 +77,25 @@ export default function SalaryCapTab({ team }: SalaryCapTabProps) {
     }
   };
 
-  const sortedData = salaryCapData ? [...salaryCapData.players].sort((a, b) => {
-    let aValue = a[sortField];
-    let bValue = b[sortField];
+  const sortedData = useMemo(() => {
+    if (!salaryCapData?.players) return [];
 
-    if (typeof aValue === 'string') {
-      aValue = aValue.toLowerCase();
-      bValue = (bValue as string).toLowerCase();
-    }
+    return [...salaryCapData.players].sort((a, b) => {
+      let aValue: string | number = a[sortField];
+      let bValue: string | number = b[sortField];
 
-    if (sortDirection === 'asc') {
-      return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
-    } else {
-      return aValue > bValue ? -1 : aValue < bValue ? 1 : 0;
-    }
-  }) : [];
+      if (typeof aValue === 'string') {
+        aValue = aValue.toLowerCase();
+        bValue = (bValue as string).toLowerCase();
+      }
+
+      if (sortDirection === 'asc') {
+        return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
+      } else {
+        return aValue > bValue ? -1 : aValue < bValue ? 1 : 0;
+      }
+    });
+  }, [salaryCapData?.players, sortField, sortDirection]);
 
   const getSortIcon = (field: SortField) => {
     if (sortField !== field) {
@@ -136,15 +119,20 @@ export default function SalaryCapTab({ team }: SalaryCapTabProps) {
     );
   };
 
-  if (loading) {
+  // Tab header component - reused across loading/error/data states
+  const TabHeader = () => (
+    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 gap-4">
+      <div>
+        <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">{team.fullName} Salary Cap</h2>
+        <div className="h-1 rounded-full" style={{ backgroundColor: team.primaryColor, width: 'fit-content', minWidth: '270px' }}></div>
+      </div>
+    </div>
+  );
+
+  if (isLoading) {
     return (
       <LayoutStabilizer className="bg-white rounded-lg shadow p-4 sm:p-6" minHeight={600}>
-        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 gap-4">
-          <div>
-            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">{team.fullName} Salary Cap</h2>
-            <div className="h-1 rounded-full" style={{ backgroundColor: team.primaryColor, width: 'fit-content', minWidth: '270px' }}></div>
-          </div>
-        </div>
+        <TabHeader />
         <div className="text-center py-12">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto mb-4"></div>
           <p className="text-gray-600">Loading salary cap data...</p>
@@ -156,28 +144,13 @@ export default function SalaryCapTab({ team }: SalaryCapTabProps) {
   if (error) {
     return (
       <LayoutStabilizer className="bg-white rounded-lg shadow p-4 sm:p-6" minHeight={600}>
-        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 gap-4">
-          <div>
-            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">{team.fullName} Salary Cap</h2>
-            <div className="h-1 rounded-full" style={{ backgroundColor: team.primaryColor, width: 'fit-content', minWidth: '270px' }}></div>
-          </div>
-        </div>
-        <div className="text-center py-12">
-          <div className="text-red-600 mb-4">
-            <svg className="mx-auto h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
-            </svg>
-          </div>
-          <h3 className="text-lg font-medium text-gray-900 mb-2">Error Loading Salary Cap</h3>
-          <p className="text-gray-600 mb-4">{error}</p>
-          <button
-            onClick={fetchSalaryCap}
-            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2"
-            style={{ backgroundColor: team.primaryColor }}
-          >
-            Try Again
-          </button>
-        </div>
+        <TabHeader />
+        <SWRErrorFallback
+          error={error}
+          onRetry={() => mutate()}
+          teamColor={team.primaryColor}
+          title="Error Loading Salary Cap"
+        />
       </LayoutStabilizer>
     );
   }
@@ -185,12 +158,7 @@ export default function SalaryCapTab({ team }: SalaryCapTabProps) {
   if (!salaryCapData) {
     return (
       <LayoutStabilizer className="bg-white rounded-lg shadow p-4 sm:p-6" minHeight={600}>
-        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 gap-4">
-          <div>
-            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">{team.fullName} Salary Cap</h2>
-            <div className="h-1 rounded-full" style={{ backgroundColor: team.primaryColor, width: 'fit-content', minWidth: '270px' }}></div>
-          </div>
-        </div>
+        <TabHeader />
         <div className="text-center py-12">
           <h3 className="text-lg font-medium text-gray-900 mb-2">No Salary Cap Data Available</h3>
           <p className="text-gray-600">No salary cap data found for this team.</p>
@@ -201,18 +169,13 @@ export default function SalaryCapTab({ team }: SalaryCapTabProps) {
 
   return (
     <LayoutStabilizer className="bg-white rounded-lg shadow p-4 sm:p-6" minHeight={600}>
-      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 gap-4">
-        <div>
-          <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">{team.fullName} Salary Cap</h2>
-          <div className="h-1 rounded-full" style={{ backgroundColor: team.primaryColor, width: 'fit-content', minWidth: '270px' }}></div>
-        </div>
-      </div>
+      <TabHeader />
 
       <div className="space-y-8">
         {/* Cap Summary Cards */}
         <div className="mb-2">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="bg-white rounded-lg p-4 shadow-sm border-l-4" style={{ borderLeftColor: team.primaryColor }}>
+            <div className="bg-white rounded-lg p-4 shadow-sm border-l-4 card-hover" style={{ borderLeftColor: team.primaryColor }}>
               <div className="text-center">
                 <h4 className="text-sm font-semibold text-gray-700 mb-2 uppercase tracking-wide">Salary Cap</h4>
                 <div className="text-2xl font-bold text-gray-900 mb-1">${(salaryCapData.teamSummary.salaryCap / 1000000).toFixed(1)}M</div>
@@ -220,7 +183,7 @@ export default function SalaryCapTab({ team }: SalaryCapTabProps) {
               </div>
             </div>
 
-            <div className="bg-white rounded-lg p-4 shadow-sm border-l-4" style={{ borderLeftColor: team.primaryColor }}>
+            <div className="bg-white rounded-lg p-4 shadow-sm border-l-4 card-hover" style={{ borderLeftColor: team.primaryColor }}>
               <div className="text-center">
                 <h4 className="text-sm font-semibold text-gray-700 mb-2 uppercase tracking-wide">Available Cap Space</h4>
                 <div className={`text-2xl font-bold mb-1 ${salaryCapData.teamSummary.capSpace > 0 ? 'text-green-600' : 'text-red-600'}`}>
@@ -232,7 +195,7 @@ export default function SalaryCapTab({ team }: SalaryCapTabProps) {
               </div>
             </div>
 
-            <div className="bg-white rounded-lg p-4 shadow-sm border-l-4" style={{ borderLeftColor: team.primaryColor }}>
+            <div className="bg-white rounded-lg p-4 shadow-sm border-l-4 card-hover" style={{ borderLeftColor: team.primaryColor }}>
               <div className="text-center">
                 <h4 className="text-sm font-semibold text-gray-700 mb-2 uppercase tracking-wide">Active Cap Spend</h4>
                 <div className="text-2xl font-bold text-gray-900 mb-1">${(salaryCapData.teamSummary.activeCapSpend / 1000000).toFixed(1)}M</div>
@@ -242,7 +205,7 @@ export default function SalaryCapTab({ team }: SalaryCapTabProps) {
               </div>
             </div>
 
-            <div className="bg-white rounded-lg p-4 shadow-sm border-l-4" style={{ borderLeftColor: team.primaryColor }}>
+            <div className="bg-white rounded-lg p-4 shadow-sm border-l-4 card-hover" style={{ borderLeftColor: team.primaryColor }}>
               <div className="text-center">
                 <h4 className="text-sm font-semibold text-gray-700 mb-2 uppercase tracking-wide">Dead Money</h4>
                 <div className="text-2xl font-bold text-gray-900 mb-1">${(salaryCapData.teamSummary.deadMoney / 1000000).toFixed(1)}M</div>
@@ -271,9 +234,9 @@ export default function SalaryCapTab({ team }: SalaryCapTabProps) {
             </button>
           </div>
           <div className="overflow-x-auto">
-            <table className="min-w-full text-sm">
+            <table className="min-w-full text-sm sort-animation" key={`${sortField}-${sortDirection}`}>
               <thead>
-                <tr className="text-white" style={{ backgroundColor: team.primaryColor }}>
+                <tr style={{ backgroundColor: team.primaryColor, color: getContrastTextColor(team.primaryColor) }}>
                   <th
                     className="text-left p-3 font-medium cursor-pointer hover:opacity-90 whitespace-nowrap min-w-[160px]"
                     onClick={() => handleSort('name')}

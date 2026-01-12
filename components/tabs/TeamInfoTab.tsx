@@ -3,6 +3,7 @@
 import { TeamData } from '@/data/teams';
 import { getTeamInfo } from '@/data/teamInfo';
 import { getHallOfFamers } from '@/data/hallOfFame';
+import { getContrastTextColor } from '@/utils/colorHelpers';
 
 interface TeamInfoTabProps {
   team: TeamData;
@@ -23,7 +24,7 @@ export default function TeamInfoTab({ team }: TeamInfoTabProps) {
 
       {/* Team Stats Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
-        <div className="bg-white rounded-lg p-4 shadow-sm border-l-4" style={{ borderLeftColor: team.primaryColor }}>
+        <div className="bg-white rounded-lg p-4 shadow-sm border-l-4 card-hover" style={{ borderLeftColor: team.primaryColor }}>
           <div className="flex items-center justify-between">
             <div>
               <p className="text-2xl font-bold text-gray-900">{teamInfo.founded}</p>
@@ -33,7 +34,7 @@ export default function TeamInfoTab({ team }: TeamInfoTabProps) {
           </div>
         </div>
 
-        <div className="bg-white rounded-lg p-4 shadow-sm border-l-4" style={{ borderLeftColor: team.primaryColor }}>
+        <div className="bg-white rounded-lg p-4 shadow-sm border-l-4 card-hover" style={{ borderLeftColor: team.primaryColor }}>
           <div className="flex items-center justify-between">
             <div>
               <p className="text-xl font-bold text-gray-900">{teamInfo.stadium}</p>
@@ -43,7 +44,7 @@ export default function TeamInfoTab({ team }: TeamInfoTabProps) {
           </div>
         </div>
 
-        <div className="bg-white rounded-lg p-4 shadow-sm border-l-4" style={{ borderLeftColor: team.primaryColor }}>
+        <div className="bg-white rounded-lg p-4 shadow-sm border-l-4 card-hover" style={{ borderLeftColor: team.primaryColor }}>
           <div className="flex items-center justify-between">
             <div>
               <p className="text-2xl font-bold text-gray-900">{teamInfo.capacity}</p>
@@ -53,7 +54,7 @@ export default function TeamInfoTab({ team }: TeamInfoTabProps) {
           </div>
         </div>
 
-        <div className="bg-white rounded-lg p-4 shadow-sm border-l-4" style={{ borderLeftColor: team.primaryColor }}>
+        <div className="bg-white rounded-lg p-4 shadow-sm border-l-4 card-hover" style={{ borderLeftColor: team.primaryColor }}>
           <div className="flex items-center justify-between">
             <div>
               <p className="text-lg font-bold text-gray-900">{teamInfo.division}</p>
@@ -63,7 +64,7 @@ export default function TeamInfoTab({ team }: TeamInfoTabProps) {
           </div>
         </div>
 
-        <div className="bg-white rounded-lg p-4 shadow-sm border-l-4" style={{ borderLeftColor: team.primaryColor }}>
+        <div className="bg-white rounded-lg p-4 shadow-sm border-l-4 card-hover" style={{ borderLeftColor: team.primaryColor }}>
           <div className="flex items-center justify-between">
             <div>
               <p className="text-lg font-bold text-gray-900">{teamInfo.location}</p>
@@ -73,7 +74,7 @@ export default function TeamInfoTab({ team }: TeamInfoTabProps) {
           </div>
         </div>
 
-        <div className="bg-white rounded-lg p-4 shadow-sm border-l-4" style={{ borderLeftColor: team.primaryColor }}>
+        <div className="bg-white rounded-lg p-4 shadow-sm border-l-4 card-hover" style={{ borderLeftColor: team.primaryColor }}>
           <div className="flex items-center justify-between">
             <div>
               <p className="text-lg font-bold text-gray-900">{teamInfo.owner}</p>
@@ -91,7 +92,7 @@ export default function TeamInfoTab({ team }: TeamInfoTabProps) {
           <div className="space-y-4">
             {/* Super Bowl Championships */}
             <div className="flex items-start gap-3">
-              <div className="w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-bold" style={{ backgroundColor: team.primaryColor }}>
+              <div className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold" style={{ backgroundColor: team.primaryColor, color: getContrastTextColor(team.primaryColor) }}>
                 {teamInfo.superbowlWins}
               </div>
               <div>
@@ -102,7 +103,7 @@ export default function TeamInfoTab({ team }: TeamInfoTabProps) {
 
             {/* Conference Championships */}
             <div className="flex items-start gap-3">
-              <div className="w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-bold" style={{ backgroundColor: team.primaryColor }}>
+              <div className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold" style={{ backgroundColor: team.primaryColor, color: getContrastTextColor(team.primaryColor) }}>
                 {teamInfo.conferenceChampionships}
               </div>
               <div>
@@ -115,7 +116,7 @@ export default function TeamInfoTab({ team }: TeamInfoTabProps) {
           <div className="space-y-4">
             {/* Division Titles */}
             <div className="flex items-start gap-3">
-              <div className="w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-bold" style={{ backgroundColor: team.primaryColor }}>
+              <div className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold" style={{ backgroundColor: team.primaryColor, color: getContrastTextColor(team.primaryColor) }}>
                 {teamInfo.divisionTitles}
               </div>
               <div>
@@ -130,7 +131,7 @@ export default function TeamInfoTab({ team }: TeamInfoTabProps) {
 
             {/* Playoff Appearances */}
             <div className="flex items-start gap-3">
-              <div className="w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-bold" style={{ backgroundColor: team.primaryColor }}>
+              <div className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold" style={{ backgroundColor: team.primaryColor, color: getContrastTextColor(team.primaryColor) }}>
                 {teamInfo.playoffAppearances}
               </div>
               <div>
@@ -182,7 +183,7 @@ export default function TeamInfoTab({ team }: TeamInfoTabProps) {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {teamInfo.retiredNumbers.map((player, index) => (
               <div key={index} className="flex items-center gap-3">
-                <div className="w-16 h-16 text-white rounded-lg flex items-center justify-center font-bold text-xl" style={{ backgroundColor: team.primaryColor }}>
+                <div className="w-16 h-16 rounded-lg flex items-center justify-center font-bold text-xl" style={{ backgroundColor: team.primaryColor, color: getContrastTextColor(team.primaryColor) }}>
                   {player.number}
                 </div>
                 <div>
@@ -208,7 +209,7 @@ export default function TeamInfoTab({ team }: TeamInfoTabProps) {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
             {hallOfFamers.map((player, index) => (
-              <div key={index} className="px-3 py-2 rounded-lg border-4 border-yellow-400 text-white" style={{ backgroundColor: team.primaryColor }}>
+              <div key={index} className="px-3 py-2 rounded-lg border-4 border-yellow-400" style={{ backgroundColor: team.primaryColor, color: getContrastTextColor(team.primaryColor) }}>
                 <div className="font-semibold text-white text-sm leading-tight">{player.name}</div>
                 <div className="text-xs text-gray-200 leading-snug">{player.position} {player.years && `(${player.years})`}</div>
                 {player.inducted && player.inducted !== 'N/A' && (

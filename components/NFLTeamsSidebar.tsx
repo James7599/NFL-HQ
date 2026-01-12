@@ -136,7 +136,7 @@ const NFLTeamsSidebar: React.FC<NFLTeamsSidebarProps> = ({ currentTeam, currentT
             aria-label="Toggle dropdown"
           >
             <svg
-              className={`w-4 h-4 transform transition-transform ${isExpanded ? 'rotate-180' : ''}`}
+              className={`w-4 h-4 transform transition-transform duration-300 ease-out ${isExpanded ? 'rotate-180' : ''}`}
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -187,7 +187,7 @@ const NFLTeamsSidebar: React.FC<NFLTeamsSidebarProps> = ({ currentTeam, currentT
               >
                 <div className="text-[#0050A0] text-xs font-bold uppercase tracking-wider">NFL Tools</div>
                 <svg
-                  className={`w-4 h-4 text-[#0050A0] transform transition-transform ${isNFLToolsExpanded ? 'rotate-180' : ''}`}
+                  className={`w-4 h-4 text-[#0050A0] transform transition-transform duration-300 ease-out ${isNFLToolsExpanded ? 'rotate-180' : ''}`}
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -225,7 +225,7 @@ const NFLTeamsSidebar: React.FC<NFLTeamsSidebarProps> = ({ currentTeam, currentT
                             >
                               <div className="text-xs">PFSN Impact Rankings</div>
                               <svg
-                                className={`w-3 h-3 transform transition-transform ${isImpactRankingsExpanded ? 'rotate-180' : ''}`}
+                                className={`w-3 h-3 transform transition-transform duration-300 ease-out ${isImpactRankingsExpanded ? 'rotate-180' : ''}`}
                                 fill="none"
                                 stroke="currentColor"
                                 viewBox="0 0 24 24"
@@ -265,7 +265,7 @@ const NFLTeamsSidebar: React.FC<NFLTeamsSidebarProps> = ({ currentTeam, currentT
               >
                 <div className="text-[#0050A0] text-xs font-bold uppercase tracking-wider">NFL Teams</div>
                 <svg
-                  className={`w-4 h-4 text-[#0050A0] transform transition-transform ${isTeamsExpanded ? 'rotate-180' : ''}`}
+                  className={`w-4 h-4 text-[#0050A0] transform transition-transform duration-300 ease-out ${isTeamsExpanded ? 'rotate-180' : ''}`}
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -309,9 +309,9 @@ const NFLTeamsSidebar: React.FC<NFLTeamsSidebarProps> = ({ currentTeam, currentT
                 className="flex items-center justify-between mb-2 cursor-pointer"
                 onClick={() => setIsOtherToolsExpanded(!isOtherToolsExpanded)}
               >
-                <div className="text-[#0050A0] text-xs font-bold uppercase tracking-wider">Other Tools</div>
+                <div className="text-[#0050A0] text-xs font-bold uppercase tracking-wider">Other Sports</div>
                 <svg
-                  className={`w-4 h-4 text-[#0050A0] transform transition-transform ${isOtherToolsExpanded ? 'rotate-180' : ''}`}
+                  className={`w-4 h-4 text-[#0050A0] transform transition-transform duration-300 ease-out ${isOtherToolsExpanded ? 'rotate-180' : ''}`}
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -474,7 +474,7 @@ const NFLTeamsSidebar: React.FC<NFLTeamsSidebarProps> = ({ currentTeam, currentT
                           PFSN Impact Rankings
                         </span>
                         <svg
-                          className={`w-4 h-4 transform transition-transform ${isImpactRankingsExpanded ? 'rotate-180' : ''}`}
+                          className={`w-4 h-4 transform transition-transform duration-300 ease-out ${isImpactRankingsExpanded ? 'rotate-180' : ''}`}
                           fill="none"
                           stroke="currentColor"
                           viewBox="0 0 24 24"
@@ -579,7 +579,7 @@ const NFLTeamsSidebar: React.FC<NFLTeamsSidebarProps> = ({ currentTeam, currentT
               <div className="flex items-center justify-between min-w-0">
                 <div className="flex items-center gap-2 min-w-0 flex-shrink">
                   <div className="h-0.5 w-3 bg-gray-600 rounded flex-shrink-0"></div>
-                  <span className="text-[11px] font-bold text-gray-300 uppercase tracking-wider truncate">Other Tools</span>
+                  <span className="text-[11px] font-bold text-gray-300 uppercase tracking-wider truncate">Other Sports</span>
                 </div>
                 <div className="flex-1 ml-3 h-px bg-gradient-to-r from-gray-800 to-transparent flex-shrink-0"></div>
               </div>

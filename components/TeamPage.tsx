@@ -28,6 +28,7 @@ import ScheduleTab from '@/components/tabs/ScheduleTab';
 import StatsTab from '@/components/tabs/StatsTab';
 import NewsTab from '@/components/tabs/NewsTab';
 import InjuryReportTab from '@/components/tabs/InjuryReportTab';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
 
 interface TeamPageProps {
   team: TeamData;
@@ -427,31 +428,44 @@ function TeamPageContent({ team, initialTab }: TeamPageProps) {
   };
 
   const renderActiveTab = () => {
+    // Wrap each tab with ErrorBoundary for graceful error handling
+    const wrapWithErrorBoundary = (component: React.ReactNode, tabName: string) => (
+      <ErrorBoundary teamColor={team.primaryColor} componentName={tabName}>
+        {component}
+      </ErrorBoundary>
+    );
+
     switch (activeTab) {
       case 'overview':
-        return <OverviewTab team={team} onTabChange={handleTabChange} schedule={teamSchedule} divisionStandings={divisionStandings} />;
+        return wrapWithErrorBoundary(
+          <OverviewTab team={team} onTabChange={handleTabChange} schedule={teamSchedule} divisionStandings={divisionStandings} />,
+          'Overview'
+        );
       case 'team-info':
-        return <TeamInfoTab team={team} />;
+        return wrapWithErrorBoundary(<TeamInfoTab team={team} />, 'Team Info');
       case 'draft-picks':
-        return <DraftPicksTab team={team} />;
+        return wrapWithErrorBoundary(<DraftPicksTab team={team} />, 'Draft Picks');
       case 'transactions':
-        return <TransactionsTab team={team} />;
+        return wrapWithErrorBoundary(<TransactionsTab team={team} />, 'Transactions');
       case 'salary-cap':
-        return <SalaryCapTab team={team} />;
+        return wrapWithErrorBoundary(<SalaryCapTab team={team} />, 'Salary Cap');
       case 'roster':
-        return <RosterTab team={team} />;
+        return wrapWithErrorBoundary(<RosterTab team={team} />, 'Roster');
       case 'depth-chart':
-        return <DepthChartTab team={team} />;
+        return wrapWithErrorBoundary(<DepthChartTab team={team} />, 'Depth Chart');
       case 'schedule':
-        return <ScheduleTab team={team} />;
+        return wrapWithErrorBoundary(<ScheduleTab team={team} />, 'Schedule');
       case 'stats':
-        return <StatsTab team={team} />;
+        return wrapWithErrorBoundary(<StatsTab team={team} />, 'Stats');
       case 'news':
-        return <NewsTab team={team} />;
+        return wrapWithErrorBoundary(<NewsTab team={team} />, 'News');
       case 'injury-report':
-        return <InjuryReportTab team={team} />;
+        return wrapWithErrorBoundary(<InjuryReportTab team={team} />, 'Injury Report');
       default:
-        return <OverviewTab team={team} onTabChange={handleTabChange} />;
+        return wrapWithErrorBoundary(
+          <OverviewTab team={team} onTabChange={handleTabChange} />,
+          'Overview'
+        );
     }
   };
 
