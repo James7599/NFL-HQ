@@ -1027,11 +1027,11 @@ export default function PlayerRankingsClient() {
                   <tr>
                     <th className="pl-3 sm:pl-6 pr-2 sm:pr-4 py-3 text-left text-xs sm:text-sm font-bold w-16 sm:w-20">Rank</th>
                     <th className="px-2 sm:px-4 py-3 text-left text-xs sm:text-sm font-bold">Player</th>
-                    <th className="hidden sm:table-cell px-4 py-3 text-left text-sm font-bold w-20">Pos</th>
-                    <th className="hidden md:table-cell px-4 py-3 text-left text-sm font-bold">Team</th>
-                    <th className="hidden lg:table-cell px-4 py-3 text-center text-sm font-bold w-16">Age</th>
-                    <th className="hidden lg:table-cell px-4 py-3 text-center text-sm font-bold w-24">Impact Grade</th>
-                    <th className="px-4 py-3 text-center text-sm font-bold w-16">Actions</th>
+                    <th className="hidden sm:table-cell px-3 py-3 text-center text-sm font-bold w-16">Pos</th>
+                    <th className="hidden md:table-cell px-3 py-3 text-left text-sm font-bold w-44">Team</th>
+                    <th className="hidden lg:table-cell px-3 py-3 text-center text-sm font-bold w-14">Age</th>
+                    <th className="hidden lg:table-cell px-3 py-3 text-center text-sm font-bold w-24">Impact Grade</th>
+                    <th className="px-3 py-3 text-center text-sm font-bold w-16">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -1129,14 +1129,14 @@ export default function PlayerRankingsClient() {
                         </td>
 
                         {/* Position */}
-                        <td className="hidden sm:table-cell px-4 py-4">
+                        <td className="hidden sm:table-cell px-3 py-4 text-center">
                           <span className={`inline-block px-2 py-1 rounded text-xs font-semibold border ${getPositionColor(rankedPlayer.player.position)}`}>
                             {rankedPlayer.player.position}
                           </span>
                         </td>
 
                         {/* Team */}
-                        <td className="hidden md:table-cell px-4 py-4">
+                        <td className="hidden md:table-cell px-3 py-4">
                           <div className="flex items-center gap-2">
                             {team && (
                               <img
@@ -1145,19 +1145,19 @@ export default function PlayerRankingsClient() {
                                 className="w-6 h-6 object-contain flex-shrink-0"
                               />
                             )}
-                            <span className="text-sm text-gray-700">{rankedPlayer.player.team}</span>
+                            <span className="text-sm text-gray-700 truncate">{rankedPlayer.player.team}</span>
                           </div>
                         </td>
 
                         {/* Age */}
-                        <td className="hidden lg:table-cell px-4 py-4 text-center">
+                        <td className="hidden lg:table-cell px-3 py-4 text-center">
                           <span className="text-sm text-gray-700">
                             {rankedPlayer.player.age || '-'}
                           </span>
                         </td>
 
                         {/* Impact Grade */}
-                        <td className="hidden lg:table-cell px-4 py-4 text-center">
+                        <td className="hidden lg:table-cell px-3 py-4 text-center">
                           {rankedPlayer.player.impactGrade && rankedPlayer.player.impactGrade > 0 ? (
                             <span className="font-semibold text-blue-600">
                               {rankedPlayer.player.impactGrade.toFixed(1)}
@@ -1168,7 +1168,7 @@ export default function PlayerRankingsClient() {
                         </td>
 
                         {/* Actions */}
-                        <td className="px-4 py-4 text-center">
+                        <td className="px-3 py-4 text-center">
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
