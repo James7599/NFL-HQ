@@ -1024,13 +1024,6 @@ export default function PlayerRankingsClient() {
                         {/* Player Info */}
                         <td className="px-2 sm:px-4 py-3 sm:py-4">
                           <div className="flex items-center gap-2 sm:gap-3">
-                            {team && (
-                              <img
-                                src={team.logoUrl}
-                                alt={team.name}
-                                className="w-8 h-8 sm:w-10 sm:h-10 object-contain flex-shrink-0"
-                              />
-                            )}
                             <div className="min-w-0">
                               <div className="font-semibold text-gray-900 text-sm sm:text-base truncate">
                                 {rankedPlayer.player.name}
@@ -1051,7 +1044,16 @@ export default function PlayerRankingsClient() {
 
                         {/* Team */}
                         <td className="hidden md:table-cell px-4 py-4">
-                          <span className="text-sm text-gray-700">{rankedPlayer.player.team}</span>
+                          <div className="flex items-center gap-2">
+                            {team && (
+                              <img
+                                src={team.logoUrl}
+                                alt={team.name}
+                                className="w-6 h-6 object-contain flex-shrink-0"
+                              />
+                            )}
+                            <span className="text-sm text-gray-700">{rankedPlayer.player.team}</span>
+                          </div>
                         </td>
 
                         {/* Actions */}
