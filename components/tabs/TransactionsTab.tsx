@@ -58,7 +58,7 @@ interface TransactionsTabProps {
 }
 
 export default function TransactionsTab({ team }: TransactionsTabProps) {
-  const [selectedMonth, setSelectedMonth] = useState<string>('All Year');
+  const [selectedMonth, setSelectedMonth] = useState<string>('All Season');
 
   // SWR fetch - replaces useState/useCallback/useEffect boilerplate
   const { data, error, isLoading, mutate } = useSWR<TransactionsResponse>(
@@ -69,44 +69,59 @@ export default function TransactionsTab({ team }: TransactionsTabProps) {
 
   const transactionsData = data?.transactions || [];
 
+  // Helper to get month key from date string (MM/DD format)
+  // For NFL 2025 season: Sep-Dec are 2025, Jan-Feb are 2026
+  const getMonthKey = (dateStr: string): string => {
+    const month = dateStr.substring(0, 2);
+    switch (month) {
+      case '01': return 'Jan 2026';
+      case '02': return 'Feb 2026';
+      case '03': return 'Mar 2026';
+      case '04': return 'Apr 2025';
+      case '05': return 'May 2025';
+      case '06': return 'Jun 2025';
+      case '07': return 'Jul 2025';
+      case '08': return 'Aug 2025';
+      case '09': return 'Sep 2025';
+      case '10': return 'Oct 2025';
+      case '11': return 'Nov 2025';
+      case '12': return 'Dec 2025';
+      default: return 'Other';
+    }
+  };
+
+  // Month sort order for NFL season (newest first: Jan 2026 -> Sep 2025)
+  const monthSortOrder: Record<string, number> = {
+    'Feb 2026': 1,
+    'Jan 2026': 2,
+    'Dec 2025': 3,
+    'Nov 2025': 4,
+    'Oct 2025': 5,
+    'Sep 2025': 6,
+    'Aug 2025': 7,
+    'Jul 2025': 8,
+    'Jun 2025': 9,
+    'May 2025': 10,
+    'Apr 2025': 11,
+    'Mar 2026': 12,
+  };
+
   // Generate month filter options from actual data
   const months = useMemo(() => {
-    const uniqueMonths = Array.from(new Set(transactionsData.map(t => {
-      const monthKey = t.date.startsWith('09/') ? 'Sep 2025' :
-                      t.date.startsWith('08/') ? 'Aug 2025' :
-                      t.date.startsWith('07/') ? 'Jul 2025' :
-                      t.date.startsWith('06/') ? 'Jun 2025' :
-                      t.date.startsWith('05/') ? 'May 2025' :
-                      t.date.startsWith('04/') ? 'Apr 2025' :
-                      t.date.startsWith('03/') ? 'Mar 2025' :
-                      t.date.startsWith('02/') ? 'Feb 2025' :
-                      t.date.startsWith('01/') ? 'Jan 2025' :
-                      t.date.startsWith('12/') ? 'Dec 2024' :
-                      t.date.startsWith('11/') ? 'Nov 2024' :
-                      t.date.startsWith('10/') ? 'Oct 2024' : 'Other';
-      return monthKey;
-    })));
+    const uniqueMonths = Array.from(new Set(transactionsData.map(t => getMonthKey(t.date))));
 
-    return ['All Year', ...uniqueMonths.filter(m => m !== 'Other').sort().reverse()];
+    // Sort months with newest first
+    const sortedMonths = uniqueMonths
+      .filter(m => m !== 'Other')
+      .sort((a, b) => (monthSortOrder[a] || 99) - (monthSortOrder[b] || 99));
+
+    return ['All Season', ...sortedMonths];
   }, [transactionsData]);
 
   const filteredData = useMemo(() => {
     return transactionsData.filter(transaction => {
-      const monthMatch = selectedMonth === 'All Year' ||
-        (selectedMonth === 'Sep 2025' && transaction.date.startsWith('09/')) ||
-        (selectedMonth === 'Aug 2025' && transaction.date.startsWith('08/')) ||
-        (selectedMonth === 'Jul 2025' && transaction.date.startsWith('07/')) ||
-        (selectedMonth === 'Jun 2025' && transaction.date.startsWith('06/')) ||
-        (selectedMonth === 'May 2025' && transaction.date.startsWith('05/')) ||
-        (selectedMonth === 'Apr 2025' && transaction.date.startsWith('04/')) ||
-        (selectedMonth === 'Mar 2025' && transaction.date.startsWith('03/')) ||
-        (selectedMonth === 'Feb 2025' && transaction.date.startsWith('02/')) ||
-        (selectedMonth === 'Jan 2025' && transaction.date.startsWith('01/')) ||
-        (selectedMonth === 'Dec 2024' && transaction.date.startsWith('12/')) ||
-        (selectedMonth === 'Nov 2024' && transaction.date.startsWith('11/')) ||
-        (selectedMonth === 'Oct 2024' && transaction.date.startsWith('10/'));
-
-      return monthMatch;
+      if (selectedMonth === 'All Season') return true;
+      return getMonthKey(transaction.date) === selectedMonth;
     });
   }, [transactionsData, selectedMonth]);
 
@@ -114,18 +129,7 @@ export default function TransactionsTab({ team }: TransactionsTabProps) {
   const groupedData = useMemo(() => {
     const groups: { [key: string]: Transaction[] } = {};
     filteredData.forEach(transaction => {
-      const monthKey = transaction.date.startsWith('09/') ? 'Sep 2025' :
-                      transaction.date.startsWith('08/') ? 'Aug 2025' :
-                      transaction.date.startsWith('07/') ? 'Jul 2025' :
-                      transaction.date.startsWith('06/') ? 'Jun 2025' :
-                      transaction.date.startsWith('05/') ? 'May 2025' :
-                      transaction.date.startsWith('04/') ? 'Apr 2025' :
-                      transaction.date.startsWith('03/') ? 'Mar 2025' :
-                      transaction.date.startsWith('02/') ? 'Feb 2025' :
-                      transaction.date.startsWith('01/') ? 'Jan 2025' :
-                      transaction.date.startsWith('12/') ? 'Dec 2024' :
-                      transaction.date.startsWith('11/') ? 'Nov 2024' :
-                      transaction.date.startsWith('10/') ? 'Oct 2024' : 'Other';
+      const monthKey = getMonthKey(transaction.date);
 
       if (!groups[monthKey]) {
         groups[monthKey] = [];
@@ -144,6 +148,13 @@ export default function TransactionsTab({ team }: TransactionsTabProps) {
 
     return groups;
   }, [filteredData]);
+
+  // Get sorted month keys for rendering (newest first)
+  const sortedMonthKeys = useMemo(() => {
+    return Object.keys(groupedData)
+      .filter(m => m !== 'Other')
+      .sort((a, b) => (monthSortOrder[a] || 99) - (monthSortOrder[b] || 99));
+  }, [groupedData]);
 
   // Tab header component - reused across loading/error/data states
   const TabHeader = ({ showFilter = false }: { showFilter?: boolean }) => (
@@ -204,7 +215,7 @@ export default function TransactionsTab({ team }: TransactionsTabProps) {
 
       {/* Transactions by Month */}
       <div className="space-y-8">
-        {Object.entries(groupedData).map(([monthKey, transactions]) => (
+        {sortedMonthKeys.map((monthKey) => (
           <div key={monthKey}>
             <h3 className="text-lg font-semibold text-gray-800 mb-4 pt-2">{monthKey}</h3>
 
@@ -228,7 +239,7 @@ export default function TransactionsTab({ team }: TransactionsTabProps) {
                   </tr>
                 </thead>
                 <tbody>
-                  {transactions.map((transaction, index) => (
+                  {groupedData[monthKey].map((transaction, index) => (
                     <tr key={`${transaction.date}-${transaction.player}-${index}`}
                         className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
                       <td className="p-3 text-gray-700">{transaction.date}</td>
@@ -328,7 +339,7 @@ export default function TransactionsTab({ team }: TransactionsTabProps) {
         ))}
       </div>
 
-      {Object.keys(groupedData).length === 0 && (
+      {sortedMonthKeys.length === 0 && (
         <div className="text-center py-8 text-gray-600">
           No transactions found for the selected criteria.
         </div>

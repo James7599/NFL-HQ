@@ -282,9 +282,23 @@ export async function GET(request: NextRequest) {
           // Convert ESPN games to local format
           const transformedGames = espnGames.map(convertESPNGameToLocalFormat);
 
-          // Determine cache time based on game status
-          const hasLiveGames = espnGames.some(g => g.is_live);
-          const revalidateTime = hasLiveGames ? 30 : 300; // 30s if live, 5min otherwise
+          // Determine cache time based on date and time, not response content
+          // This avoids stale cache issues when game status changes
+          const now = new Date();
+          const gameDate = new Date(requestedDate + 'T23:59:59-05:00'); // End of game day in ET
+          const hoursSinceGameDay = (now.getTime() - gameDate.getTime()) / (1000 * 60 * 60);
+
+          let revalidateTime: number;
+          if (hoursSinceGameDay > 6) {
+            // Game day was more than 6 hours ago - games should be final, cache longer
+            revalidateTime = 3600; // 1 hour
+          } else if (hoursSinceGameDay > 0) {
+            // Within 6 hours after game day ends - games might have just finished
+            revalidateTime = 60; // 1 minute - refresh frequently to catch final scores
+          } else {
+            // Game day is today or in future - could be live
+            revalidateTime = 30; // 30 seconds for live game updates
+          }
 
           return NextResponse.json({
             schedule: transformedGames,
@@ -294,7 +308,7 @@ export async function GET(request: NextRequest) {
             source: 'espn',
           }, {
             headers: {
-              'Cache-Control': `s-maxage=${revalidateTime}, stale-while-revalidate`,
+              'Cache-Control': `s-maxage=${revalidateTime}, stale-while-revalidate=${revalidateTime}`,
             },
           });
         }
