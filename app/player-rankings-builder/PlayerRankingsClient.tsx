@@ -205,6 +205,9 @@ export default function PlayerRankingsClient() {
   const [showDownloadMenu, setShowDownloadMenu] = useState(false);
   const [showAddPlayerDialog, setShowAddPlayerDialog] = useState(false);
   const [addPlayerSearch, setAddPlayerSearch] = useState('');
+  const [allNFLPlayers, setAllNFLPlayers] = useState<Player[]>([]);
+  const [loadingPlayers, setLoadingPlayers] = useState(false);
+  const [playersLoaded, setPlayersLoaded] = useState(false);
   const downloadMenuRef = useRef<HTMLDivElement>(null);
 
   // Logo states for canvas rendering
@@ -359,6 +362,28 @@ export default function PlayerRankingsClient() {
     preloadLogos();
   }, []);
 
+  // Fetch all NFL players when Add Player dialog is opened
+  useEffect(() => {
+    if (showAddPlayerDialog && !playersLoaded && !loadingPlayers) {
+      const fetchAllPlayers = async () => {
+        setLoadingPlayers(true);
+        try {
+          const response = await fetch('/nfl-hq/api/nfl/all-players');
+          if (response.ok) {
+            const data = await response.json();
+            setAllNFLPlayers(data.players || []);
+            setPlayersLoaded(true);
+          }
+        } catch (error) {
+          console.error('Error fetching all players:', error);
+        } finally {
+          setLoadingPlayers(false);
+        }
+      };
+      fetchAllPlayers();
+    }
+  }, [showAddPlayerDialog, playersLoaded, loadingPlayers]);
+
   // Filter rankings by position
   const filteredRankings = useMemo(() => {
     let filtered = rankings;
@@ -383,7 +408,9 @@ export default function PlayerRankingsClient() {
   // Available players for adding (not in rankings)
   const filteredAvailablePlayers = useMemo(() => {
     const rankedIds = new Set(rankings.map(r => r.player.id));
-    let available = TOP_100_PLAYERS.filter(p => !rankedIds.has(p.id));
+    // Use all NFL players from API, or fall back to TOP_100 if not loaded yet
+    const playerPool = playersLoaded ? allNFLPlayers : TOP_100_PLAYERS;
+    let available = playerPool.filter(p => !rankedIds.has(p.id));
 
     if (addPlayerSearch.trim()) {
       const query = addPlayerSearch.toLowerCase();
@@ -394,8 +421,9 @@ export default function PlayerRankingsClient() {
       );
     }
 
-    return available;
-  }, [rankings, addPlayerSearch]);
+    // Limit results to 100 for performance
+    return available.slice(0, 100);
+  }, [rankings, addPlayerSearch, allNFLPlayers, playersLoaded]);
 
   // Drag handlers
   const handleDragStart = (e: React.DragEvent, index: number) => {
@@ -1136,15 +1164,31 @@ export default function PlayerRankingsClient() {
               type="text"
               value={addPlayerSearch}
               onChange={(e) => setAddPlayerSearch(e.target.value)}
-              placeholder="Search players..."
+              placeholder="Search players by name, team, or position..."
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0050A0] mb-4"
             />
-            {filteredAvailablePlayers.length === 0 ? (
-              <p className="text-gray-600 text-center py-8">No available players to add.</p>
+            {loadingPlayers ? (
+              <div className="text-center py-8">
+                <svg className="animate-spin w-8 h-8 mx-auto text-[#0050A0] mb-2" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <p className="text-gray-600">Loading all NFL players...</p>
+              </div>
+            ) : filteredAvailablePlayers.length === 0 ? (
+              <p className="text-gray-600 text-center py-8">
+                {addPlayerSearch.trim() ? 'No players found matching your search.' : 'No available players to add.'}
+              </p>
             ) : (
-              <div className="space-y-2 max-h-96 overflow-y-auto">
-                {filteredAvailablePlayers.map((player) => {
-                  const team = teamsById[player.teamId];
+              <>
+                {playersLoaded && (
+                  <p className="text-xs text-gray-500 mb-2">
+                    Showing {filteredAvailablePlayers.length} players{filteredAvailablePlayers.length === 100 ? ' (search to find more)' : ''} from {allNFLPlayers.length} total NFL players
+                  </p>
+                )}
+                <div className="space-y-2 max-h-96 overflow-y-auto">
+                  {filteredAvailablePlayers.map((player) => {
+                    const team = teamsById[player.teamId];
                   return (
                     <div
                       key={player.id}
@@ -1173,8 +1217,9 @@ export default function PlayerRankingsClient() {
                       </button>
                     </div>
                   );
-                })}
-              </div>
+                  })}
+                </div>
+              </>
             )}
           </div>
         </div>
