@@ -20,6 +20,34 @@ interface RankedPlayer {
   player: Player;
 }
 
+// Player Avatar component with proper fallback handling
+function PlayerAvatar({ playerId, playerName, teamColor }: { playerId: string; playerName: string; teamColor: string }) {
+  const [imgError, setImgError] = useState(false);
+  const initials = playerName.split(' ').map(n => n[0]).join('');
+
+  if (imgError) {
+    return (
+      <div
+        className="w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center flex-shrink-0"
+        style={{ backgroundColor: `${teamColor}20` }}
+      >
+        <span className="font-semibold text-sm" style={{ color: teamColor }}>
+          {initials}
+        </span>
+      </div>
+    );
+  }
+
+  return (
+    <img
+      src={`https://staticd.profootballnetwork.com/skm/assets/player-images/nfl/${playerId}.png?w=80`}
+      alt={playerName}
+      className="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover bg-gray-100 flex-shrink-0"
+      onError={() => setImgError(true)}
+    />
+  );
+}
+
 // Position groups for filtering
 const POSITION_GROUPS: Record<string, string[]> = {
   'All': [],
@@ -1099,30 +1127,11 @@ export default function PlayerRankingsClient() {
                         <td className="px-2 sm:px-4 py-3 sm:py-4">
                           <div className="flex items-center gap-2 sm:gap-3">
                             {/* Player Headshot */}
-                            <div className="relative flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12">
-                              <img
-                                src={`https://staticd.profootballnetwork.com/skm/assets/player-images/nfl/${rankedPlayer.player.id}.png?w=80`}
-                                alt={rankedPlayer.player.name}
-                                className="w-full h-full rounded-full object-cover bg-gray-100"
-                                onError={(e) => {
-                                  const target = e.target as HTMLImageElement;
-                                  target.style.display = 'none';
-                                  const fallback = target.nextElementSibling as HTMLElement;
-                                  if (fallback) fallback.style.display = 'flex';
-                                }}
-                              />
-                              <div
-                                className="absolute inset-0 rounded-full items-center justify-center hidden"
-                                style={{ backgroundColor: `${team?.primaryColor || '#0050A0'}20` }}
-                              >
-                                <span
-                                  className="font-semibold text-sm"
-                                  style={{ color: team?.primaryColor || '#0050A0' }}
-                                >
-                                  {rankedPlayer.player.name.split(' ').map(n => n[0]).join('')}
-                                </span>
-                              </div>
-                            </div>
+                            <PlayerAvatar
+                              playerId={rankedPlayer.player.id}
+                              playerName={rankedPlayer.player.name}
+                              teamColor={team?.primaryColor || '#0050A0'}
+                            />
                             <div className="min-w-0">
                               <div className="font-semibold text-gray-900 text-sm sm:text-base truncate">
                                 {rankedPlayer.player.name}
