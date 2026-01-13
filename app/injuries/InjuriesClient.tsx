@@ -254,7 +254,7 @@ export default function InjuriesClient() {
       </div>
 
       {/* Main Content */}
-      <main className="flex-1 lg:ml-64 min-w-0">
+      <main id="main-content" className="flex-1 lg:ml-64 min-w-0">
         {/* Header */}
         <div className="bg-[#0050A0] text-white pt-[57px] lg:pt-0 pb-4 lg:pb-6">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 pt-4 lg:pt-10">
@@ -381,11 +381,11 @@ export default function InjuriesClient() {
                 <table className="w-full min-w-[700px]">
                   <thead className="bg-[#0050A0] text-white">
                     <tr>
-                      <th className="px-4 py-3 text-left text-xs sm:text-sm font-bold">PLAYER</th>
-                      <th className="px-4 py-3 text-left text-xs sm:text-sm font-bold w-24">POS</th>
-                      <th className="px-4 py-3 text-left text-xs sm:text-sm font-bold w-32">TEAM</th>
-                      <th className="px-4 py-3 text-left text-xs sm:text-sm font-bold">INJURY</th>
-                      <th className="px-4 py-3 text-left text-xs sm:text-sm font-bold w-40">STATUS</th>
+                      <th scope="col" className="px-4 py-3 text-left text-xs sm:text-sm font-bold">PLAYER</th>
+                      <th scope="col" className="px-4 py-3 text-left text-xs sm:text-sm font-bold w-24">POS</th>
+                      <th scope="col" className="px-4 py-3 text-left text-xs sm:text-sm font-bold w-32">TEAM</th>
+                      <th scope="col" className="px-4 py-3 text-left text-xs sm:text-sm font-bold">INJURY</th>
+                      <th scope="col" className="px-4 py-3 text-left text-xs sm:text-sm font-bold w-40">STATUS</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -601,10 +601,10 @@ export default function InjuriesClient() {
                       <table className="w-full min-w-[640px]">
                         <thead className="bg-[#0050A0] text-white">
                           <tr>
-                            <th className="px-4 py-3 text-left text-xs sm:text-sm font-bold">PLAYER</th>
-                            <th className="px-4 py-3 text-left text-xs sm:text-sm font-bold w-24">POS</th>
-                            <th className="px-4 py-3 text-left text-xs sm:text-sm font-bold">INJURY</th>
-                            <th className="px-4 py-3 text-left text-xs sm:text-sm font-bold w-40">STATUS</th>
+                            <th scope="col" className="px-4 py-3 text-left text-xs sm:text-sm font-bold">PLAYER</th>
+                            <th scope="col" className="px-4 py-3 text-left text-xs sm:text-sm font-bold w-24">POS</th>
+                            <th scope="col" className="px-4 py-3 text-left text-xs sm:text-sm font-bold">INJURY</th>
+                            <th scope="col" className="px-4 py-3 text-left text-xs sm:text-sm font-bold w-40">STATUS</th>
                           </tr>
                         </thead>
                         <tbody>

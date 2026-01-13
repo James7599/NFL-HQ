@@ -120,6 +120,13 @@ export default function RootLayout({
         <meta httpEquiv="X-DNS-Prefetch-Control" content="on" />
       </head>
       <body className="antialiased raptive-pfn-disable-footer-close pb-24">
+        {/* Skip Navigation Link - Accessibility */}
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[100] focus:px-4 focus:py-2 focus:bg-[#0050A0] focus:text-white focus:rounded-lg focus:font-semibold focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-white"
+        >
+          Skip to main content
+        </a>
         <NFLScoreTicker />
         <CanonicalURL />
         <StructuredData />

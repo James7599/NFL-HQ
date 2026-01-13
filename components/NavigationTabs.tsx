@@ -88,10 +88,10 @@ export default function NavigationTabs({ activeTab, onTabChange, team }: Navigat
                 e.preventDefault();
                 onTabChange(tab.id);
               }}
-              className={`py-4 px-2 border-b-2 font-medium text-sm whitespace-nowrap transition-colors will-change-auto cursor-pointer ${
+              className={`py-4 px-3 border-b-2 font-medium text-sm whitespace-nowrap transition-colors will-change-auto cursor-pointer ${
                 activeTab === tab.id
-                  ? 'border-transparent text-gray-600 hover:text-gray-700 hover:border-gray-300'
-                  : 'border-transparent text-gray-600 hover:text-gray-700 hover:border-gray-300'
+                  ? 'border-transparent text-gray-600 hover:text-gray-700 hover:border-gray-300 active:text-gray-800'
+                  : 'border-transparent text-gray-600 hover:text-gray-700 hover:border-gray-300 active:text-gray-800'
               }`}
               style={{
                 contain: 'layout style',

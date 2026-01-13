@@ -317,7 +317,7 @@ export default function FreeAgencyTrackerClient() {
       </div>
 
       {/* Main Content */}
-      <main className="flex-1 lg:ml-64 min-w-0">
+      <main id="main-content" className="flex-1 lg:ml-64 min-w-0">
         {/* Header */}
         <div className="bg-[#0050A0] text-white pt-[57px] lg:pt-0 pb-4 lg:pb-6">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 pt-4 lg:pt-10">
@@ -372,8 +372,9 @@ export default function FreeAgencyTrackerClient() {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                   {/* Team Filter */}
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">Team</label>
+                    <label htmlFor="fa-team-filter" className="block text-sm font-semibold text-gray-700 mb-2">Team</label>
                     <select
+                      id="fa-team-filter"
                       value={selectedTeam}
                       onChange={e => setSelectedTeam(e.target.value)}
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0050A0] bg-white text-sm"
@@ -387,8 +388,9 @@ export default function FreeAgencyTrackerClient() {
 
                   {/* Position Filter */}
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">Position</label>
+                    <label htmlFor="fa-position-filter" className="block text-sm font-semibold text-gray-700 mb-2">Position</label>
                     <select
+                      id="fa-position-filter"
                       value={selectedPosition}
                       onChange={e => setSelectedPosition(e.target.value)}
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0050A0] bg-white text-sm"
@@ -402,8 +404,9 @@ export default function FreeAgencyTrackerClient() {
 
                   {/* FA Type Filter */}
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">FA Type</label>
+                    <label htmlFor="fa-type-filter" className="block text-sm font-semibold text-gray-700 mb-2">FA Type</label>
                     <select
+                      id="fa-type-filter"
                       value={selectedFaType}
                       onChange={e => setSelectedFaType(e.target.value)}
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0050A0] bg-white text-sm"
@@ -417,8 +420,9 @@ export default function FreeAgencyTrackerClient() {
 
                   {/* Signed Status Filter */}
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">Status</label>
+                    <label htmlFor="fa-status-filter" className="block text-sm font-semibold text-gray-700 mb-2">Status</label>
                     <select
+                      id="fa-status-filter"
                       value={selectedSignedStatus}
                       onChange={e => setSelectedSignedStatus(e.target.value)}
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0050A0] bg-white text-sm"
@@ -460,13 +464,13 @@ export default function FreeAgencyTrackerClient() {
                               <SortIndicator column="name" />
                             </div>
                           </th>
-                          <th className="px-4 py-3 text-center text-xs font-bold text-white uppercase tracking-wider">
+                          <th scope="col" className="px-4 py-3 text-center text-xs font-bold text-white uppercase tracking-wider">
                             Position
                           </th>
-                          <th className="px-4 py-3 text-center text-xs font-bold text-white uppercase tracking-wider">
+                          <th scope="col" className="px-4 py-3 text-center text-xs font-bold text-white uppercase tracking-wider">
                             2025 Team
                           </th>
-                          <th className="px-4 py-3 text-center text-xs font-bold text-white uppercase tracking-wider">
+                          <th scope="col" className="px-4 py-3 text-center text-xs font-bold text-white uppercase tracking-wider">
                             FA Type
                           </th>
                           <th
@@ -487,7 +491,7 @@ export default function FreeAgencyTrackerClient() {
                               <SortIndicator column="pfsn2025Impact" />
                             </div>
                           </th>
-                          <th className="px-4 py-3 text-center text-xs font-bold text-white uppercase tracking-wider">
+                          <th scope="col" className="px-4 py-3 text-center text-xs font-bold text-white uppercase tracking-wider">
                             2026 Team
                           </th>
                           <th
@@ -499,7 +503,7 @@ export default function FreeAgencyTrackerClient() {
                               <SortIndicator column="positionRank" />
                             </div>
                           </th>
-                          <th className="px-4 py-3 text-center text-xs font-bold text-white uppercase tracking-wider">
+                          <th scope="col" className="px-4 py-3 text-center text-xs font-bold text-white uppercase tracking-wider">
                             Status
                           </th>
                         </tr>

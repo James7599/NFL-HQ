@@ -447,7 +447,7 @@ function SchedulePageInner() {
       </div>
 
       {/* Main content */}
-      <main className="flex-1 lg:ml-64 min-w-0">
+      <main id="main-content" className="flex-1 lg:ml-64 min-w-0">
         {/* Header */}
         <div className="bg-[#0050A0] text-white pt-[57px] lg:pt-0 pb-4 lg:pb-6">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 pt-4 lg:pt-10">
@@ -531,7 +531,7 @@ function SchedulePageInner() {
               <div className="flex items-center gap-2 justify-center">
                 <button
                   onClick={goToPreviousDay}
-                  className="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors flex-shrink-0 min-w-[44px] min-h-[44px] flex items-center justify-center"
+                  className="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 active:bg-gray-300 transition-colors flex-shrink-0 min-w-[44px] min-h-[44px] flex items-center justify-center"
                   aria-label="Previous day"
                 >
                   <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -550,7 +550,7 @@ function SchedulePageInner() {
 
                 <button
                   onClick={goToNextDay}
-                  className="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors flex-shrink-0 min-w-[44px] min-h-[44px] flex items-center justify-center"
+                  className="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 active:bg-gray-300 transition-colors flex-shrink-0 min-w-[44px] min-h-[44px] flex items-center justify-center"
                   aria-label="Next day"
                 >
                   <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -587,7 +587,7 @@ function SchedulePageInner() {
               <div className="flex items-center justify-between gap-2 sm:gap-4">
                 <button
                   onClick={goToPreviousWeek}
-                  className="flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors flex-shrink-0 min-h-[44px]"
+                  className="flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 active:bg-gray-300 transition-colors flex-shrink-0 min-h-[44px]"
                   aria-label="Previous week"
                 >
                   <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -609,7 +609,7 @@ function SchedulePageInner() {
 
                 <button
                   onClick={goToNextWeek}
-                  className="flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors flex-shrink-0 min-h-[44px]"
+                  className="flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 active:bg-gray-300 transition-colors flex-shrink-0 min-h-[44px]"
                   aria-label="Next week"
                 >
                   <span className="hidden md:inline text-sm font-medium text-gray-700">Next</span>
@@ -627,7 +627,7 @@ function SchedulePageInner() {
               <div className="flex items-center justify-between gap-2 sm:gap-4">
                 <button
                   onClick={goToPreviousMonth}
-                  className="flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors flex-shrink-0 min-h-[44px]"
+                  className="flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 active:bg-gray-300 transition-colors flex-shrink-0 min-h-[44px]"
                   aria-label="Previous month"
                 >
                   <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -644,7 +644,7 @@ function SchedulePageInner() {
 
                 <button
                   onClick={goToNextMonth}
-                  className="flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors flex-shrink-0 min-h-[44px]"
+                  className="flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 active:bg-gray-300 transition-colors flex-shrink-0 min-h-[44px]"
                   aria-label="Next month"
                 >
                   <span className="hidden md:inline text-sm font-medium text-gray-700">Next</span>
@@ -703,8 +703,13 @@ function SchedulePageInner() {
                   >
                     {/* Main Game Card - Clickable */}
                     <div
+                      role={hasDetails ? 'button' : undefined}
+                      tabIndex={hasDetails ? 0 : undefined}
+                      aria-expanded={hasDetails ? expandedGame === game.event_id : undefined}
+                      aria-label={hasDetails ? `${awayTeam?.name || game.away_team.abbr} at ${homeTeam?.name || game.home_team.abbr} - ${isFinal ? 'Final' : game.status}. Click for details` : undefined}
                       onClick={() => hasDetails && toggleGameExpand(game.event_id)}
-                      className={`p-5 ${hasDetails ? 'cursor-pointer hover:bg-gray-50' : ''}`}
+                      onKeyDown={(e) => { if (hasDetails && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); toggleGameExpand(game.event_id); } }}
+                      className={`p-5 ${hasDetails ? 'cursor-pointer hover:bg-gray-50 active:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500' : ''}`}
                     >
                       <div className="flex items-center gap-6">
                         {/* Both Teams - Left Side */}
@@ -719,8 +724,8 @@ function SchedulePageInner() {
                                 <img
                                   src={awayTeam.logoUrl}
                                   alt={awayTeam.fullName}
-
-
+                                  width={40}
+                                  height={40}
                                   className="w-10 h-10 flex-shrink-0"
                                 />
                                 <div className="flex-1 min-w-0">
@@ -749,8 +754,8 @@ function SchedulePageInner() {
                                 <img
                                   src={homeTeam.logoUrl}
                                   alt={homeTeam.fullName}
-
-
+                                  width={40}
+                                  height={40}
                                   className="w-10 h-10 flex-shrink-0"
                                 />
                                 <div className="flex-1 min-w-0">
@@ -944,8 +949,8 @@ function SchedulePageInner() {
                               <img
                                 src={awayTeam.logoUrl}
                                 alt={awayTeam.abbreviation}
-                                
-                                
+                                width={20}
+                                height={20}
                                 className="w-5 h-5"
                               />
                               View {awayTeam.abbreviation}
@@ -959,8 +964,8 @@ function SchedulePageInner() {
                               <img
                                 src={homeTeam.logoUrl}
                                 alt={homeTeam.abbreviation}
-                                
-                                
+                                width={20}
+                                height={20}
                                 className="w-5 h-5"
                               />
                               View {homeTeam.abbreviation}
@@ -1041,13 +1046,13 @@ function SchedulePageInner() {
                                       )}
                                       <div className="flex items-center justify-between gap-1">
                                         {awayTeam && (
-                                          <img src={awayTeam.logoUrl} alt={awayTeam.abbreviation}   className="w-5 h-5" />
+                                          <img src={awayTeam.logoUrl} alt={awayTeam.abbreviation} width={20} height={20} className="w-5 h-5" />
                                         )}
                                         <span className="font-semibold flex-1 text-left">{awayTeam?.abbreviation || game.away_team.abbr}</span>
                                         {(game.has_score || (game.status !== 'Pre-Game' && game.away_team.score !== undefined && game.away_team.score !== null)) ? (
                                           <span className={isFinal && game.away_team.is_winner ? 'font-bold' : ''}>{game.away_team.score}</span>
                                         ) : (
-                                          <span className="text-gray-600 text-[10px]">
+                                          <span className="text-gray-600 text-xs">
                                             {new Date(game.start_date).toLocaleTimeString('en-US', {
                                               hour: 'numeric',
                                               minute: '2-digit'
@@ -1056,11 +1061,11 @@ function SchedulePageInner() {
                                         )}
                                       </div>
                                       <div className="flex items-center gap-1 mt-1">
-                                        <span className="text-gray-400 text-[10px]">@</span>
+                                        <span className="text-gray-400 text-xs">@</span>
                                       </div>
                                       <div className="flex items-center justify-between gap-1">
                                         {homeTeam && (
-                                          <img src={homeTeam.logoUrl} alt={homeTeam.abbreviation}   className="w-5 h-5" />
+                                          <img src={homeTeam.logoUrl} alt={homeTeam.abbreviation} width={20} height={20} className="w-5 h-5" />
                                         )}
                                         <span className="font-semibold flex-1 text-left">{homeTeam?.abbreviation || game.home_team.abbr}</span>
                                         {(game.has_score || (game.status !== 'Pre-Game' && game.home_team.score !== undefined && game.home_team.score !== null)) && <span className={isFinal && game.home_team.is_winner ? 'font-bold' : ''}>{game.home_team.score}</span>}
@@ -1073,7 +1078,7 @@ function SchedulePageInner() {
                                         {/* Stadium */}
                                         {game.venue && (
                                           <div className="mb-3">
-                                            <h4 className="text-[10px] font-bold text-gray-600 uppercase tracking-wide mb-1">Stadium</h4>
+                                            <h4 className="text-xs font-bold text-gray-600 uppercase tracking-wide mb-1">Stadium</h4>
                                             <div className="text-xs">
                                               <div className="font-semibold text-gray-900">{game.venue.name}</div>
                                               <div className="text-gray-600">
@@ -1086,12 +1091,12 @@ function SchedulePageInner() {
                                         {/* TV Broadcast */}
                                         {game.tv_stations && game.tv_stations.length > 0 && (
                                           <div className="mb-3">
-                                            <h4 className="text-[10px] font-bold text-gray-600 uppercase tracking-wide mb-1">Broadcast</h4>
+                                            <h4 className="text-xs font-bold text-gray-600 uppercase tracking-wide mb-1">Broadcast</h4>
                                             <div className="flex flex-wrap gap-1">
                                               {game.tv_stations.map((station, idx) => (
                                                 <span
                                                   key={idx}
-                                                  className="inline-block px-1.5 py-0.5 bg-gray-200 text-gray-700 text-[10px] font-medium rounded"
+                                                  className="inline-block px-2 py-1 bg-gray-200 text-gray-700 text-xs font-medium rounded"
                                                   title={station.name}
                                                 >
                                                   {station.call_letters}
@@ -1106,7 +1111,7 @@ function SchedulePageInner() {
                                           {awayTeam && (
                                             <Link
                                               href={`/teams/${awayTeam.id}`}
-                                              className="inline-flex items-center gap-1 px-2 py-1 bg-white border border-gray-300 rounded text-[10px] font-medium text-gray-700 hover:bg-gray-50"
+                                              className="inline-flex items-center gap-1 px-2.5 py-1.5 bg-white border border-gray-300 rounded text-xs font-medium text-gray-700 hover:bg-gray-50 active:bg-gray-100"
                                             >
                                               {awayTeam.abbreviation}
                                             </Link>
@@ -1114,7 +1119,7 @@ function SchedulePageInner() {
                                           {homeTeam && (
                                             <Link
                                               href={`/teams/${homeTeam.id}`}
-                                              className="inline-flex items-center gap-1 px-2 py-1 bg-white border border-gray-300 rounded text-[10px] font-medium text-gray-700 hover:bg-gray-50"
+                                              className="inline-flex items-center gap-1 px-2.5 py-1.5 bg-white border border-gray-300 rounded text-xs font-medium text-gray-700 hover:bg-gray-50 active:bg-gray-100"
                                             >
                                               {homeTeam.abbreviation}
                                             </Link>
@@ -1240,18 +1245,18 @@ function SchedulePageInner() {
                                               <img
                                                 src={awayTeam.logoUrl}
                                                 alt={awayTeam.abbreviation}
-
-
+                                                width={24}
+                                                height={24}
                                                 className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6"
                                               />
                                             )}
-                                            <span className="text-[10px] sm:text-xs text-gray-400 font-bold">@</span>
+                                            <span className="text-xs text-gray-400 font-bold">@</span>
                                             {homeTeam && (
                                               <img
                                                 src={homeTeam.logoUrl}
                                                 alt={homeTeam.abbreviation}
-
-
+                                                width={24}
+                                                height={24}
                                                 className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6"
                                               />
                                             )}
@@ -1261,7 +1266,7 @@ function SchedulePageInner() {
                                     </div>
                                   ) : (
                                     /* For 4+ games: Show compact badge */
-                                    <div className={`inline-flex items-center justify-center px-1.5 py-0.5 sm:px-2 sm:py-1 ${gameStyle.bg} ${gameStyle.text} border ${gameStyle.border} text-[10px] sm:text-xs font-bold rounded whitespace-nowrap`}>
+                                    <div className={`inline-flex items-center justify-center px-2 py-1 ${gameStyle.bg} ${gameStyle.text} border ${gameStyle.border} text-xs font-bold rounded whitespace-nowrap`}>
                                       <span className="hidden sm:inline">{gameCount} games</span>
                                       <span className="sm:hidden">{gameCount}g</span>
                                     </div>

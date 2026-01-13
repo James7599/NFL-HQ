@@ -406,7 +406,7 @@ export default function PlayerProfileClient({ playerSlug }: Props) {
       <div className="lg:hidden fixed top-0 left-0 right-0 z-20">
         <NFLTeamsSidebar isMobile={true} />
       </div>
-      <main className="flex-1 lg:ml-64 min-w-0">
+      <main id="main-content" className="flex-1 lg:ml-64 min-w-0">
         {children}
       </main>
     </div>
@@ -686,9 +686,9 @@ export default function PlayerProfileClient({ playerSlug }: Props) {
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b-2 border-gray-200">
-                      <th className="text-left py-3 px-2 font-semibold text-gray-600 bg-gray-50 whitespace-nowrap">WK</th>
-                      <th className="text-left py-3 px-2 font-semibold text-gray-600 bg-gray-50 whitespace-nowrap">OPP</th>
-                      <th className="text-center py-3 px-2 font-semibold text-gray-600 bg-gray-50 whitespace-nowrap">RESULT</th>
+                      <th scope="col" className="text-left py-3 px-2 font-semibold text-gray-600 bg-gray-50 whitespace-nowrap">WK</th>
+                      <th scope="col" className="text-left py-3 px-2 font-semibold text-gray-600 bg-gray-50 whitespace-nowrap">OPP</th>
+                      <th scope="col" className="text-center py-3 px-2 font-semibold text-gray-600 bg-gray-50 whitespace-nowrap">RESULT</th>
                       {gameLogData.statLabels.slice(0, 8).map((label) => (
                         <th key={label.name} className="text-center py-3 px-2 font-semibold text-gray-600 bg-gray-50 whitespace-nowrap">
                           {label.label}

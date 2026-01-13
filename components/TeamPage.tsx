@@ -475,7 +475,7 @@ function TeamPageContent({ team, initialTab }: TeamPageProps) {
       <PerformanceMonitor />
 
       {/* Main content - No sidebar here, layout.tsx handles it */}
-      <main className="w-full min-w-0 bg-gray-50">
+      <main id="main-content" className="w-full min-w-0 bg-gray-50">
         <LayoutStabilizer minHeight={200}>
           <TeamHeroSection
             team={team}

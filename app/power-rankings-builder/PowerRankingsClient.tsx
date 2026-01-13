@@ -1,8 +1,29 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 
 import { getAllTeams, TeamData } from '@/data/teams';
+
+// Toast notification component for non-blocking user feedback
+function Toast({ message, type, onClose }: { message: string; type: 'success' | 'error' | 'info'; onClose: () => void }) {
+  useEffect(() => {
+    const timer = setTimeout(onClose, 3000);
+    return () => clearTimeout(timer);
+  }, [onClose]);
+
+  const bgColor = type === 'success' ? 'bg-green-600' : type === 'error' ? 'bg-red-600' : 'bg-blue-600';
+
+  return (
+    <div className={`fixed bottom-4 right-4 z-50 ${bgColor} text-white px-4 py-3 rounded-lg shadow-lg flex items-center gap-3 animate-in slide-in-from-bottom-2 duration-200`}>
+      <span>{message}</span>
+      <button onClick={onClose} className="text-white/80 hover:text-white">
+        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+  );
+}
 import NFLTeamsSidebar from '@/components/NFLTeamsSidebar';
 import { getApiPath } from '@/utils/api';
 
@@ -172,6 +193,12 @@ export default function PowerRankingsClient() {
   const [pfsnLogoImage, setPfsnLogoImage] = useState<HTMLImageElement | null>(null);
   const actionsMenuRef = useRef<HTMLDivElement>(null);
 
+  // Toast notification state
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null);
+  const showToast = useCallback((message: string, type: 'success' | 'error' | 'info' = 'info') => {
+    setToast({ message, type });
+  }, []);
+
   // Save/Load state
   const [showSaveDialog, setShowSaveDialog] = useState(false);
   const [showLoadDialog, setShowLoadDialog] = useState(false);
@@ -214,10 +241,10 @@ export default function PowerRankingsClient() {
     }
   };
 
-  // Save/Load functionality
+  // Save/Load functionality - deferred to avoid blocking main thread
   const saveRankingsToLocalStorage = () => {
     if (!saveNameInput.trim()) {
-      alert('Please enter a name for your rankings');
+      showToast('Please enter a name for your rankings', 'error');
       return;
     }
 
@@ -227,26 +254,52 @@ export default function PowerRankingsClient() {
       rankings: rankings
     };
 
-    const existing = localStorage.getItem('nfl-power-rankings');
-    const allSaved = existing ? JSON.parse(existing) : [];
-    allSaved.push(saved);
+    // Defer localStorage operations to idle time
+    const saveOperation = () => {
+      try {
+        const existing = localStorage.getItem('nfl-power-rankings');
+        const allSaved = existing ? JSON.parse(existing) : [];
+        allSaved.push(saved);
 
-    // Keep only last 10 saves
-    if (allSaved.length > 10) {
-      allSaved.shift();
+        // Keep only last 10 saves
+        if (allSaved.length > 10) {
+          allSaved.shift();
+        }
+
+        localStorage.setItem('nfl-power-rankings', JSON.stringify(allSaved));
+        loadSavedRankings();
+        showToast('Rankings saved successfully!', 'success');
+      } catch {
+        showToast('Failed to save rankings', 'error');
+      }
+    };
+
+    if ('requestIdleCallback' in window) {
+      requestIdleCallback(saveOperation);
+    } else {
+      setTimeout(saveOperation, 0);
     }
 
-    localStorage.setItem('nfl-power-rankings', JSON.stringify(allSaved));
     setSaveNameInput('');
     setShowSaveDialog(false);
-    loadSavedRankings();
-    alert('Rankings saved successfully!');
   };
 
   const loadSavedRankings = () => {
-    const saved = localStorage.getItem('nfl-power-rankings');
-    if (saved) {
-      setSavedRankings(JSON.parse(saved));
+    const loadOperation = () => {
+      try {
+        const saved = localStorage.getItem('nfl-power-rankings');
+        if (saved) {
+          setSavedRankings(JSON.parse(saved));
+        }
+      } catch {
+        console.error('Failed to load saved rankings');
+      }
+    };
+
+    if ('requestIdleCallback' in window) {
+      requestIdleCallback(loadOperation);
+    } else {
+      setTimeout(loadOperation, 0);
     }
   };
 
@@ -258,12 +311,24 @@ export default function PowerRankingsClient() {
   };
 
   const deleteSavedRanking = (index: number) => {
-    const saved = localStorage.getItem('nfl-power-rankings');
-    if (saved) {
-      const allSaved = JSON.parse(saved);
-      allSaved.splice(index, 1);
-      localStorage.setItem('nfl-power-rankings', JSON.stringify(allSaved));
-      loadSavedRankings();
+    const deleteOperation = () => {
+      try {
+        const saved = localStorage.getItem('nfl-power-rankings');
+        if (saved) {
+          const allSaved = JSON.parse(saved);
+          allSaved.splice(index, 1);
+          localStorage.setItem('nfl-power-rankings', JSON.stringify(allSaved));
+          loadSavedRankings();
+        }
+      } catch {
+        showToast('Failed to delete ranking', 'error');
+      }
+    };
+
+    if ('requestIdleCallback' in window) {
+      requestIdleCallback(deleteOperation);
+    } else {
+      setTimeout(deleteOperation, 0);
     }
   };
 
@@ -382,17 +447,11 @@ export default function PowerRankingsClient() {
     setDraggedIndex(index);
     e.dataTransfer.effectAllowed = 'move';
     e.dataTransfer.setData('text/html', e.currentTarget.innerHTML);
-
-    // Make drag image slightly transparent
-    if (e.currentTarget instanceof HTMLElement) {
-      e.currentTarget.style.opacity = '0.5';
-    }
+    // Opacity is now handled via CSS class based on draggedIndex state
   };
 
-  const handleDragEnd = (e: React.DragEvent) => {
-    if (e.currentTarget instanceof HTMLElement) {
-      e.currentTarget.style.opacity = '1';
-    }
+  const handleDragEnd = () => {
+    // State change triggers CSS class update - no direct DOM manipulation
     setDraggedIndex(null);
     setDragOverIndex(null);
   };
@@ -620,83 +679,93 @@ export default function PowerRankingsClient() {
 
   const handleDownload = async (count: 5 | 10 | 32) => {
     if (!logosLoaded) {
-      alert('Logos are still loading. Please wait a moment and try again.');
+      showToast('Logos are still loading. Please wait a moment and try again.', 'info');
       return;
     }
 
     setShowActionsMenu(false);
     setIsDownloading(true);
 
-    try {
-      const selectedTeams = rankings.slice(0, count);
-      const canvas = generateCanvas(selectedTeams);
+    // Defer canvas generation to avoid blocking main thread during interaction
+    const generateAndDownload = () => {
+      try {
+        const selectedTeams = rankings.slice(0, count);
+        const canvas = generateCanvas(selectedTeams);
 
-      if (!canvas) {
-        throw new Error('Failed to generate canvas');
-      }
+        if (!canvas) {
+          throw new Error('Failed to generate canvas');
+        }
 
-      // Detect if mobile device
-      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+        // Detect if mobile device
+        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
-      if (isMobile) {
-        // For mobile: Convert to blob and use Web Share API or open in new tab
-        canvas.toBlob(async (blob) => {
-          if (!blob) {
-            throw new Error('Failed to create image blob');
-          }
+        if (isMobile) {
+          // For mobile: Convert to blob and use Web Share API or open in new tab
+          canvas.toBlob(async (blob) => {
+            if (!blob) {
+              throw new Error('Failed to create image blob');
+            }
 
-          const fileName = `NFL_Power_Rankings_${Date.now()}.png`;
+            const fileName = `NFL_Power_Rankings_${Date.now()}.png`;
 
-          // Try Web Share API first (works on iOS Safari, Android Chrome)
-          if (navigator.share && navigator.canShare) {
-            const file = new File([blob], fileName, { type: 'image/png' });
+            // Try Web Share API first (works on iOS Safari, Android Chrome)
+            if (navigator.share && navigator.canShare) {
+              const file = new File([blob], fileName, { type: 'image/png' });
 
-            if (navigator.canShare({ files: [file] })) {
-              try {
-                await navigator.share({
-                  files: [file],
-                  title: 'My NFL Power Rankings',
-                  text: 'Check out my NFL Power Rankings!'
-                });
-                setIsDownloading(false);
-                return;
-              } catch (err) {
-                // User cancelled share or share failed, fall through to image opening
-                console.log('Share cancelled or failed:', err);
+              if (navigator.canShare({ files: [file] })) {
+                try {
+                  await navigator.share({
+                    files: [file],
+                    title: 'My NFL Power Rankings',
+                    text: 'Check out my NFL Power Rankings!'
+                  });
+                  setIsDownloading(false);
+                  return;
+                } catch (err) {
+                  // User cancelled share or share failed, fall through to image opening
+                  console.log('Share cancelled or failed:', err);
+                }
               }
             }
-          }
 
-          // Fallback: Open image in new tab (user can long-press to save on mobile)
-          const url = URL.createObjectURL(blob);
-          const newWindow = window.open(url, '_blank');
+            // Fallback: Open image in new tab (user can long-press to save on mobile)
+            const url = URL.createObjectURL(blob);
+            const newWindow = window.open(url, '_blank');
 
-          if (newWindow) {
-            // Clean up the URL after a delay
-            setTimeout(() => URL.revokeObjectURL(url), 100);
-          } else {
-            // If popup was blocked, try direct download
-            const link = document.createElement('a');
-            link.download = fileName;
-            link.href = url;
-            link.click();
-            URL.revokeObjectURL(url);
-          }
+            if (newWindow) {
+              // Clean up the URL after a delay
+              setTimeout(() => URL.revokeObjectURL(url), 100);
+            } else {
+              // If popup was blocked, try direct download
+              const link = document.createElement('a');
+              link.download = fileName;
+              link.href = url;
+              link.click();
+              URL.revokeObjectURL(url);
+            }
 
+            setIsDownloading(false);
+          }, 'image/png', 1.0);
+        } else {
+          // Desktop: Traditional download
+          const link = document.createElement('a');
+          link.download = `NFL_Power_Rankings_${Date.now()}.png`;
+          link.href = canvas.toDataURL('image/png', 1.0);
+          link.click();
           setIsDownloading(false);
-        }, 'image/png', 1.0);
-      } else {
-        // Desktop: Traditional download
-        const link = document.createElement('a');
-        link.download = `NFL_Power_Rankings_${Date.now()}.png`;
-        link.href = canvas.toDataURL('image/png', 1.0);
-        link.click();
+        }
+      } catch (error) {
+        console.error('Error generating image:', error);
+        showToast('Failed to generate image. Please try again.', 'error');
         setIsDownloading(false);
       }
-    } catch (error) {
-      console.error('Error generating image:', error);
-      alert('Failed to generate image. Please try again.');
-      setIsDownloading(false);
+    };
+
+    // Use requestIdleCallback for non-blocking canvas generation
+    if ('requestIdleCallback' in window) {
+      requestIdleCallback(generateAndDownload, { timeout: 2000 });
+    } else {
+      setTimeout(generateAndDownload, 0);
     }
   };
 
@@ -786,7 +855,7 @@ export default function PowerRankingsClient() {
       </div>
 
       {/* Main Content */}
-      <main className="flex-1 lg:ml-64 min-w-0">
+      <main id="main-content" className="flex-1 lg:ml-64 min-w-0">
         {/* Header */}
         <div className="bg-[#0050A0] text-white pt-[57px] lg:pt-0 pb-4 lg:pb-6">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 pt-4 lg:pt-10">
@@ -813,7 +882,8 @@ export default function PowerRankingsClient() {
             </p>
           </div>
 
-          {/* Comparison Mode Banner */}
+          {/* Comparison Mode Banner - min-height reserves space to prevent CLS */}
+          <div className={`transition-all duration-200 ${standingsLoaded && comparisonTeams.length > 0 ? 'min-h-[60px]' : ''}`}>
           {standingsLoaded && comparisonTeams.length > 0 && (
             <div className="bg-purple-50 border border-purple-200 rounded-lg p-4 mb-6">
               <div className="flex items-center justify-between">
@@ -847,7 +917,7 @@ export default function PowerRankingsClient() {
                     return (
                       <div key={teamIndex} className="bg-white rounded-lg p-3 border border-purple-200">
                         <div className="flex items-center gap-2 mb-2">
-                          <img src={team.logoUrl} alt={team.name}   className="w-8 h-8 object-contain" />
+                          <img src={team.logoUrl} alt={team.name} width={32} height={32} className="w-8 h-8 object-contain" />
                           <div className="min-w-0 flex-1">
                             <div className="font-bold text-gray-900 text-sm truncate">{team.fullName}</div>
                             <div className="text-xs text-gray-600">Rank #{rankings[teamIndex].rank}</div>
@@ -878,6 +948,7 @@ export default function PowerRankingsClient() {
               )}
             </div>
           )}
+          </div>
 
           {/* Loading State */}
           {!standingsLoaded && (
@@ -889,9 +960,9 @@ export default function PowerRankingsClient() {
                 <table className="w-full">
                   <thead className="bg-[#0050A0] text-white">
                     <tr>
-                      <th className="pl-6 pr-4 py-3 text-left text-sm font-bold w-20">Rank</th>
-                      <th className="px-4 py-3 text-left text-sm font-bold">Team</th>
-                      <th className="hidden md:table-cell px-4 py-3 text-left text-sm font-bold w-24">Conference</th>
+                      <th scope="col" className="pl-6 pr-4 py-3 text-left text-sm font-bold w-20">Rank</th>
+                      <th scope="col" className="px-4 py-3 text-left text-sm font-bold">Team</th>
+                      <th scope="col" className="hidden md:table-cell px-4 py-3 text-left text-sm font-bold w-24">Conference</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -1068,9 +1139,9 @@ export default function PowerRankingsClient() {
               <table className="w-full">
                 <thead className="bg-[#0050A0] text-white">
                   <tr>
-                    <th className="pl-3 sm:pl-6 pr-2 sm:pr-4 py-3 text-left text-xs sm:text-sm font-bold w-16 sm:w-20">Rank</th>
-                    <th className="px-2 sm:px-4 py-3 text-left text-xs sm:text-sm font-bold">Team</th>
-                    <th className="hidden md:table-cell px-4 py-3 text-left text-sm font-bold w-24">Conference</th>
+                    <th scope="col" className="pl-3 sm:pl-6 pr-2 sm:pr-4 py-3 text-left text-xs sm:text-sm font-bold w-16 sm:w-20">Rank</th>
+                    <th scope="col" className="px-2 sm:px-4 py-3 text-left text-xs sm:text-sm font-bold">Team</th>
+                    <th scope="col" className="hidden md:table-cell px-4 py-3 text-left text-sm font-bold w-24">Conference</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -1184,8 +1255,8 @@ export default function PowerRankingsClient() {
 
       {/* Reset Confirmation Dialog */}
       {showResetDialog && (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6 animate-in fade-in zoom-in duration-200">
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4" style={{ contain: 'layout' }}>
+          <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6 animate-in fade-in zoom-in duration-200" style={{ contain: 'content' }}>
             <div className="flex items-center gap-3 mb-4">
               <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center">
                 <svg className="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1217,8 +1288,8 @@ export default function PowerRankingsClient() {
 
       {/* Save Rankings Dialog */}
       {showSaveDialog && (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6 animate-in fade-in zoom-in duration-200">
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4" style={{ contain: 'layout' }}>
+          <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6 animate-in fade-in zoom-in duration-200" style={{ contain: 'content' }}>
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-xl font-bold text-gray-900">Save Rankings</h3>
               <button
@@ -1261,8 +1332,8 @@ export default function PowerRankingsClient() {
 
       {/* Load Rankings Dialog */}
       {showLoadDialog && (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full p-6 animate-in fade-in zoom-in duration-200 max-h-[80vh] overflow-y-auto">
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4" style={{ contain: 'layout' }}>
+          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full p-6 animate-in fade-in zoom-in duration-200 max-h-[80vh] overflow-y-auto" style={{ contain: 'content' }}>
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-xl font-bold text-gray-900">Load Saved Rankings</h3>
               <button
@@ -1323,6 +1394,15 @@ export default function PowerRankingsClient() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Toast Notification */}
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
       )}
     </div>
   );

@@ -56,11 +56,11 @@ const PositionTable = ({
       <table className="w-full text-sm">
         <thead>
           <tr style={{ backgroundColor: team.primaryColor, color: getContrastTextColor(team.primaryColor) }}>
-            <th className="text-left p-3 font-medium">POS</th>
-            <th className="text-left p-3 font-medium">STARTER</th>
-            <th className="text-left p-3 font-medium">2ND</th>
-            <th className="text-left p-3 font-medium">3RD</th>
-            <th className="text-left p-3 font-medium">4TH</th>
+            <th scope="col" className="text-left p-3 font-medium">POS</th>
+            <th scope="col" className="text-left p-3 font-medium">STARTER</th>
+            <th scope="col" className="text-left p-3 font-medium">2ND</th>
+            <th scope="col" className="text-left p-3 font-medium">3RD</th>
+            <th scope="col" className="text-left p-3 font-medium">4TH</th>
           </tr>
         </thead>
         <tbody>

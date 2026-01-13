@@ -925,7 +925,7 @@ export default function PlayerRankingsClient() {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search Player"
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0050A0] bg-white text-sm"
+                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0050A0] bg-white text-sm"
                 />
               </div>
             </div>
@@ -1082,13 +1082,13 @@ export default function PlayerRankingsClient() {
               <table className="w-full">
                 <thead className="bg-[#0050A0] text-white">
                   <tr>
-                    <th className="pl-3 sm:pl-6 pr-2 sm:pr-4 py-3 text-left text-xs sm:text-sm font-bold w-16 sm:w-20">Rank</th>
-                    <th className="px-2 sm:px-4 py-3 text-left text-xs sm:text-sm font-bold">Player</th>
-                    <th className="hidden sm:table-cell px-3 py-3 text-center text-sm font-bold w-16">Pos</th>
-                    <th className="hidden md:table-cell px-3 py-3 text-left text-sm font-bold w-44">Team</th>
-                    <th className="hidden lg:table-cell px-3 py-3 text-center text-sm font-bold w-14">Age</th>
-                    <th className="hidden lg:table-cell px-3 py-3 text-center text-sm font-bold w-24">Impact Grade</th>
-                    <th className="px-3 py-3 text-center text-sm font-bold w-16">Actions</th>
+                    <th scope="col" className="pl-3 sm:pl-6 pr-2 sm:pr-4 py-3 text-left text-xs sm:text-sm font-bold w-16 sm:w-20">Rank</th>
+                    <th scope="col" className="px-2 sm:px-4 py-3 text-left text-xs sm:text-sm font-bold">Player</th>
+                    <th scope="col" className="hidden sm:table-cell px-3 py-3 text-center text-sm font-bold w-16">Pos</th>
+                    <th scope="col" className="hidden md:table-cell px-3 py-3 text-left text-sm font-bold w-44">Team</th>
+                    <th scope="col" className="hidden lg:table-cell px-3 py-3 text-center text-sm font-bold w-14">Age</th>
+                    <th scope="col" className="hidden lg:table-cell px-3 py-3 text-center text-sm font-bold w-24">Impact Grade</th>
+                    <th scope="col" className="px-3 py-3 text-center text-sm font-bold w-16">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -1126,7 +1126,7 @@ export default function PlayerRankingsClient() {
                                 autoFocus
                                 min={1}
                                 max={rankings.length}
-                                className="w-14 h-10 px-2 text-center text-lg font-bold border-2 border-[#0050A0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0050A0]"
+                                className="w-14 h-11 px-2 text-center text-lg font-bold border-2 border-[#0050A0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0050A0]"
                                 onClick={(e) => e.stopPropagation()}
                               />
                             ) : (
@@ -1135,7 +1135,7 @@ export default function PlayerRankingsClient() {
                                   e.stopPropagation();
                                   handleRankClick(index);
                                 }}
-                                className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gray-100 flex items-center justify-center hover:bg-blue-100 hover:ring-2 hover:ring-blue-300 cursor-pointer transition-all"
+                                className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-gray-100 flex items-center justify-center hover:bg-blue-100 active:bg-blue-200 hover:ring-2 hover:ring-blue-300 cursor-pointer transition-all"
                                 title="Click to edit rank"
                               >
                                 <span className="text-base sm:text-lg font-bold text-gray-900">
@@ -1212,7 +1212,7 @@ export default function PlayerRankingsClient() {
                               e.stopPropagation();
                               removePlayer(index);
                             }}
-                            className="p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                            className="p-2.5 -m-1 text-red-500 hover:bg-red-50 active:bg-red-100 rounded-lg transition-colors"
                             title="Remove player"
                           >
                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

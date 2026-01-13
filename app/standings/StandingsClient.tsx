@@ -494,8 +494,8 @@ export default function StandingsClient() {
         <table className="min-w-[900px] w-full bg-white rounded-lg overflow-hidden shadow-sm">
           <thead style={{ backgroundColor: '#0050A0' }}>
             <tr>
-              <th className="pl-4 sm:pl-6 pr-2 sm:pr-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-bold text-white w-10 sm:w-12">#</th>
-              <th className="px-2 sm:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-bold text-white">Team</th>
+              <th scope="col" className="pl-4 sm:pl-6 pr-2 sm:pr-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-bold text-white w-10 sm:w-12">#</th>
+              <th scope="col" className="px-2 sm:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-bold text-white">Team</th>
               <th
                 className="px-2 sm:px-4 py-2 sm:py-3 text-center text-xs sm:text-sm font-bold text-white cursor-pointer hover:bg-[#003d7a] transition-colors"
                 onClick={() => handleSort('wins')}
@@ -514,7 +514,7 @@ export default function StandingsClient() {
                   <SortIndicator column="losses" />
                 </div>
               </th>
-              <th className="px-2 sm:px-4 py-2 sm:py-3 text-center text-xs sm:text-sm font-bold text-white">T</th>
+              <th scope="col" className="px-2 sm:px-4 py-2 sm:py-3 text-center text-xs sm:text-sm font-bold text-white">T</th>
               <th
                 className="px-2 sm:px-4 py-2 sm:py-3 text-center text-xs sm:text-sm font-bold text-white cursor-pointer hover:bg-[#003d7a] transition-colors"
                 onClick={() => handleSort('winPct')}
@@ -533,8 +533,8 @@ export default function StandingsClient() {
                   <SortIndicator column="gamesBack" />
                 </div>
               </th>
-              <th className="px-2 sm:px-4 py-2 sm:py-3 text-center text-xs sm:text-sm font-bold text-white">Home</th>
-              <th className="px-2 sm:px-4 py-2 sm:py-3 text-center text-xs sm:text-sm font-bold text-white">Away</th>
+              <th scope="col" className="px-2 sm:px-4 py-2 sm:py-3 text-center text-xs sm:text-sm font-bold text-white">Home</th>
+              <th scope="col" className="px-2 sm:px-4 py-2 sm:py-3 text-center text-xs sm:text-sm font-bold text-white">Away</th>
               <th
                 className="px-2 sm:px-4 py-2 sm:py-3 text-center text-xs sm:text-sm font-bold text-white cursor-pointer hover:bg-[#003d7a] transition-colors"
                 onClick={() => handleSort('confRecord')}
@@ -553,7 +553,7 @@ export default function StandingsClient() {
                   <SortIndicator column="divRecord" />
                 </div>
               </th>
-              <th className="px-2 sm:px-4 py-2 sm:py-3 text-center text-xs sm:text-sm font-bold text-white">Streak</th>
+              <th scope="col" className="px-2 sm:px-4 py-2 sm:py-3 text-center text-xs sm:text-sm font-bold text-white">Streak</th>
               <th
                 className="px-2 sm:px-4 py-2 sm:py-3 text-center text-xs sm:text-sm font-bold text-white cursor-pointer hover:bg-[#003d7a] transition-colors"
                 onClick={() => handleSort('last10')}
@@ -631,7 +631,7 @@ export default function StandingsClient() {
       </div>
 
       {/* Main Content */}
-      <main className="flex-1 lg:ml-64 min-w-0">
+      <main id="main-content" className="flex-1 lg:ml-64 min-w-0">
         {/* Header */}
         <div className="bg-[#0050A0] text-white pt-[57px] lg:pt-0 pb-4 lg:pb-6">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 pt-4 lg:pt-10">

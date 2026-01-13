@@ -269,7 +269,9 @@ export default function DraftPicksTab({ team }: DraftPicksTabProps) {
         </div>
 
         <div>
+          <label htmlFor="draft-picks-search" className="sr-only">Search draft picks by player name</label>
           <input
+            id="draft-picks-search"
             type="text"
             placeholder="Search Player..."
             value={searchTerm}
@@ -300,12 +302,12 @@ export default function DraftPicksTab({ team }: DraftPicksTabProps) {
                 <table className="w-full text-sm mb-6">
                   <thead>
                     <tr style={{ backgroundColor: team.primaryColor, color: getContrastTextColor(team.primaryColor) }}>
-                      <th className="text-left p-3 font-medium">Name</th>
-                      <th className="text-left p-3 font-medium">POS</th>
-                      <th className="text-left p-3 font-medium">Round</th>
-                      <th className="text-left p-3 font-medium">Rnd. Pick</th>
-                      <th className="text-left p-3 font-medium">OVR. Pick</th>
-                      <th className="text-left p-3 font-medium hidden sm:table-cell">College</th>
+                      <th scope="col" className="text-left p-3 font-medium">Name</th>
+                      <th scope="col" className="text-left p-3 font-medium">POS</th>
+                      <th scope="col" className="text-left p-3 font-medium">Round</th>
+                      <th scope="col" className="text-left p-3 font-medium">Rnd. Pick</th>
+                      <th scope="col" className="text-left p-3 font-medium">OVR. Pick</th>
+                      <th scope="col" className="text-left p-3 font-medium hidden sm:table-cell">College</th>
                     </tr>
                   </thead>
                   <tbody>

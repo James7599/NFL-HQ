@@ -261,7 +261,7 @@ export default function StatsPageContent() {
       </div>
 
       {/* Main content */}
-      <main className="flex-1 lg:ml-64 min-w-0">
+      <main id="main-content" className="flex-1 lg:ml-64 min-w-0">
         {/* Header */}
         <div className="bg-[#0050A0] text-white pt-[57px] lg:pt-0 pb-4 lg:pb-6">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 pt-4 lg:pt-10">
@@ -342,12 +342,12 @@ export default function StatsPageContent() {
                   <table className="w-full min-w-[480px] sm:min-w-[560px] md:min-w-[640px]">
                     <thead className="bg-gray-50 border-b border-gray-200">
                       <tr>
-                        <th className="pl-3 sm:pl-4 md:pl-6 pr-2 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider w-10 sm:w-12 md:w-16">Rank</th>
-                        <th className="px-2 sm:px-3 md:px-4 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Player</th>
-                        <th className="px-2 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider w-16 sm:w-20 md:w-24">Position</th>
-                        <th className="px-2 sm:px-3 md:px-4 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider w-20 sm:w-24">Team</th>
-                        <th className="px-2 py-3 text-center text-xs font-bold text-gray-600 uppercase tracking-wider w-12 sm:w-16 md:w-20">GP</th>
-                        <th className="px-3 sm:px-4 md:px-6 py-3 text-right text-xs font-bold text-gray-600 uppercase tracking-wider w-16 sm:w-20 md:w-24">
+                        <th scope="col" className="pl-3 sm:pl-4 md:pl-6 pr-2 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider w-10 sm:w-12 md:w-16">Rank</th>
+                        <th scope="col" className="px-2 sm:px-3 md:px-4 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Player</th>
+                        <th scope="col" className="px-2 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider w-16 sm:w-20 md:w-24">Position</th>
+                        <th scope="col" className="px-2 sm:px-3 md:px-4 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider w-20 sm:w-24">Team</th>
+                        <th scope="col" className="px-2 py-3 text-center text-xs font-bold text-gray-600 uppercase tracking-wider w-12 sm:w-16 md:w-20">GP</th>
+                        <th scope="col" className="px-3 sm:px-4 md:px-6 py-3 text-right text-xs font-bold text-gray-600 uppercase tracking-wider w-16 sm:w-20 md:w-24">
                           {showPerGame ? `${activeCategoryInfo.abbr}/G` : activeCategoryInfo.abbr}
                         </th>
                       </tr>
@@ -569,7 +569,7 @@ export default function StatsPageContent() {
       {/* Player Detail Modal */}
       {isModalOpen && selectedPlayer && (
         <div className="fixed inset-0 z-50 overflow-y-auto">
-          <div className="flex items-center justify-center min-h-screen px-2 sm:px-4 pt-4 pb-20 text-center sm:p-0">
+          <div className="flex items-center justify-center min-h-screen px-4 pt-16 pb-20 text-center sm:p-4">
             {/* Backdrop */}
             <div
               className="fixed inset-0 bg-black/60 transition-opacity"
@@ -577,7 +577,7 @@ export default function StatsPageContent() {
             />
 
             {/* Modal */}
-            <div className="relative bg-white rounded-lg sm:rounded-xl shadow-xl transform transition-all w-full max-w-[calc(100vw-16px)] sm:max-w-[calc(100vw-32px)] md:max-w-lg mx-auto">
+            <div className="relative bg-white rounded-xl shadow-xl transform transition-all w-full max-w-[calc(100vw-32px)] sm:max-w-md md:max-w-lg mx-auto" style={{ contain: 'content' }}>
               {/* Header */}
               <div className="bg-[#0050A0] text-white px-4 sm:px-6 py-4 rounded-t-lg sm:rounded-t-xl">
                 <div className="flex items-center justify-between">
@@ -586,8 +586,8 @@ export default function StatsPageContent() {
                       <img
                         src={getTeamInfo(selectedPlayer.teamId)!.logoUrl}
                         alt={getTeamInfo(selectedPlayer.teamId)!.abbreviation}
-
-
+                        width={40}
+                        height={40}
                         className="w-10 h-10"
                       />
                     )}

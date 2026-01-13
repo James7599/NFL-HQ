@@ -205,10 +205,10 @@ export default function TransactionsTab({ team }: TransactionsTabProps) {
               <table className="w-full text-sm">
                 <thead>
                   <tr style={{ backgroundColor: team.primaryColor, color: getContrastTextColor(team.primaryColor) }}>
-                    <th className="text-left p-3 font-medium w-24">DATE</th>
-                    <th className="text-left p-3 font-medium">PLAYER</th>
-                    <th className="p-3 font-medium w-20 text-center">POS</th>
-                    <th className="text-left p-3 font-medium">TRANSACTION</th>
+                    <th scope="col" className="text-left p-3 font-medium w-24">DATE</th>
+                    <th scope="col" className="text-left p-3 font-medium">PLAYER</th>
+                    <th scope="col" className="p-3 font-medium w-20 text-center">POS</th>
+                    <th scope="col" className="text-left p-3 font-medium">TRANSACTION</th>
                   </tr>
                 </thead>
                 <tbody>

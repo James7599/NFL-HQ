@@ -210,7 +210,7 @@ export default function HomePageContent() {
       </div>
 
       {/* Main content */}
-      <main className="flex-1 lg:ml-64 min-w-0">
+      <main id="main-content" className="flex-1 lg:ml-64 min-w-0">
         {/* Header */}
         <div className="bg-[#0050A0] text-white pt-[57px] lg:pt-0 pb-4 lg:pb-6">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 pt-4 lg:pt-10">
@@ -297,7 +297,7 @@ export default function HomePageContent() {
                       className={`block border rounded-lg p-4 hover:border-[#0050A0] transition-colors relative ${isLive ? 'border-green-400 ring-2 ring-green-100' : 'border-gray-200'}`}
                     >
                       {isLive && (
-                        <div className="absolute top-2 right-2 flex items-center gap-1 px-2 py-0.5 bg-green-500 text-white text-[10px] font-bold uppercase rounded">
+                        <div className="absolute top-2 right-2 flex items-center gap-1 px-2 py-1 bg-green-500 text-white text-xs font-bold uppercase rounded">
                           <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse"></span>
                           Live
                         </div>

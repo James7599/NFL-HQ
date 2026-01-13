@@ -98,7 +98,7 @@ const NFLTeamsSidebar: React.FC<NFLTeamsSidebarProps> = ({ currentTeam, currentT
             {/* Hamburger menu icon */}
             <button
               onClick={() => setIsExpanded(!isExpanded)}
-              className="text-white p-1"
+              className="text-white p-2.5 -m-1.5 rounded-lg hover:bg-white/10 active:bg-white/20 transition-colors"
               aria-label="Toggle menu"
             >
               <svg
@@ -182,8 +182,13 @@ const NFLTeamsSidebar: React.FC<NFLTeamsSidebarProps> = ({ currentTeam, currentT
             {/* NFL TOOLS Section */}
             <div className="px-4 py-2 border-b border-gray-800">
               <div
-                className="flex items-center justify-between mb-2 cursor-pointer"
+                role="button"
+                tabIndex={0}
+                aria-expanded={isNFLToolsExpanded}
+                aria-controls="nfl-tools-menu"
+                className="flex items-center justify-between mb-2 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 rounded"
                 onClick={() => setIsNFLToolsExpanded(!isNFLToolsExpanded)}
+                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setIsNFLToolsExpanded(!isNFLToolsExpanded); } }}
               >
                 <div className="text-[#0050A0] text-xs font-bold uppercase tracking-wider">NFL Tools</div>
                 <svg
@@ -260,8 +265,13 @@ const NFLTeamsSidebar: React.FC<NFLTeamsSidebarProps> = ({ currentTeam, currentT
             {/* NFL TEAMS Section */}
             <div className="px-4 py-2 border-b border-gray-800">
               <div
-                className="flex items-center justify-between mb-2 cursor-pointer"
+                role="button"
+                tabIndex={0}
+                aria-expanded={isTeamsExpanded}
+                aria-controls="nfl-teams-menu"
+                className="flex items-center justify-between mb-2 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 rounded"
                 onClick={() => setIsTeamsExpanded(!isTeamsExpanded)}
+                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setIsTeamsExpanded(!isTeamsExpanded); } }}
               >
                 <div className="text-[#0050A0] text-xs font-bold uppercase tracking-wider">NFL Teams</div>
                 <svg
@@ -306,8 +316,13 @@ const NFLTeamsSidebar: React.FC<NFLTeamsSidebarProps> = ({ currentTeam, currentT
             {/* OTHER TOOLS Section */}
             <div className="px-4 py-2">
               <div
-                className="flex items-center justify-between mb-2 cursor-pointer"
+                role="button"
+                tabIndex={0}
+                aria-expanded={isOtherToolsExpanded}
+                aria-controls="other-tools-menu"
+                className="flex items-center justify-between mb-2 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 rounded"
                 onClick={() => setIsOtherToolsExpanded(!isOtherToolsExpanded)}
+                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setIsOtherToolsExpanded(!isOtherToolsExpanded); } }}
               >
                 <div className="text-[#0050A0] text-xs font-bold uppercase tracking-wider">Other Sports</div>
                 <svg
@@ -431,7 +446,7 @@ const NFLTeamsSidebar: React.FC<NFLTeamsSidebarProps> = ({ currentTeam, currentT
               <div className="flex items-center justify-between min-w-0">
                 <div className="flex items-center gap-2 min-w-0 flex-shrink">
                   <div className="h-0.5 w-3 bg-gray-600 rounded flex-shrink-0"></div>
-                  <span className="text-[11px] font-bold text-gray-300 uppercase tracking-wider truncate">NFL Tools</span>
+                  <span className="text-xs font-bold text-gray-100 uppercase tracking-wider truncate">NFL Tools</span>
                 </div>
                 <div className="flex-1 ml-3 h-px bg-gradient-to-r from-gray-800 to-transparent flex-shrink-0"></div>
               </div>
@@ -489,7 +504,7 @@ const NFLTeamsSidebar: React.FC<NFLTeamsSidebarProps> = ({ currentTeam, currentT
                           href={item.url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="relative flex items-center px-3 py-2 mx-1 ml-4 rounded-md transition-all duration-200 text-gray-300 hover:bg-gray-800/50 hover:text-white"
+                          className="relative flex items-center px-3 py-2 mx-1 ml-4 rounded-md transition-all duration-200 text-gray-100 hover:bg-gray-800/50 hover:text-white"
                         >
                           <span className="text-sm font-medium truncate flex items-center gap-2">
                             {item.title}
@@ -512,7 +527,7 @@ const NFLTeamsSidebar: React.FC<NFLTeamsSidebarProps> = ({ currentTeam, currentT
               <div className="flex items-center justify-between min-w-0">
                 <div className="flex items-center gap-2 min-w-0 flex-shrink">
                   <div className="h-0.5 w-3 bg-gray-600 rounded flex-shrink-0"></div>
-                  <span className="text-[11px] font-bold text-gray-300 uppercase tracking-wider truncate">
+                  <span className="text-xs font-bold text-gray-100 uppercase tracking-wider truncate">
                     NFL Teams {currentTab && `- ${currentTab.replace('-', ' ').toUpperCase()}`}
                   </span>
                 </div>
@@ -555,7 +570,7 @@ const NFLTeamsSidebar: React.FC<NFLTeamsSidebarProps> = ({ currentTeam, currentT
             <li className="mb-4">
               <button
                 onClick={() => setIsTeamsExpanded(true)}
-                className="w-full text-left px-3 py-2 mx-1 rounded-md transition-all duration-200 text-gray-400 hover:bg-gray-800/50 hover:text-white"
+                className="w-full text-left px-3 py-2 mx-1 rounded-md transition-all duration-200 text-gray-200 hover:bg-gray-800/50 hover:text-white"
               >
                 <span className="text-xs font-medium">+ Show More Teams</span>
               </button>
@@ -566,7 +581,7 @@ const NFLTeamsSidebar: React.FC<NFLTeamsSidebarProps> = ({ currentTeam, currentT
             <li className="mb-4">
               <button
                 onClick={() => setIsTeamsExpanded(false)}
-                className="w-full text-left px-3 py-2 mx-1 rounded-md transition-all duration-200 text-gray-400 hover:bg-gray-800/50 hover:text-white"
+                className="w-full text-left px-3 py-2 mx-1 rounded-md transition-all duration-200 text-gray-200 hover:bg-gray-800/50 hover:text-white"
               >
                 <span className="text-xs font-medium">- Show Fewer Teams</span>
               </button>
@@ -579,7 +594,7 @@ const NFLTeamsSidebar: React.FC<NFLTeamsSidebarProps> = ({ currentTeam, currentT
               <div className="flex items-center justify-between min-w-0">
                 <div className="flex items-center gap-2 min-w-0 flex-shrink">
                   <div className="h-0.5 w-3 bg-gray-600 rounded flex-shrink-0"></div>
-                  <span className="text-[11px] font-bold text-gray-300 uppercase tracking-wider truncate">Other Sports</span>
+                  <span className="text-xs font-bold text-gray-100 uppercase tracking-wider truncate">Other Sports</span>
                 </div>
                 <div className="flex-1 ml-3 h-px bg-gradient-to-r from-gray-800 to-transparent flex-shrink-0"></div>
               </div>
@@ -591,7 +606,7 @@ const NFLTeamsSidebar: React.FC<NFLTeamsSidebarProps> = ({ currentTeam, currentT
                 href={tool.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="relative flex items-center px-3 py-2 mx-1 rounded-md transition-all duration-200 text-gray-300 hover:bg-gray-800/50 hover:text-white"
+                className="relative flex items-center px-3 py-2 mx-1 rounded-md transition-all duration-200 text-gray-100 hover:bg-gray-800/50 hover:text-white"
               >
                 <span className="text-sm font-medium truncate flex items-center gap-2">
                   {tool.title}

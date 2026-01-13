@@ -580,10 +580,10 @@ export default function OverviewTab({ team, onTabChange, schedule: passedSchedul
               <table className="w-full text-base">
                 <thead>
                   <tr className="text-left border-b">
-                    <th className="pb-2 text-xs font-medium text-gray-600 uppercase tracking-wider">Team</th>
-                    <th className="pb-2 text-xs font-medium text-gray-600 uppercase tracking-wider text-center">W</th>
-                    <th className="pb-2 text-xs font-medium text-gray-600 uppercase tracking-wider text-center">L</th>
-                    <th className="pb-2 text-xs font-medium text-gray-600 uppercase tracking-wider text-center">PCT</th>
+                    <th scope="col" className="pb-2 text-xs font-medium text-gray-600 uppercase tracking-wider">Team</th>
+                    <th scope="col" className="pb-2 text-xs font-medium text-gray-600 uppercase tracking-wider text-center">W</th>
+                    <th scope="col" className="pb-2 text-xs font-medium text-gray-600 uppercase tracking-wider text-center">L</th>
+                    <th scope="col" className="pb-2 text-xs font-medium text-gray-600 uppercase tracking-wider text-center">PCT</th>
                   </tr>
                 </thead>
                 <tbody>

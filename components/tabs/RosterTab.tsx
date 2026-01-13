@@ -257,14 +257,14 @@ export default function RosterTab({ team }: RosterTabProps) {
                     <table className="min-w-full text-sm">
                       <thead>
                         <tr style={{ backgroundColor: team.primaryColor, color: getContrastTextColor(team.primaryColor) }}>
-                          <th className="text-center px-3 py-3 font-medium whitespace-nowrap w-12">#</th>
-                          <th className="text-left px-3 py-3 font-medium whitespace-nowrap min-w-[200px]">Name</th>
-                          <th className="text-center px-3 py-3 font-medium whitespace-nowrap w-24">Impact Grade</th>
-                          <th className="text-center px-3 py-3 font-medium whitespace-nowrap w-24">Experience</th>
-                          <th className="text-center px-3 py-3 font-medium whitespace-nowrap w-16">Age</th>
-                          <th className="text-center px-3 py-3 font-medium whitespace-nowrap w-16">Height</th>
-                          <th className="text-center px-3 py-3 font-medium whitespace-nowrap w-16">Weight</th>
-                          <th className="text-left px-3 py-3 font-medium whitespace-nowrap min-w-[120px]">College</th>
+                          <th scope="col" className="text-center px-3 py-3 font-medium whitespace-nowrap w-12">#</th>
+                          <th scope="col" className="text-left px-3 py-3 font-medium whitespace-nowrap min-w-[200px]">Name</th>
+                          <th scope="col" className="text-center px-3 py-3 font-medium whitespace-nowrap w-24">Impact Grade</th>
+                          <th scope="col" className="text-center px-3 py-3 font-medium whitespace-nowrap w-24">Experience</th>
+                          <th scope="col" className="text-center px-3 py-3 font-medium whitespace-nowrap w-16">Age</th>
+                          <th scope="col" className="text-center px-3 py-3 font-medium whitespace-nowrap w-16">Height</th>
+                          <th scope="col" className="text-center px-3 py-3 font-medium whitespace-nowrap w-16">Weight</th>
+                          <th scope="col" className="text-left px-3 py-3 font-medium whitespace-nowrap min-w-[120px]">College</th>
                         </tr>
                       </thead>
                       <tbody>

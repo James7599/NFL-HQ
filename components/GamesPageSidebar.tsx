@@ -80,7 +80,7 @@ const GamesPageSidebar: React.FC<GamesPageSidebarProps> = ({ currentGame, isMobi
             {/* Hamburger menu icon */}
             <button
               onClick={() => setIsExpanded(!isExpanded)}
-              className="text-white p-1"
+              className="text-white p-2.5 -m-1.5 rounded-lg hover:bg-white/10 active:bg-white/20 transition-colors"
               aria-label="Toggle teams menu"
             >
               <svg
@@ -215,7 +215,7 @@ const GamesPageSidebar: React.FC<GamesPageSidebarProps> = ({ currentGame, isMobi
           <li className="mb-4">
             <a
               href="https://www.profootballnetwork.com/nfl/teams/"
-              className="relative flex items-center px-3 py-2 mx-1 rounded-md transition-all duration-200 text-gray-100 hover:bg-gray-800/50 hover:text-white"
+              className="relative flex items-center px-3 py-2 mx-1 rounded-md transition-all duration-200 text-gray-100 hover:bg-gray-800/50 active:bg-gray-700/50 hover:text-white"
             >
               <div className="flex items-center gap-2 w-full">
                 <svg
@@ -261,7 +261,7 @@ const GamesPageSidebar: React.FC<GamesPageSidebarProps> = ({ currentGame, isMobi
                     relative flex items-center px-3 py-2 mx-1 rounded-md transition-all duration-200
                     ${isCurrentTeam
                       ? 'bg-blue-600/20 text-blue-400 border-l-2 border-blue-500'
-                      : 'text-gray-100 hover:bg-gray-800/50 hover:text-white'
+                      : 'text-gray-100 hover:bg-gray-800/50 active:bg-gray-700/50 hover:text-white'
                     }
                   `}
                 >
@@ -284,7 +284,7 @@ const GamesPageSidebar: React.FC<GamesPageSidebarProps> = ({ currentGame, isMobi
             <li className="mb-4">
               <button
                 onClick={() => setIsTeamsExpanded(true)}
-                className="w-full text-left px-3 py-2 mx-1 rounded-md transition-all duration-200 text-gray-400 hover:bg-gray-800/50 hover:text-white"
+                className="w-full text-left px-3 py-2 mx-1 rounded-md transition-all duration-200 text-gray-400 hover:bg-gray-800/50 active:bg-gray-700/50 hover:text-white"
               >
                 <span className="text-xs font-medium">Show More Teams</span>
               </button>
@@ -295,7 +295,7 @@ const GamesPageSidebar: React.FC<GamesPageSidebarProps> = ({ currentGame, isMobi
             <li className="mb-4">
               <button
                 onClick={() => setIsTeamsExpanded(false)}
-                className="w-full text-left px-3 py-2 mx-1 rounded-md transition-all duration-200 text-gray-400 hover:bg-gray-800/50 hover:text-white"
+                className="w-full text-left px-3 py-2 mx-1 rounded-md transition-all duration-200 text-gray-400 hover:bg-gray-800/50 active:bg-gray-700/50 hover:text-white"
               >
                 <span className="text-xs font-medium">- Show fewer teams</span>
               </button>
@@ -320,7 +320,7 @@ const GamesPageSidebar: React.FC<GamesPageSidebarProps> = ({ currentGame, isMobi
                 href={tool.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="relative flex items-center px-3 py-2 mx-1 rounded-md transition-all duration-200 text-gray-100 hover:bg-gray-800/50 hover:text-white"
+                className="relative flex items-center px-3 py-2 mx-1 rounded-md transition-all duration-200 text-gray-100 hover:bg-gray-800/50 active:bg-gray-700/50 hover:text-white"
               >
                 <span className="text-sm font-medium truncate flex items-center gap-2">
                   {tool.title}
@@ -350,7 +350,7 @@ const GamesPageSidebar: React.FC<GamesPageSidebarProps> = ({ currentGame, isMobi
                 href={tool.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="relative flex items-center px-3 py-2 mx-1 rounded-md transition-all duration-200 text-gray-100 hover:bg-gray-800/50 hover:text-white"
+                className="relative flex items-center px-3 py-2 mx-1 rounded-md transition-all duration-200 text-gray-100 hover:bg-gray-800/50 active:bg-gray-700/50 hover:text-white"
               >
                 <span className="text-sm font-medium truncate flex items-center gap-2">
                   {tool.title}
@@ -380,7 +380,7 @@ const GamesPageSidebar: React.FC<GamesPageSidebarProps> = ({ currentGame, isMobi
                 href={tool.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="relative flex items-center px-3 py-2 mx-1 rounded-md transition-all duration-200 text-gray-100 hover:bg-gray-800/50 hover:text-white"
+                className="relative flex items-center px-3 py-2 mx-1 rounded-md transition-all duration-200 text-gray-100 hover:bg-gray-800/50 active:bg-gray-700/50 hover:text-white"
               >
                 <span className="text-sm font-medium truncate flex items-center gap-2">
                   {tool.title}
