@@ -39,11 +39,11 @@ const initialPlayoffData: { [key: string]: Matchup } = {
   // AFC Wild Card Round
   'afc-wc-1': {
     id: 'afc-wc-1',
-    team1: { seed: 4, name: 'Steelers', teamId: 'pittsburgh-steelers' },
-    team2: { seed: 5, name: 'Texans', teamId: 'houston-texans' },
+    team1: { seed: 4, name: 'Steelers', teamId: 'pittsburgh-steelers', score: 6 },
+    team2: { seed: 5, name: 'Texans', teamId: 'houston-texans', score: 30 },
     round: 'Wild Card',
     date: 'Jan 12',
-    completed: false,
+    completed: true,
   },
   'afc-wc-2': {
     id: 'afc-wc-2',
