@@ -165,12 +165,12 @@ export default function PowerRankingsClient() {
   const [history, setHistory] = useState<RankedTeam[][]>([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
   const [comparisonTeams, setComparisonTeams] = useState<number[]>([]);
-  const [showDownloadMenu, setShowDownloadMenu] = useState(false);
+  const [showActionsMenu, setShowActionsMenu] = useState(false);
   const [logoDataUrls, setLogoDataUrls] = useState<Record<string, string>>({});
   const [logoImages, setLogoImages] = useState<Record<string, HTMLImageElement>>({});
   const [logosLoaded, setLogosLoaded] = useState(false);
   const [pfsnLogoImage, setPfsnLogoImage] = useState<HTMLImageElement | null>(null);
-  const downloadMenuRef = useRef<HTMLDivElement>(null);
+  const actionsMenuRef = useRef<HTMLDivElement>(null);
 
   // Save/Load state
   const [showSaveDialog, setShowSaveDialog] = useState(false);
@@ -624,7 +624,7 @@ export default function PowerRankingsClient() {
       return;
     }
 
-    setShowDownloadMenu(false);
+    setShowActionsMenu(false);
     setIsDownloading(true);
 
     try {
@@ -702,7 +702,11 @@ export default function PowerRankingsClient() {
 
 
   const resetRankings = () => {
-    const sortedTeams = [...allTeams].sort((a, b) => {
+    // Get current teams with their live records preserved
+    const teamsWithRecords = rankings.map(r => r.team);
+
+    // Sort by the default rankings order
+    const sortedTeams = [...teamsWithRecords].sort((a, b) => {
       const aIndex = RANKINGS_ORDER.indexOf(a.id);
       const bIndex = RANKINGS_ORDER.indexOf(b.id);
       return aIndex - bIndex;
@@ -710,7 +714,7 @@ export default function PowerRankingsClient() {
 
     const newRankings = sortedTeams.map((team, index) => ({
       rank: index + 1,
-      team
+      team // Preserves liveRecord, wins, losses, conferenceRank
     }));
 
     saveToHistory(newRankings);
@@ -745,7 +749,7 @@ export default function PowerRankingsClient() {
       // Escape to clear comparison
       if (e.key === 'Escape') {
         setComparisonTeams([]);
-        setShowDownloadMenu(false);
+        setShowActionsMenu(false);
       }
     };
 
@@ -753,19 +757,19 @@ export default function PowerRankingsClient() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [historyIndex, history]);
 
-  // Close download menu when clicking outside
+  // Close actions menu when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (downloadMenuRef.current && !downloadMenuRef.current.contains(event.target as Node)) {
-        setShowDownloadMenu(false);
+      if (actionsMenuRef.current && !actionsMenuRef.current.contains(event.target as Node)) {
+        setShowActionsMenu(false);
       }
     };
 
-    if (showDownloadMenu) {
+    if (showActionsMenu) {
       document.addEventListener('mousedown', handleClickOutside);
       return () => document.removeEventListener('mousedown', handleClickOutside);
     }
-  }, [showDownloadMenu]);
+  }, [showActionsMenu]);
 
   return (
     <div className="flex min-h-screen bg-gray-50">
@@ -952,34 +956,10 @@ export default function PowerRankingsClient() {
                   Reset
                 </button>
 
-                {/* Save/Load */}
-                <button
-                  onClick={() => setShowSaveDialog(true)}
-                  className="px-3 py-1.5 text-sm bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors font-medium flex items-center gap-1.5"
-                  title="Save Rankings"
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
-                  </svg>
-                  Save
-                </button>
-
-                <button
-                  onClick={() => setShowLoadDialog(true)}
-                  disabled={savedRankings.length === 0}
-                  className="px-3 py-1.5 text-sm bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-400 text-white rounded-lg transition-colors font-medium flex items-center gap-1.5"
-                  title="Load Rankings"
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
-                  </svg>
-                  Load
-                </button>
-
-                {/* Download Dropdown */}
-                <div className="relative" ref={downloadMenuRef}>
+                {/* More Actions Dropdown */}
+                <div className="relative" ref={actionsMenuRef}>
                   <button
-                    onClick={() => setShowDownloadMenu(!showDownloadMenu)}
+                    onClick={() => setShowActionsMenu(!showActionsMenu)}
                     disabled={isDownloading}
                     className="px-3 py-1.5 text-sm bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white rounded-lg transition-colors font-medium flex items-center gap-1.5"
                   >
@@ -994,33 +974,88 @@ export default function PowerRankingsClient() {
                     ) : (
                       <>
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
                         </svg>
-                        Download Image
+                        More
                       </>
                     )}
                   </button>
 
-                  {/* Download Menu Dropdown */}
-                  {showDownloadMenu && !isDownloading && (
-                    <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl border border-gray-200 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+                  {/* Actions Menu Dropdown */}
+                  {showActionsMenu && !isDownloading && (
+                    <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-xl border border-gray-200 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
                       <div className="py-2">
+                        {/* Save */}
                         <button
-                          onClick={() => handleDownload(5)}
-                          className="w-full px-4 py-2 text-left hover:bg-gray-50 text-gray-700 transition-colors"
+                          onClick={() => {
+                            setShowActionsMenu(false);
+                            setShowSaveDialog(true);
+                          }}
+                          className="w-full px-4 py-2 text-left hover:bg-gray-50 text-gray-700 transition-colors flex items-center gap-3"
                         >
+                          <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
+                          </svg>
+                          <span className="font-medium">Save Rankings</span>
+                        </button>
+
+                        {/* Load */}
+                        <button
+                          onClick={() => {
+                            setShowActionsMenu(false);
+                            setShowLoadDialog(true);
+                          }}
+                          disabled={savedRankings.length === 0}
+                          className="w-full px-4 py-2 text-left hover:bg-gray-50 text-gray-700 disabled:text-gray-400 disabled:hover:bg-white transition-colors flex items-center gap-3"
+                        >
+                          <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                          </svg>
+                          <span className="font-medium">Load Rankings</span>
+                          {savedRankings.length > 0 && (
+                            <span className="ml-auto text-xs text-gray-400">({savedRankings.length})</span>
+                          )}
+                        </button>
+
+                        {/* Divider */}
+                        <div className="border-t border-gray-200 my-2"></div>
+
+                        {/* Download Options */}
+                        <div className="px-4 py-1 text-xs font-semibold text-gray-400 uppercase tracking-wider">Download Image</div>
+                        <button
+                          onClick={() => {
+                            setShowActionsMenu(false);
+                            handleDownload(5);
+                          }}
+                          className="w-full px-4 py-2 text-left hover:bg-gray-50 text-gray-700 transition-colors flex items-center gap-3"
+                        >
+                          <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                          </svg>
                           <span className="font-medium">Top 5 Teams</span>
                         </button>
                         <button
-                          onClick={() => handleDownload(10)}
-                          className="w-full px-4 py-2 text-left hover:bg-gray-50 text-gray-700 transition-colors"
+                          onClick={() => {
+                            setShowActionsMenu(false);
+                            handleDownload(10);
+                          }}
+                          className="w-full px-4 py-2 text-left hover:bg-gray-50 text-gray-700 transition-colors flex items-center gap-3"
                         >
+                          <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                          </svg>
                           <span className="font-medium">Top 10 Teams</span>
                         </button>
                         <button
-                          onClick={() => handleDownload(32)}
-                          className="w-full px-4 py-2 text-left hover:bg-gray-50 text-gray-700 transition-colors"
+                          onClick={() => {
+                            setShowActionsMenu(false);
+                            handleDownload(32);
+                          }}
+                          className="w-full px-4 py-2 text-left hover:bg-gray-50 text-gray-700 transition-colors flex items-center gap-3"
                         >
+                          <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                          </svg>
                           <span className="font-medium">All 32 Teams</span>
                         </button>
                       </div>
