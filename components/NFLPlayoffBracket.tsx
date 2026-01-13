@@ -92,7 +92,7 @@ const initialPlayoffData: { [key: string]: Matchup } = {
     team1: { seed: 1, name: 'Broncos', teamId: 'denver-broncos' },
     team2: null,
     round: 'Divisional',
-    date: 'Sat 1/17 1:30p PT',
+    date: 'Sat, Jan 17',
     completed: false,
   },
   'afc-div-2': {
@@ -100,7 +100,7 @@ const initialPlayoffData: { [key: string]: Matchup } = {
     team1: null,
     team2: null,
     round: 'Divisional',
-    date: 'Sun 1/18 12p PT',
+    date: 'Sun, Jan 18',
     completed: false,
   },
   // NFC Divisional Round
@@ -109,7 +109,7 @@ const initialPlayoffData: { [key: string]: Matchup } = {
     team1: { seed: 1, name: 'Seahawks', teamId: 'seattle-seahawks' },
     team2: null,
     round: 'Divisional',
-    date: 'Sat 1/17 5p PT',
+    date: 'Sat, Jan 17',
     completed: false,
   },
   'nfc-div-2': {
@@ -117,7 +117,7 @@ const initialPlayoffData: { [key: string]: Matchup } = {
     team1: null,
     team2: null,
     round: 'Divisional',
-    date: 'Sun 1/18 3:30p PT',
+    date: 'Sun, Jan 18',
     completed: false,
   },
   // Conference Championships
