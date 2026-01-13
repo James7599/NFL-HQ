@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import InjuriesClient from './InjuriesClient';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
 
 export const metadata: Metadata = {
   title: 'NFL Injury Report 2025 | NFL HQ',
@@ -7,5 +8,9 @@ export const metadata: Metadata = {
 };
 
 export default function InjuriesPage() {
-  return <InjuriesClient />;
+  return (
+    <ErrorBoundary componentName="Injury Report">
+      <InjuriesClient />
+    </ErrorBoundary>
+  );
 }

@@ -153,13 +153,32 @@ function normalizePlayerName(name: string): string {
     .replace(/(jr|sr|ii|iii|iv)$/g, '');
 }
 
-// Team roster fetching is now handled by unified rosters API
+// In-memory cache for ESPN rosters to avoid redundant fetches
+// Cache stores normalized name -> athlete ID mapping per team
+interface ESPNRosterCache {
+  data: Map<string, string>; // normalizedName -> athleteId
+  timestamp: number;
+}
+const espnRosterCache = new Map<string, ESPNRosterCache>();
+const ESPN_ROSTER_CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours
 
 async function fetchESPNAthleteId(teamId: string, playerName: string): Promise<string | null> {
   try {
     const espnTeamId = espnTeamIdMap[teamId];
     if (!espnTeamId) return null;
 
+    const normalizedSearchName = normalizePlayerName(playerName);
+
+    // Check in-memory cache first
+    const cached = espnRosterCache.get(teamId);
+    if (cached && Date.now() - cached.timestamp < ESPN_ROSTER_CACHE_TTL) {
+      const cachedId = cached.data.get(normalizedSearchName);
+      if (cachedId) return cachedId;
+      // Player not in cached roster - don't refetch, roster is complete
+      return null;
+    }
+
+    // Fetch and cache entire roster for this team
     const response = await fetch(
       `https://site.api.espn.com/apis/site/v2/sports/football/nfl/teams/${espnTeamId}/roster`,
       {
@@ -168,22 +187,31 @@ async function fetchESPNAthleteId(teamId: string, playerName: string): Promise<s
       }
     );
 
-    if (!response.ok) return null;
+    if (!response.ok) {
+      console.warn(`[ESPN Athlete ID] Failed to fetch roster for team ${teamId}: ${response.status}`);
+      return null;
+    }
 
     const data = await response.json();
-    const normalizedSearchName = normalizePlayerName(playerName);
 
-    // Search through all position groups
+    // Build cache map for this team's roster
+    const rosterMap = new Map<string, string>();
     for (const group of data.athletes || []) {
       for (const athlete of group.items || []) {
         const athleteName = athlete.fullName || athlete.displayName || '';
-        if (normalizePlayerName(athleteName) === normalizedSearchName) {
-          return athlete.id;
-        }
+        const normalizedName = normalizePlayerName(athleteName);
+        rosterMap.set(normalizedName, athlete.id);
       }
     }
 
-    return null;
+    // Store in cache
+    espnRosterCache.set(teamId, {
+      data: rosterMap,
+      timestamp: Date.now(),
+    });
+
+    // Return the requested player's ID
+    return rosterMap.get(normalizedSearchName) || null;
   } catch (error) {
     console.error('Error fetching ESPN athlete ID:', error);
     return null;
@@ -200,7 +228,10 @@ async function fetchESPNAthleteStats(athleteId: string): Promise<ESPNStats | nul
       }
     );
 
-    if (!response.ok) return null;
+    if (!response.ok) {
+      console.warn(`[ESPN Athlete Stats] Failed for athlete ${athleteId}: ${response.status}`);
+      return null;
+    }
 
     const data = await response.json();
     const statsSummary = data.athlete?.statsSummary;
@@ -249,7 +280,10 @@ async function fetchESPNGameLog(athleteId: string, season?: number): Promise<ESP
       }
     );
 
-    if (!response.ok) return null;
+    if (!response.ok) {
+      console.warn(`[ESPN Game Log] Failed for athlete ${athleteId}, season ${season || 'current'}: ${response.status}`);
+      return null;
+    }
 
     const data = await response.json();
 
@@ -338,7 +372,10 @@ async function fetchESPNCareerStats(athleteId: string): Promise<ESPNCareerStats 
       }
     );
 
-    if (!response.ok) return null;
+    if (!response.ok) {
+      console.warn(`[ESPN Career Stats] Failed for athlete ${athleteId}: ${response.status}`);
+      return null;
+    }
 
     const data = await response.json();
 

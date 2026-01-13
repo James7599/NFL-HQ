@@ -139,26 +139,19 @@ export async function GET(request: NextRequest) {
         ? `https://${process.env.VERCEL_URL}`
         : 'http://localhost:3000';
 
-    // Fetch both stats and rosters
+    // Fetch stats only - removed redundant roster fetch (saves 32 API calls)
+    // Position inference from stats is sufficient for stat leaders display
     const teamDataPromises = allTeamSlugs.map(async (teamSlug) => {
       try {
-        const [statsResponse, rosterResponse] = await Promise.all([
-          fetch(
-            `https://cf-gotham.sportskeeda.com/taxonomy/sport/nfl/team/${teamSlug}/stats?season=${season}&event=regular`,
-            {
-              headers: {
-                'User-Agent': 'Mozilla/5.0 (compatible; NFL-Team-Pages/1.0)',
-              },
-              next: { revalidate: 86400 } // Cache for 24 hours
-            }
-          ),
-          fetch(
-            `${baseUrl}/nfl-hq/nfl/teams/api/roster/${teamSlug}`,
-            {
-              next: { revalidate: 86400 } // Cache rosters for 24 hours
-            }
-          ).catch(() => null)
-        ]);
+        const statsResponse = await fetch(
+          `https://cf-gotham.sportskeeda.com/taxonomy/sport/nfl/team/${teamSlug}/stats?season=${season}&event=regular`,
+          {
+            headers: {
+              'User-Agent': 'Mozilla/5.0 (compatible; NFL-Team-Pages/1.0)',
+            },
+            next: { revalidate: 86400 } // Cache for 24 hours
+          }
+        );
 
         if (!statsResponse.ok) {
           console.warn(`Failed to fetch stats for ${teamSlug}:`, statsResponse.status);
@@ -166,23 +159,10 @@ export async function GET(request: NextRequest) {
         }
 
         const statsData = await statsResponse.json();
-        let rosterPlayers: any[] = [];
-
-        if (rosterResponse && rosterResponse.ok) {
-          const rosterData = await rosterResponse.json();
-          // Combine all roster categories
-          const roster = rosterData.roster || {};
-          rosterPlayers = [
-            ...(roster.activeRoster || []),
-            ...(roster.injuredReserve || []),
-            ...(roster.practiceSquad || [])
-          ];
-        }
 
         return {
           teamSlug,
           playerStats: statsData.data?.player_stats || {},
-          roster: rosterPlayers
         };
       } catch (error) {
         console.warn(`Error fetching data for ${teamSlug}:`, error);
@@ -192,25 +172,9 @@ export async function GET(request: NextRequest) {
 
     const allTeamStats = (await Promise.all(teamDataPromises)).filter(Boolean);
 
-    // Build roster lookup map for positions
-    const rosterPositions: Map<string, string> = new Map();
-
-    for (const teamData of allTeamStats) {
-      if (!teamData || !teamData.roster) continue;
-
-      for (const rosterPlayer of teamData.roster) {
-        if (rosterPlayer.name && rosterPlayer.position) {
-          // Use team+name as key for unique identification
-          const key = `${teamData.teamSlug}:${rosterPlayer.name.toLowerCase().trim()}`;
-          rosterPositions.set(key, rosterPlayer.position);
-        }
-      }
-    }
-
-    console.log(`Built roster lookup with ${rosterPositions.size} players`);
-
     // Combine all player stats from all teams
-    const allPlayers: SportsKeedaPlayerStat[] = [];
+    // Use a Map for O(1) lookups instead of O(n) .find() calls
+    const playersBySlug = new Map<string, SportsKeedaPlayerStat>();
 
     for (const teamData of allTeamStats) {
       if (!teamData) continue;
@@ -222,11 +186,12 @@ export async function GET(request: NextRequest) {
         for (const player of playerStats.passing) {
           // Generate a unique player ID from the slug
           const playerId = player.slug ? player.slug.split('').reduce((acc: number, char: string) => acc + char.charCodeAt(0), 0) : Math.random() * 1000000;
+          const slug = player.slug || '';
 
-          allPlayers.push({
+          playersBySlug.set(slug, {
             player_id: playerId,
             player_name: player.name,
-            player_slug: player.slug || '',
+            player_slug: slug,
             team_id: 0,
             team_slug: teamSlug,
             position: 'QB',
@@ -241,20 +206,21 @@ export async function GET(request: NextRequest) {
         }
       }
 
-      // Process rushing stats
+      // Process rushing stats - O(1) lookup via Map
       if (playerStats.rushing) {
         for (const player of playerStats.rushing) {
-          const playerId = player.slug ? player.slug.split('').reduce((acc: number, char: string) => acc + char.charCodeAt(0), 0) : Math.random() * 1000000;
-          const existingPlayer = allPlayers.find(p => p.player_slug === player.slug);
+          const slug = player.slug || '';
+          const existingPlayer = playersBySlug.get(slug);
           if (existingPlayer) {
             existingPlayer.rushing_yards = player.yards || 0;
             existingPlayer.rushing_touchdowns = player.touchdowns || 0;
             existingPlayer.rushing_attempts = player.attempts || 0;
           } else {
-            allPlayers.push({
+            const playerId = slug ? slug.split('').reduce((acc: number, char: string) => acc + char.charCodeAt(0), 0) : Math.random() * 1000000;
+            playersBySlug.set(slug, {
               player_id: playerId,
               player_name: player.name,
-              player_slug: player.slug || '',
+              player_slug: slug,
               team_id: 0,
               team_slug: teamSlug,
               position: 'N/A',
@@ -267,21 +233,22 @@ export async function GET(request: NextRequest) {
         }
       }
 
-      // Process receiving stats
+      // Process receiving stats - O(1) lookup via Map
       if (playerStats.receiving) {
         for (const player of playerStats.receiving) {
-          const playerId = player.slug ? player.slug.split('').reduce((acc: number, char: string) => acc + char.charCodeAt(0), 0) : Math.random() * 1000000;
-          const existingPlayer = allPlayers.find(p => p.player_slug === player.slug);
+          const slug = player.slug || '';
+          const existingPlayer = playersBySlug.get(slug);
           if (existingPlayer) {
             existingPlayer.receiving_yards = player.yards || 0;
             existingPlayer.receptions = player.receptions || 0;
             existingPlayer.receiving_touchdowns = player.touchdowns || 0;
             existingPlayer.receiving_targets = player.targets || 0;
           } else {
-            allPlayers.push({
+            const playerId = slug ? slug.split('').reduce((acc: number, char: string) => acc + char.charCodeAt(0), 0) : Math.random() * 1000000;
+            playersBySlug.set(slug, {
               player_id: playerId,
               player_name: player.name,
-              player_slug: player.slug || '',
+              player_slug: slug,
               team_id: 0,
               team_slug: teamSlug,
               position: 'N/A',
@@ -295,21 +262,22 @@ export async function GET(request: NextRequest) {
         }
       }
 
-      // Process defensive stats
+      // Process defensive stats - O(1) lookup via Map
       if (playerStats.defense) {
         for (const player of playerStats.defense) {
-          const playerId = player.slug ? player.slug.split('').reduce((acc: number, char: string) => acc + char.charCodeAt(0), 0) : Math.random() * 1000000;
-          const existingPlayer = allPlayers.find(p => p.player_slug === player.slug);
+          const slug = player.slug || '';
+          const existingPlayer = playersBySlug.get(slug);
           if (existingPlayer) {
             existingPlayer.total_tackles = player.tackles?.total_tackles || 0;
             existingPlayer.sacks = player.sacks?.sacks || 0;
             existingPlayer.interceptions = player.interceptions?.interceptions || 0;
             existingPlayer.forced_fumbles = player.fumbles?.forced_fumbles || 0;
           } else {
-            allPlayers.push({
+            const playerId = slug ? slug.split('').reduce((acc: number, char: string) => acc + char.charCodeAt(0), 0) : Math.random() * 1000000;
+            playersBySlug.set(slug, {
               player_id: playerId,
               player_name: player.name,
-              player_slug: player.slug || '',
+              player_slug: slug,
               team_id: 0,
               team_slug: teamSlug,
               position: 'DEF',
@@ -324,43 +292,38 @@ export async function GET(request: NextRequest) {
       }
     }
 
+    // Convert Map back to array for further processing
+    const allPlayers = Array.from(playersBySlug.values());
+
     console.log(`Collected stats for ${allPlayers.length} players`);
 
     if (allPlayers.length === 0) {
       console.warn('No players found in API responses');
     }
 
-    // Determine positions from roster data or fall back to stat-based inference
+    // Determine positions from stat-based inference
+    // This is sufficient for stat leaders display (QB, RB, WR, DEF)
     for (const player of allPlayers) {
-      // Try to get position from roster first
-      const rosterKey = `${player.team_slug}:${player.player_name.toLowerCase().trim()}`;
-      const rosterPosition = rosterPositions.get(rosterKey);
+      const passingYards = player.passing_yards || 0;
+      const rushingYards = player.rushing_yards || 0;
+      const receivingYards = player.receiving_yards || 0;
 
-      if (rosterPosition) {
-        player.position = rosterPosition;
-      } else {
-        // Fall back to stat-based inference
-        const passingYards = player.passing_yards || 0;
-        const rushingYards = player.rushing_yards || 0;
-        const receivingYards = player.receiving_yards || 0;
-
-        // QB if they have significant passing yards
-        if (passingYards > 0) {
-          player.position = 'QB';
-        }
-        // WR/TE if receiving yards are their primary stat
-        else if (receivingYards > rushingYards && receivingYards > 0) {
-          player.position = 'WR';
-        }
-        // RB if rushing yards are their primary stat
-        else if (rushingYards > 0) {
-          player.position = 'RB';
-        }
-        // DEF stays as is
-        // If no offensive stats and position is not DEF, set to N/A
-        else if (player.position !== 'DEF') {
-          player.position = 'N/A';
-        }
+      // QB if they have significant passing yards
+      if (passingYards > 0) {
+        player.position = 'QB';
+      }
+      // WR/TE if receiving yards are their primary stat
+      else if (receivingYards > rushingYards && receivingYards > 0) {
+        player.position = 'WR';
+      }
+      // RB if rushing yards are their primary stat
+      else if (rushingYards > 0) {
+        player.position = 'RB';
+      }
+      // DEF stays as is (already set when processing defensive stats)
+      // If no offensive stats and position is not DEF, set to N/A
+      else if (player.position !== 'DEF') {
+        player.position = 'N/A';
       }
     }
 

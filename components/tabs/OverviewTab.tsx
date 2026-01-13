@@ -162,13 +162,13 @@ export default function OverviewTab({ team, onTabChange, schedule: passedSchedul
   const [standingsError, setStandingsError] = useState<string | null>(null);
 
 
-  const fetchOverviewArticles = useCallback(async () => {
+  const fetchOverviewArticles = useCallback(async (signal?: AbortSignal) => {
     try {
       setLoading(true);
       setError(null);
 
       // Use the team-specific API endpoint that works for all teams
-      const response = await fetch(`/nfl-hq/nfl/teams/api/overview-articles/${team.id}`);
+      const response = await fetch(`/nfl-hq/nfl/teams/api/overview-articles/${team.id}`, { signal });
 
       if (!response.ok) {
         throw new Error(`API error: ${response.status} ${response.statusText}`);
@@ -183,6 +183,10 @@ export default function OverviewTab({ team, onTabChange, schedule: passedSchedul
       // Set all articles for pagination
       setArticles(data.articles);
     } catch (err) {
+      // Don't set error state if the request was aborted
+      if (err instanceof Error && err.name === 'AbortError') {
+        return;
+      }
       setError(`Failed to load ${team.name} articles`);
       console.error('Error fetching overview articles:', err);
     } finally {
@@ -190,12 +194,12 @@ export default function OverviewTab({ team, onTabChange, schedule: passedSchedul
     }
   }, [team.id, team.name]);
 
-  const fetchTeamSchedule = useCallback(async () => {
+  const fetchTeamSchedule = useCallback(async (signal?: AbortSignal) => {
     try {
       setScheduleLoading(true);
       setScheduleError(null);
 
-      const response = await fetch(`/nfl-hq/nfl/teams/api/schedule/${team.id}`);
+      const response = await fetch(`/nfl-hq/nfl/teams/api/schedule/${team.id}`, { signal });
 
       if (!response.ok) {
         if (response.status === 404) {
@@ -258,6 +262,10 @@ export default function OverviewTab({ team, onTabChange, schedule: passedSchedul
 
       setSchedule(relevantGames);
     } catch (err) {
+      // Don't set error state if the request was aborted
+      if (err instanceof Error && err.name === 'AbortError') {
+        return;
+      }
       console.error('Error fetching schedule:', err);
       setScheduleError(err instanceof Error ? err.message : 'Failed to load schedule');
     } finally {
@@ -265,12 +273,12 @@ export default function OverviewTab({ team, onTabChange, schedule: passedSchedul
     }
   }, [team.id]);
 
-  const fetchTeamStats = useCallback(async () => {
+  const fetchTeamStats = useCallback(async (signal?: AbortSignal) => {
     try {
       setStatsLoading(true);
       setStatsError(null);
 
-      const response = await fetch(`/nfl-hq/nfl/teams/api/stats/${team.id}`);
+      const response = await fetch(`/nfl-hq/nfl/teams/api/stats/${team.id}`, { signal });
 
       if (!response.ok) {
         if (response.status === 404) {
@@ -287,6 +295,10 @@ export default function OverviewTab({ team, onTabChange, schedule: passedSchedul
 
       setStats(data.stats);
     } catch (err) {
+      // Don't set error state if the request was aborted
+      if (err instanceof Error && err.name === 'AbortError') {
+        return;
+      }
       console.error('Error fetching stats:', err);
       setStatsError(err instanceof Error ? err.message : 'Failed to load stats');
     } finally {
@@ -294,7 +306,7 @@ export default function OverviewTab({ team, onTabChange, schedule: passedSchedul
     }
   }, [team.id]);
 
-  const fetchDivisionStandings = useCallback(async () => {
+  const fetchDivisionStandings = useCallback(async (signal?: AbortSignal) => {
     try {
       setStandingsLoading(true);
       setStandingsError(null);
@@ -303,7 +315,7 @@ export default function OverviewTab({ team, onTabChange, schedule: passedSchedul
       const divisionTeams = getDivisionTeams(team);
       const standingsPromises = divisionTeams.map(async (divisionTeam) => {
         try {
-          const response = await fetch(`/nfl-hq/nfl/teams/api/schedule/${divisionTeam.id}`);
+          const response = await fetch(`/nfl-hq/nfl/teams/api/schedule/${divisionTeam.id}`, { signal });
           if (!response.ok) {
             throw new Error(`Failed to fetch schedule for ${divisionTeam.name}`);
           }
@@ -326,6 +338,10 @@ export default function OverviewTab({ team, onTabChange, schedule: passedSchedul
             winPercentage: wins + losses + ties > 0 ? wins / (wins + losses + ties) : 0
           };
         } catch (err) {
+          // Re-throw AbortError to be handled by outer catch
+          if (err instanceof Error && err.name === 'AbortError') {
+            throw err;
+          }
           console.error(`Error fetching data for ${divisionTeam.name}:`, err);
           return {
             ...divisionTeam,
@@ -349,6 +365,10 @@ export default function OverviewTab({ team, onTabChange, schedule: passedSchedul
 
       setDivisionStandings(standings);
     } catch (err) {
+      // Don't set error state if the request was aborted
+      if (err instanceof Error && err.name === 'AbortError') {
+        return;
+      }
       console.error('Error fetching division standings:', err);
       setStandingsError(err instanceof Error ? err.message : 'Failed to load standings');
     } finally {
@@ -412,20 +432,29 @@ export default function OverviewTab({ team, onTabChange, schedule: passedSchedul
   }, [passedStandings]);
 
   useEffect(() => {
+    // Create AbortController to cancel pending fetches on team change
+    const abortController = new AbortController();
+    const signal = abortController.signal;
+
     // Track overview tab view
     trackScheduleView(team.id, '2025');
     trackStandingsView(team.division);
 
-    fetchOverviewArticles();
-    fetchTeamStats();
+    fetchOverviewArticles(signal);
+    fetchTeamStats(signal);
 
     // Only fetch if data wasn't passed via props
     if (!passedSchedule) {
-      fetchTeamSchedule();
+      fetchTeamSchedule(signal);
     }
     if (!passedStandings) {
-      fetchDivisionStandings();
+      fetchDivisionStandings(signal);
     }
+
+    // Cleanup: abort any in-flight requests when team changes or component unmounts
+    return () => {
+      abortController.abort();
+    };
   }, [fetchOverviewArticles, fetchTeamSchedule, fetchTeamStats, fetchDivisionStandings, team.id, team.division, passedSchedule, passedStandings]);
 
   const formatDate = (dateString: string) => {

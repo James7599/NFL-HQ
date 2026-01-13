@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import PlayersDirectoryClient from './PlayersDirectoryClient';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
 
 export const metadata: Metadata = {
   title: 'NFL Players - Player Profiles & PFSN Impact Grades',
@@ -29,5 +30,9 @@ export const metadata: Metadata = {
 };
 
 export default function PlayersPage() {
-  return <PlayersDirectoryClient />;
+  return (
+    <ErrorBoundary componentName="Players Directory">
+      <PlayersDirectoryClient />
+    </ErrorBoundary>
+  );
 }

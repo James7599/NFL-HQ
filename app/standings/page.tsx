@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import StandingsClient from './StandingsClient';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
 
 export const metadata: Metadata = {
   title: 'NFL Standings 2025 Season | AFC & NFC Conference',
@@ -7,5 +8,9 @@ export const metadata: Metadata = {
 };
 
 export default function StandingsPage() {
-  return <StandingsClient />;
+  return (
+    <ErrorBoundary componentName="Standings">
+      <StandingsClient />
+    </ErrorBoundary>
+  );
 }

@@ -210,9 +210,13 @@ export default function PlayerProfileClient({ playerSlug }: Props) {
 
   // Fetch player data and articles in parallel for faster loading
   useEffect(() => {
+    // Create AbortController to cancel pending fetches on player change
+    const abortController = new AbortController();
+    const signal = abortController.signal;
+
     async function fetchPlayerData() {
       try {
-        const response = await fetch(getApiPath(`api/nfl/player/${playerSlug}`));
+        const response = await fetch(getApiPath(`api/nfl/player/${playerSlug}`), { signal });
         if (!response.ok) {
           if (response.status === 404) {
             setError('Player not found');
@@ -224,6 +228,10 @@ export default function PlayerProfileClient({ playerSlug }: Props) {
         const data = await response.json();
         return data.player;
       } catch (err) {
+        // Don't set error state if the request was aborted
+        if (err instanceof Error && err.name === 'AbortError') {
+          return null;
+        }
         console.error('Error fetching player:', err);
         setError('Failed to load player data. Please try again later.');
         return null;
@@ -237,43 +245,79 @@ export default function PlayerProfileClient({ playerSlug }: Props) {
 
         // Try cleaned slug first (e.g., "aj-brown")
         let rssUrl = `https://www.profootballnetwork.com/tag/${cleanedSlug}/feed/`;
-        let response = await fetch(getApiPath(`api/proxy-rss?url=${encodeURIComponent(rssUrl)}`));
+        let response = await fetch(getApiPath(`api/proxy-rss?url=${encodeURIComponent(rssUrl)}`), { signal });
         let data = response.ok ? await response.json() : null;
 
         // If no articles found and slug was cleaned, try original slug
         if ((!data?.articles || data.articles.length === 0) && cleanedSlug !== playerSlug) {
           rssUrl = `https://www.profootballnetwork.com/tag/${playerSlug}/feed/`;
-          response = await fetch(getApiPath(`api/proxy-rss?url=${encodeURIComponent(rssUrl)}`));
+          response = await fetch(getApiPath(`api/proxy-rss?url=${encodeURIComponent(rssUrl)}`), { signal });
           data = response.ok ? await response.json() : null;
         }
 
         return data?.articles && Array.isArray(data.articles) ? data.articles : [];
       } catch (err) {
+        // Don't log error if request was aborted
+        if (err instanceof Error && err.name === 'AbortError') {
+          return [];
+        }
         console.error('Error fetching articles:', err);
         return [];
       }
     }
 
     async function loadAllData() {
+      // Check if already aborted before starting
+      if (signal.aborted) return;
+
       setLoading(true);
       setError(null);
 
-      // Fetch player and articles in parallel
-      const [playerData, articlesData] = await Promise.all([
-        fetchPlayerData(),
-        fetchArticlesData(),
-      ]);
+      try {
+        // Fetch player and articles in parallel
+        // Using Promise.allSettled to ensure one failure doesn't affect the other
+        const results = await Promise.allSettled([
+          fetchPlayerData(),
+          fetchArticlesData(),
+        ]);
 
-      if (playerData) {
-        setPlayer(playerData);
+        // Check if aborted before setting state
+        if (signal.aborted) return;
+
+        const playerResult = results[0];
+        const articlesResult = results[1];
+
+        if (playerResult.status === 'fulfilled' && playerResult.value) {
+          setPlayer(playerResult.value);
+        }
+
+        if (articlesResult.status === 'fulfilled') {
+          setArticles(articlesResult.value);
+        } else {
+          console.warn('Articles fetch failed:', articlesResult.reason);
+          setArticles([]);
+        }
+      } catch (err) {
+        // Don't set error state if aborted
+        if (signal.aborted) return;
+        console.error('Unexpected error loading player data:', err);
+        setError('An unexpected error occurred. Please try again later.');
+      } finally {
+        // Only set loading false if not aborted
+        if (!signal.aborted) {
+          setLoading(false);
+        }
       }
-      setArticles(articlesData);
-      setLoading(false);
     }
 
     if (playerSlug) {
       loadAllData();
     }
+
+    // Cleanup: abort any in-flight requests when playerSlug changes or component unmounts
+    return () => {
+      abortController.abort();
+    };
   }, [playerSlug]);
 
   // Initialize game log data from player and handle season changes
@@ -293,6 +337,10 @@ export default function PlayerProfileClient({ playerSlug }: Props) {
 
   // Fetch game log for a different season
   useEffect(() => {
+    // Create AbortController to cancel pending fetches on season change
+    const abortController = new AbortController();
+    const signal = abortController.signal;
+
     async function fetchGameLog() {
       if (!player || selectedGameLogSeason === null) return;
 
@@ -307,7 +355,14 @@ export default function PlayerProfileClient({ playerSlug }: Props) {
 
       setGameLogLoading(true);
       try {
-        const response = await fetch(getApiPath(`api/nfl/player/${playerSlug}?gameLogSeason=${selectedGameLogSeason}`));
+        const response = await fetch(
+          getApiPath(`api/nfl/player/${playerSlug}?gameLogSeason=${selectedGameLogSeason}`),
+          { signal }
+        );
+
+        // Check if aborted before setting state
+        if (signal.aborted) return;
+
         if (response.ok) {
           const data = await response.json();
           if (data.player?.gameLog) {
@@ -315,13 +370,25 @@ export default function PlayerProfileClient({ playerSlug }: Props) {
           }
         }
       } catch (err) {
+        // Don't log error if request was aborted
+        if (err instanceof Error && err.name === 'AbortError') {
+          return;
+        }
         console.error('Error fetching game log:', err);
       } finally {
-        setGameLogLoading(false);
+        // Only set loading false if not aborted
+        if (!signal.aborted) {
+          setGameLogLoading(false);
+        }
       }
     }
 
     fetchGameLog();
+
+    // Cleanup: abort any in-flight requests when season changes or component unmounts
+    return () => {
+      abortController.abort();
+    };
   }, [selectedGameLogSeason, player, playerSlug]);
 
   const getInitials = (name: string) => {

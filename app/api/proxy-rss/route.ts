@@ -88,6 +88,30 @@ function parseRSSItems(xmlText: string): Article[] {
   return articles;
 }
 
+// Allowed domains for RSS proxying
+const ALLOWED_RSS_DOMAINS = [
+  'profootballnetwork.com',
+  'www.profootballnetwork.com',
+];
+
+function isAllowedRssUrl(urlString: string): boolean {
+  try {
+    const parsed = new URL(urlString);
+
+    // Only allow http and https protocols
+    if (!['http:', 'https:'].includes(parsed.protocol)) {
+      return false;
+    }
+
+    // Check if hostname matches or is a subdomain of allowed domains
+    return ALLOWED_RSS_DOMAINS.some(domain =>
+      parsed.hostname === domain || parsed.hostname.endsWith('.' + domain)
+    );
+  } catch {
+    return false;
+  }
+}
+
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const rssUrl = searchParams.get('url');
@@ -96,8 +120,8 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'URL parameter is required' }, { status: 400 });
   }
 
-  // Validate URL is from profootballnetwork.com
-  if (!rssUrl.includes('profootballnetwork.com')) {
+  // Validate URL format and domain
+  if (!isAllowedRssUrl(rssUrl)) {
     return NextResponse.json({ error: 'Invalid RSS feed URL' }, { status: 400 });
   }
 
@@ -111,7 +135,11 @@ export async function GET(request: NextRequest) {
     });
 
     if (!response.ok) {
-      return NextResponse.json({ articles: [] });
+      console.warn(`[RSS Proxy] Failed to fetch ${rssUrl}: ${response.status}`);
+      return NextResponse.json(
+        { error: 'Failed to fetch RSS feed', articles: [] },
+        { status: response.status >= 400 && response.status < 600 ? response.status : 502 }
+      );
     }
 
     const xmlText = await response.text();
@@ -127,6 +155,9 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     console.error('RSS proxy error:', error);
-    return NextResponse.json({ articles: [] });
+    return NextResponse.json(
+      { error: 'RSS proxy error', articles: [] },
+      { status: 502 }
+    );
   }
 }

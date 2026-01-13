@@ -1,5 +1,30 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+// Allowed domains for image proxying
+const ALLOWED_DOMAINS = [
+  'profootballnetwork.com',
+  'staticd.profootballnetwork.com',
+  'static.profootballnetwork.com',
+];
+
+function isAllowedUrl(urlString: string): boolean {
+  try {
+    const parsed = new URL(urlString);
+
+    // Only allow http and https protocols
+    if (!['http:', 'https:'].includes(parsed.protocol)) {
+      return false;
+    }
+
+    // Check if hostname matches or is a subdomain of allowed domains
+    return ALLOWED_DOMAINS.some(domain =>
+      parsed.hostname === domain || parsed.hostname.endsWith('.' + domain)
+    );
+  } catch {
+    return false;
+  }
+}
+
 export async function GET(request: NextRequest) {
   try {
     const url = request.nextUrl.searchParams.get('url');
@@ -8,8 +33,8 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'URL parameter is required' }, { status: 400 });
     }
 
-    // Only allow PFSN CDN URLs for security
-    if (!url.includes('profootballnetwork.com')) {
+    // Validate URL format and domain
+    if (!isAllowedUrl(url)) {
       return NextResponse.json({ error: 'Only PFSN URLs are allowed' }, { status: 403 });
     }
 

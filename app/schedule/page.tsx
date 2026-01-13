@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import SchedulePageContent from '@/components/SchedulePageContent';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
 
 export const metadata: Metadata = {
   title: 'NFL Schedule - Game Times, Scores & Matchups',
@@ -31,5 +32,9 @@ export const metadata: Metadata = {
 };
 
 export default function SchedulePage() {
-  return <SchedulePageContent />;
+  return (
+    <ErrorBoundary componentName="Schedule">
+      <SchedulePageContent />
+    </ErrorBoundary>
+  );
 }

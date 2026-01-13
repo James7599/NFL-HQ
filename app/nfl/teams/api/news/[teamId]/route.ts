@@ -121,12 +121,22 @@ export async function GET(
   }
 }
 
-// Enable CORS for this route
-export async function OPTIONS() {
+// Enable CORS for this route (restricted to known origins)
+export async function OPTIONS(request: NextRequest) {
+  const origin = request.headers.get('origin') || '';
+  const allowedOrigins = [
+    'https://www.profootballnetwork.com',
+    'https://profootballnetwork.com',
+    'https://nfl-hq.vercel.app',
+    'http://localhost:3000',
+  ];
+
+  const corsOrigin = allowedOrigins.includes(origin) ? origin : allowedOrigins[0];
+
   return new NextResponse(null, {
     status: 200,
     headers: {
-      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Origin': corsOrigin,
       'Access-Control-Allow-Methods': 'GET, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type',
     },

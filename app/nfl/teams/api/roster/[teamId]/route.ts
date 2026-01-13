@@ -404,19 +404,25 @@ export async function GET(
     // Transform the data to our format
     const transformedRoster = data.squad
       .map(player => {
-        // Try multiple name variations to find a match
-        const nameVariations = generateNameVariations(player.name);
-        let impactScore = 0;
-        for (const variant of nameVariations) {
-          const score = impactGrades.get(variant);
-          if (score && score > 0) {
-            impactScore = score;
-            break;
+        // Optimized lookup: try simplest normalized form first (O(1) in most cases)
+        // Only generate full variations if simple lookup fails
+        const normalizedName = player.name.toLowerCase().replace(/[^a-z0-9]/g, '');
+        let impactScore = impactGrades.get(normalizedName) || 0;
+
+        // If not found with simple normalization, try variations (rare case)
+        if (!impactScore) {
+          const nameVariations = generateNameVariations(player.name);
+          for (const variant of nameVariations) {
+            const score = impactGrades.get(variant);
+            if (score && score > 0) {
+              impactScore = score;
+              break;
+            }
           }
         }
 
         // Get ESPN college name (cleaner than SportsKeeda)
-        const normalizedName = player.name.toLowerCase().replace(/[^a-z0-9]/g, '');
+        // normalizedName already computed above
         const espnCollege = espnCollegeNames.get(normalizedName);
 
         return {

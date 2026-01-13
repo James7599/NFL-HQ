@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import PlayerProfileClient from './PlayerProfileClient';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
 
 interface Props {
   params: Promise<{ playerSlug: string }>;
@@ -124,5 +125,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function PlayerProfilePage({ params }: Props) {
   const { playerSlug } = await params;
-  return <PlayerProfileClient playerSlug={playerSlug} />;
+  return (
+    <ErrorBoundary componentName="Player Profile">
+      <PlayerProfileClient playerSlug={playerSlug} />
+    </ErrorBoundary>
+  );
 }

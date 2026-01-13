@@ -263,12 +263,40 @@ interface TransformedGame {
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
-    const season = searchParams.get('season') || '2025';
+    const seasonParam = searchParams.get('season') || '2025';
     const requestedDate = searchParams.get('date');
+
+    // Validate season parameter (must be a 4-digit year between 2020-2030)
+    const seasonYear = parseInt(seasonParam, 10);
+    if (isNaN(seasonYear) || seasonYear < 2020 || seasonYear > 2030) {
+      return NextResponse.json(
+        { error: 'Invalid season parameter. Must be a year between 2020-2030.' },
+        { status: 400 }
+      );
+    }
+    const season = seasonParam;
 
     if (!requestedDate) {
       return NextResponse.json(
         { error: 'Date parameter is required' },
+        { status: 400 }
+      );
+    }
+
+    // Validate date format (YYYY-MM-DD)
+    const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+    if (!dateRegex.test(requestedDate)) {
+      return NextResponse.json(
+        { error: 'Invalid date format. Use YYYY-MM-DD.' },
+        { status: 400 }
+      );
+    }
+
+    // Validate it's a real date
+    const parsedDate = new Date(requestedDate);
+    if (isNaN(parsedDate.getTime())) {
+      return NextResponse.json(
+        { error: 'Invalid date value.' },
         { status: 400 }
       );
     }
