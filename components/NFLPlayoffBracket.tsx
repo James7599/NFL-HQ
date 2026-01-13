@@ -92,7 +92,7 @@ const initialPlayoffData: { [key: string]: Matchup } = {
     team1: { seed: 1, name: 'Broncos', teamId: 'denver-broncos' },
     team2: null,
     round: 'Divisional',
-    date: 'Jan 16-17',
+    date: 'Sat, Jan 17',
     completed: false,
   },
   'afc-div-2': {
@@ -100,7 +100,7 @@ const initialPlayoffData: { [key: string]: Matchup } = {
     team1: null,
     team2: null,
     round: 'Divisional',
-    date: 'Jan 16-17',
+    date: 'Sun, Jan 18',
     completed: false,
   },
   // NFC Divisional Round
@@ -109,7 +109,7 @@ const initialPlayoffData: { [key: string]: Matchup } = {
     team1: { seed: 1, name: 'Seahawks', teamId: 'seattle-seahawks' },
     team2: null,
     round: 'Divisional',
-    date: 'Jan 16-17',
+    date: 'Sat, Jan 17',
     completed: false,
   },
   'nfc-div-2': {
@@ -117,7 +117,7 @@ const initialPlayoffData: { [key: string]: Matchup } = {
     team1: null,
     team2: null,
     round: 'Divisional',
-    date: 'Jan 16-17',
+    date: 'Sun, Jan 18',
     completed: false,
   },
   // Conference Championships
@@ -126,7 +126,7 @@ const initialPlayoffData: { [key: string]: Matchup } = {
     team1: null,
     team2: null,
     round: 'AFC Championship',
-    date: 'Jan 24',
+    date: 'Sun, Jan 25',
     completed: false,
   },
   'nfc-conf': {
@@ -134,7 +134,7 @@ const initialPlayoffData: { [key: string]: Matchup } = {
     team1: null,
     team2: null,
     round: 'NFC Championship',
-    date: 'Jan 24',
+    date: 'Sun, Jan 25',
     completed: false,
   },
   // Super Bowl
@@ -560,7 +560,7 @@ export default function NFLPlayoffBracket() {
 
           {/* Divisional Round */}
           <div>
-            <h4 className="text-sm font-semibold text-gray-700 mb-2">Divisional Round - Jan 18-19</h4>
+            <h4 className="text-sm font-semibold text-gray-700 mb-2">Divisional Round - Jan 17-18</h4>
             <div className="space-y-3">
               <div>
                 <div className="text-xs text-gray-600 mb-1 font-medium">AFC Divisional</div>
@@ -581,7 +581,7 @@ export default function NFLPlayoffBracket() {
 
           {/* Conference Championships */}
           <div>
-            <h4 className="text-sm font-semibold text-gray-700 mb-2">Conference Championships - Jan 26</h4>
+            <h4 className="text-sm font-semibold text-gray-700 mb-2">Conference Championships - Jan 25</h4>
             <div className="space-y-3">
               <div>
                 <div className="text-xs text-gray-600 mb-1 font-medium">AFC Championship</div>
