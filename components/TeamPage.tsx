@@ -57,10 +57,7 @@ interface TeamHeroSectionProps {
 
 function TeamHeroSection({ team, liveRecord, liveDivisionRank, teamStats }: TeamHeroSectionProps) {
   return (
-    <div
-      style={{ background: `linear-gradient(to right, rgba(0,0,0,0.35), rgba(0,0,0,0)), ${team.primaryColor}` }}
-      className="text-white"
-    >
+    <div style={{ backgroundColor: team.primaryColor }} className="text-white">
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col lg:flex-row items-center justify-between">
           <div className="flex items-center space-x-6 mb-6 lg:mb-0">
@@ -78,7 +75,7 @@ function TeamHeroSection({ team, liveRecord, liveDivisionRank, teamStats }: Team
             </div>
             <div>
               <h1 className="text-3xl lg:text-4xl font-bold">{team.fullName}</h1>
-              <p className="text-lg lg:text-xl text-white/80 min-w-[300px]">
+              <p className="text-lg lg:text-xl opacity-90 min-w-[300px]">
                 {liveDivisionRank && liveRecord ? (
                   `${liveDivisionRank} in ${team.division} • ${liveRecord}`
                 ) : (
