@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useMemo, useEffect, useCallback } from 'react';
+import Image from 'next/image';
 import { TeamData } from '@/data/teams';
 import { getApiPath } from '@/utils/api';
 import LayoutStabilizer from '@/components/LayoutStabilizer';
@@ -12,6 +13,11 @@ const getPFSNUrl = (playerName: string | undefined | null) => {
     return '#';
   }
   return `https://www.profootballnetwork.com/players/${playerName.toLowerCase().replace(/[.\s]+/g, '-').replace(/[^\w-]/g, '').replace(/-+/g, '-')}/`;
+};
+
+// Helper function to generate player slug for image URL
+const getPlayerImageSlug = (playerName: string) => {
+  return playerName.toLowerCase().replace(/[.\s]+/g, '-').replace(/[^\w-]/g, '').replace(/-+/g, '-').replace(/^-|-$/g, '');
 };
 
 interface PlayerStats {
@@ -362,6 +368,7 @@ export default function StatsTab({ team }: StatsTabProps) {
   const [error, setError] = useState<string | null>(null);
   const [sortColumn, setSortColumn] = useState<string | null>(null);
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
+  const [imageErrors, setImageErrors] = useState<Set<string>>(new Set());
 
   const fetchTeamStats = useCallback(async () => {
     try {
@@ -773,9 +780,23 @@ export default function StatsTab({ team }: StatsTabProps) {
                           href={getPFSNUrl(value)}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="font-medium hover:underline cursor-pointer"
+                          className="font-medium hover:underline cursor-pointer flex items-center gap-2"
                           style={{ color: team.primaryColor }}
                         >
+                          {!imageErrors.has(value) && (
+                            <div className="relative w-8 h-8 flex-shrink-0">
+                              <Image
+                                src={`https://staticd.profootballnetwork.com/skm/assets/player-images/nfl/${getPlayerImageSlug(value)}.png`}
+                                alt={value}
+                                fill
+                                sizes="32px"
+                                className="rounded-full object-cover"
+                                onError={() => {
+                                  setImageErrors(prev => new Set(prev).add(value));
+                                }}
+                              />
+                            </div>
+                          )}
                           {value}
                         </a>
                       ) : key === 'category' && viewType === 'team' ? (
