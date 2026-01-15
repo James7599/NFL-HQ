@@ -784,48 +784,52 @@ export default function PlayerProfileClient({ playerSlug }: Props) {
               </select>
             </div>
 
-            {player.careerStats.categories.map((category) => {
-              // Get the stats to display based on selection
-              const statsToShow = selectedSeason === 'career'
-                ? category.totals
-                : category.seasons.find(s => s.year === selectedSeason)?.stats;
+            <div className="space-y-6">
+              {player.careerStats.categories.map((category) => {
+                // Get the stats to display based on selection
+                const statsToShow = selectedSeason === 'career'
+                  ? category.totals
+                  : category.seasons.find(s => s.year === selectedSeason)?.stats;
 
-              if (!statsToShow) return null;
+                if (!statsToShow) return null;
 
-              // Filter out stats that are just "-" or empty
-              const hasData = Object.values(statsToShow).some(v => v !== '-' && v !== '' && v !== '0');
-              if (!hasData) return null;
+                // Filter out stats that are just "-" or empty
+                const hasData = Object.values(statsToShow).some(v => v !== '-' && v !== '' && v !== '0');
+                if (!hasData) return null;
 
-              return (
-                <div key={category.name} className="mb-6 last:mb-0">
-                  <h3 className="text-sm font-semibold text-gray-600 uppercase tracking-wide mb-3">
-                    {category.displayName}
-                  </h3>
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-sm">
-                      <thead>
-                        <tr className="border-b-2 border-gray-200">
-                          {category.labels.map((label, index) => (
-                            <th key={index} className="text-center py-2 px-3 font-semibold text-gray-600 bg-gray-50 whitespace-nowrap">
-                              {label}
-                            </th>
-                          ))}
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr className="border-b border-gray-100">
-                          {category.names.map((name, index) => (
-                            <td key={index} className="py-3 px-3 text-center text-gray-900 font-medium whitespace-nowrap">
-                              {statsToShow[name] || '-'}
-                            </td>
-                          ))}
-                        </tr>
-                      </tbody>
-                    </table>
+                return (
+                  <div key={category.name} className="bg-gray-50 rounded-lg overflow-hidden">
+                    <div className="bg-gray-800 px-4 py-2">
+                      <h3 className="text-sm font-bold text-white uppercase tracking-wider">
+                        {category.displayName}
+                      </h3>
+                    </div>
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-sm">
+                        <thead>
+                          <tr className="bg-gray-100 border-b border-gray-200">
+                            {category.labels.map((label, index) => (
+                              <th key={index} className="text-center py-2.5 px-3 font-semibold text-gray-500 text-xs uppercase tracking-wide whitespace-nowrap">
+                                {label}
+                              </th>
+                            ))}
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr className="bg-white">
+                            {category.names.map((name, index) => (
+                              <td key={index} className="py-3.5 px-3 text-center text-gray-900 font-semibold whitespace-nowrap">
+                                {statsToShow[name] || '-'}
+                              </td>
+                            ))}
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
         )}
 
