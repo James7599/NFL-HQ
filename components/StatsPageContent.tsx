@@ -392,7 +392,7 @@ export default function StatsPageContent() {
                                 {/* Player Image */}
                                 {!imageErrors.has(player.playerSlug) ? (
                                   <img
-                                    src={`https://a.espncdn.com/combiner/i?img=/i/headshots/nfl/players/full/${player.playerId}.png&w=80&h=58`}
+                                    src={`https://staticd.profootballnetwork.com/skm/assets/player-images/nfl/${player.playerSlug}.png`}
                                     alt={player.name}
                                     className="w-8 h-8 sm:w-10 sm:h-10 rounded-full object-cover bg-gray-100 flex-shrink-0"
                                     onError={() => handleImageError(player.playerSlug)}
@@ -574,7 +574,7 @@ export default function StatsPageContent() {
                                 {/* Player headshot */}
                                 {!imageErrors.has(player.playerSlug) ? (
                                   <img
-                                    src={`https://a.espncdn.com/combiner/i?img=/i/headshots/nfl/players/full/${player.playerId}.png&w=80&h=58`}
+                                    src={`https://staticd.profootballnetwork.com/skm/assets/player-images/nfl/${player.playerSlug}.png`}
                                     alt={player.name}
                                     className="w-6 h-6 rounded-full object-cover bg-gray-100 flex-shrink-0"
                                     onError={() => handleImageError(player.playerSlug)}
