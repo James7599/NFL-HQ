@@ -512,7 +512,10 @@ export default function PlayerProfileClient({ playerSlug }: Props) {
       />
 
       {/* Hero Section with Blue Background */}
-      <div style={{ backgroundColor: '#0050A0' }} className="text-white pt-[57px] lg:pt-3 lg:pb-3">
+      <div
+        style={{ background: 'linear-gradient(to right, rgba(0,0,0,0.35), rgba(0,0,0,0)), #0050A0' }}
+        className="text-white pt-[57px] lg:pt-3 lg:pb-3"
+      >
         <div className="container mx-auto px-4 py-3 lg:py-3">
           <div className="flex flex-col lg:flex-row items-center justify-between">
             {/* Player Info */}
