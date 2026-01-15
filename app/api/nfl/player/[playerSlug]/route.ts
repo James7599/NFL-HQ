@@ -307,8 +307,14 @@ async function fetchESPNGameLog(athleteId: string, season?: number): Promise<ESP
 
     // Process all season types (regular season type=2, postseason type=3)
     for (const seasonType of data.seasonTypes || []) {
+      // Detect if this is postseason by checking type OR displayName
+      const displayName = (seasonType.displayName || '').toLowerCase();
+      const isPostseason = seasonType.type === 3 ||
+                          displayName.includes('postseason') ||
+                          displayName.includes('playoff');
+
       // Track the display name (prefer regular season name)
-      if (!seasonDisplayName || seasonType.type === 2) {
+      if (!seasonDisplayName || !isPostseason) {
         seasonDisplayName = seasonType.displayName || seasonDisplayName;
       }
 
@@ -346,11 +352,13 @@ async function fetchESPNGameLog(athleteId: string, season?: number): Promise<ESP
           statsMap[label.name] = gameStats[index] || '-';
         });
 
-        // For postseason games, prefix week with "P" (e.g., Wild Card = P1, Divisional = P2, etc.)
-        const weekDisplay = seasonType.type === 3 ? `P${event.week || 0}` : (event.week || 0);
+        // For postseason games, add 100 to week number so they sort after regular season
+        // Regular season weeks are 1-18, postseason will be 101-104
+        const weekNum = event.week || 0;
+        const sortableWeek = isPostseason ? weekNum + 100 : weekNum;
 
         allGames.push({
-          week: typeof weekDisplay === 'string' ? parseInt(weekDisplay.replace('P', '')) + 100 : weekDisplay, // Sort postseason after regular
+          week: sortableWeek,
           date: event.gameDate || '',
           opponent: event.opponent?.displayName || event.opponent?.abbreviation || 'TBD',
           opponentLogo: event.opponent?.logo || '',
@@ -392,9 +400,9 @@ async function fetchESPNGameLog(athleteId: string, season?: number): Promise<ESP
     // Convert week numbers back to display format
     for (const game of allGames) {
       if (typeof game.week === 'number' && game.week > 100) {
-        // Postseason game - show as WC, DIV, CONF, SB
+        // Postseason game - show as WC (Wild Card), DR (Divisional Round), CC (Conference Championship), SB (Super Bowl)
         const postWeek = game.week - 100;
-        const postWeekNames: Record<number, string> = { 1: 'WC', 2: 'DIV', 3: 'CONF', 4: 'SB' };
+        const postWeekNames: Record<number, string> = { 1: 'WC', 2: 'DR', 3: 'CC', 4: 'SB' };
         game.week = postWeekNames[postWeek] || `P${postWeek}`;
       }
     }
