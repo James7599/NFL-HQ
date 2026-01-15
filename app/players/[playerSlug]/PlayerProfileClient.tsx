@@ -538,12 +538,11 @@ export default function PlayerProfileClient({ playerSlug }: Props) {
 
               {/* Name and Details */}
               <div className="text-center sm:text-left">
-                <div className="flex items-center justify-center sm:justify-start gap-2 mb-1">
-                  <h1 className="text-2xl lg:text-4xl font-bold">{player.name}</h1>
-                  <span className="text-xl lg:text-3xl opacity-70">#{player.jerseyNumber}</span>
-                </div>
+                <h1 className="text-2xl lg:text-4xl font-bold">
+                  {player.name} <span className="font-normal opacity-60">#{player.jerseyNumber}</span>
+                </h1>
 
-                <div className="flex items-center justify-center sm:justify-start gap-2 text-base lg:text-lg">
+                <div className="flex items-center justify-center sm:justify-start gap-2 text-base lg:text-lg mt-2">
                   <Link href={`/teams/${player.team.id}`} className="flex items-center gap-2 hover:opacity-80">
                     <img
                       src={player.team.logo}
