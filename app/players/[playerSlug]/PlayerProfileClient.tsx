@@ -833,7 +833,7 @@ export default function PlayerProfileClient({ playerSlug }: Props) {
         {articles.length > 0 && (
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mt-6">
             <div className="mb-6">
-              <h2 className="text-xl font-bold text-gray-900">Latest {player.name.split(' ').pop()} Articles</h2>
+              <h2 className="text-xl font-bold text-gray-900">Latest {player.name} Articles</h2>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {articles.slice(0, visibleArticles).map((article, index) => (
