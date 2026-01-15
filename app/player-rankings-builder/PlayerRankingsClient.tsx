@@ -226,6 +226,8 @@ export default function PlayerRankingsClient() {
   const [isDownloading, setIsDownloading] = useState(false);
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [rankInput, setRankInput] = useState('');
+  const [isMobile, setIsMobile] = useState(false);
+  const [selectedMoveIndex, setSelectedMoveIndex] = useState<number | null>(null);
   const [showResetDialog, setShowResetDialog] = useState(false);
   const [history, setHistory] = useState<RankedPlayer[][]>([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
@@ -331,6 +333,16 @@ export default function PlayerRankingsClient() {
   // Load saved rankings on mount
   useEffect(() => {
     loadSavedRankings();
+  }, []);
+
+  // Detect mobile screen size for tap-to-move interface
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
   // Load initial top 100 players from API
@@ -572,6 +584,46 @@ export default function PlayerRankingsClient() {
     } else if (e.key === 'Escape') {
       setEditingIndex(null);
       setRankInput('');
+    }
+  };
+
+  // Mobile: Move player up one position
+  const moveUp = (index: number) => {
+    if (index <= 0) return;
+    const newRankings = [...rankings];
+    const item = newRankings[index];
+    newRankings.splice(index, 1);
+    newRankings.splice(index - 1, 0, item);
+    const updatedRankings = newRankings.map((item, idx) => ({
+      ...item,
+      rank: idx + 1
+    }));
+    saveToHistory(updatedRankings);
+    setSelectedMoveIndex(index - 1);
+  };
+
+  // Mobile: Move player down one position
+  const moveDown = (index: number) => {
+    if (index >= rankings.length - 1) return;
+    const newRankings = [...rankings];
+    const item = newRankings[index];
+    newRankings.splice(index, 1);
+    newRankings.splice(index + 1, 0, item);
+    const updatedRankings = newRankings.map((item, idx) => ({
+      ...item,
+      rank: idx + 1
+    }));
+    saveToHistory(updatedRankings);
+    setSelectedMoveIndex(index + 1);
+  };
+
+  // Mobile: Handle row tap to select for moving
+  const handleRowTap = (index: number) => {
+    if (!isMobile) return;
+    if (selectedMoveIndex === index) {
+      setSelectedMoveIndex(null);
+    } else {
+      setSelectedMoveIndex(index);
     }
   };
 
@@ -822,6 +874,7 @@ export default function PlayerRankingsClient() {
       if (e.key === 'Escape') {
         setShowActionsMenu(false);
         setShowAddPlayerDialog(false);
+        setSelectedMoveIndex(null);
       }
     };
 
@@ -891,7 +944,7 @@ export default function PlayerRankingsClient() {
           {/* Instructions */}
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
             <p className="text-sm text-blue-900">
-              <strong>How to use:</strong> Drag and drop players to reorder, click the rank number to move to a specific position, or use the X button to remove players. Use filters to view by position.
+              <strong>How to use:</strong> {isMobile ? 'Tap a player to select, then use the arrow buttons to move up or down. Tap the rank number to jump to a specific position.' : 'Drag and drop players to reorder, or click the rank number to move to a specific position.'} Use the X button to remove players. Use filters to view by position.
             </p>
           </div>
 
@@ -1094,23 +1147,28 @@ export default function PlayerRankingsClient() {
                 <tbody>
                   {filteredRankings.map((rankedPlayer, index) => {
                     const team = teamsById[rankedPlayer.player.teamId];
+                    const isSelectedForMove = selectedMoveIndex === index;
                     return (
                       <tr
                         key={rankedPlayer.player.id}
-                        draggable
-                        onDragStart={(e) => handleDragStart(e, index)}
-                        onDragEnd={handleDragEnd}
-                        onDragOver={(e) => handleDragOver(e, index)}
-                        onDragLeave={handleDragLeave}
-                        onDrop={(e) => handleDrop(e, index)}
+                        draggable={!isMobile}
+                        onDragStart={(e) => !isMobile && handleDragStart(e, index)}
+                        onDragEnd={(e) => !isMobile && handleDragEnd(e)}
+                        onDragOver={(e) => !isMobile && handleDragOver(e, index)}
+                        onDragLeave={() => !isMobile && handleDragLeave()}
+                        onDrop={(e) => !isMobile && handleDrop(e, index)}
+                        onClick={() => handleRowTap(index)}
                         className={`
-                          border-b border-gray-200 cursor-move transition-all duration-300 ease-in-out relative
+                          border-b border-gray-200 transition-all duration-300 ease-in-out relative
+                          ${isMobile ? 'cursor-pointer' : 'cursor-move'}
                           ${draggedIndex === index ? 'opacity-50 scale-95' : 'scale-100'}
                           ${dragOverIndex === index ? 'bg-blue-100 shadow-lg' : 'hover:bg-gray-50'}
+                          ${isSelectedForMove ? 'bg-blue-50 ring-2 ring-blue-400 ring-inset' : ''}
                           border-l-4
                         `}
                         style={{
-                          borderLeftColor: team?.primaryColor || '#0050A0'
+                          borderLeftColor: team?.primaryColor || '#0050A0',
+                          backgroundColor: isSelectedForMove ? '#eff6ff' : undefined
                         }}
                       >
                         {/* Rank Number (Editable) */}
@@ -1155,7 +1213,7 @@ export default function PlayerRankingsClient() {
                               playerName={rankedPlayer.player.name}
                               teamColor={team?.primaryColor || '#0050A0'}
                             />
-                            <div className="min-w-0">
+                            <div className="min-w-0 flex-1">
                               <div className="font-semibold text-gray-900 text-sm sm:text-base truncate">
                                 {rankedPlayer.player.name}
                               </div>
@@ -1163,6 +1221,37 @@ export default function PlayerRankingsClient() {
                                 {rankedPlayer.player.position} - {rankedPlayer.player.team}
                               </div>
                             </div>
+                            {/* Mobile: Up/Down arrows when row is selected */}
+                            {isMobile && isSelectedForMove && (
+                              <div className="flex gap-1 ml-auto">
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    moveUp(index);
+                                  }}
+                                  disabled={index === 0}
+                                  className="w-10 h-10 rounded-lg bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white flex items-center justify-center transition-colors"
+                                  aria-label="Move up"
+                                >
+                                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+                                  </svg>
+                                </button>
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    moveDown(index);
+                                  }}
+                                  disabled={index === rankings.length - 1}
+                                  className="w-10 h-10 rounded-lg bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white flex items-center justify-center transition-colors"
+                                  aria-label="Move down"
+                                >
+                                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                  </svg>
+                                </button>
+                              </div>
+                            )}
                           </div>
                         </td>
 
