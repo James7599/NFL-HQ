@@ -673,7 +673,7 @@ export default function PlayerProfileClient({ playerSlug }: Props) {
                 className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
               >
                 {player.gameLog.availableSeasons.map((year) => (
-                  <option key={year} value={year}>{year} Season</option>
+                  <option key={year} value={year}>{year}-{String(year + 1).slice(-2)}</option>
                 ))}
               </select>
             </div>
