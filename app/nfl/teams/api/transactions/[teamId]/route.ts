@@ -162,8 +162,8 @@ export async function GET(
       );
     }
 
-    // Fetch data from Sportskeeda API
-    const response = await fetch(
+    // Step 1: First call to get available months
+    const initialResponse = await fetch(
       'https://cf-gotham.sportskeeda.com/taxonomy/sport/nfl/transactions/2025',
       {
         headers: {
@@ -173,11 +173,43 @@ export async function GET(
       }
     );
 
-    if (!response.ok) {
-      throw new Error(`Sportskeeda API error: ${response.status}`);
+    if (!initialResponse.ok) {
+      throw new Error(`Sportskeeda API error: ${initialResponse.status}`);
     }
 
-    const responseData: SportsKeedaResponse = await response.json();
+    const initialData: SportsKeedaResponse = await initialResponse.json();
+
+    // Step 2: Get all available months and fetch full data
+    let responseData: SportsKeedaResponse = initialData;
+
+    if (initialData.months && Array.isArray(initialData.months) && initialData.months.length > 0) {
+      // Build months parameter string (format: MMYYYY,MMYYYY,...)
+      const monthCodes = initialData.months
+        .map((m: string | { month_of_transaction?: string }) => {
+          // Handle both string format and object format
+          const monthStr = typeof m === 'string' ? m : m.month_of_transaction;
+          return monthStr;
+        })
+        .filter(Boolean)
+        .join(',');
+
+      if (monthCodes) {
+        // Fetch with all months
+        const fullResponse = await fetch(
+          `https://cf-gotham.sportskeeda.com/taxonomy/sport/nfl/transactions/2025?months=${monthCodes}`,
+          {
+            headers: {
+              'User-Agent': 'Mozilla/5.0 (compatible; NFL-Team-Pages/1.0)',
+            },
+            next: { revalidate: 10800 }
+          }
+        );
+
+        if (fullResponse.ok) {
+          responseData = await fullResponse.json();
+        }
+      }
+    }
 
     if (!responseData || !responseData.data || !Array.isArray(responseData.data)) {
       return NextResponse.json(
