@@ -571,12 +571,12 @@ export default function PlayerProfileClient({ playerSlug }: Props) {
                 <>
                   <div className="flex items-center justify-center gap-3 mb-2">
                     <div
-                      className="w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold bg-[#0050A0] text-white border-2 border-[#0050A0]"
+                      className="w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold bg-blue-100 text-blue-700 border-2 border-blue-300"
                     >
                       {player.pfsnImpact.grade}
                     </div>
                     <div className="text-left">
-                      <div className="text-2xl font-bold text-[#0050A0]">
+                      <div className="text-2xl font-bold text-blue-600">
                         {player.pfsnImpact.score}
                       </div>
                     </div>
