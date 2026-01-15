@@ -34,11 +34,6 @@ interface TeamWithRecord extends TeamData {
   conferenceRank?: string;
 }
 
-interface TeamStats {
-  ppg?: string;
-  oppPpg?: string;
-}
-
 interface RankedTeam {
   rank: number;
   team: TeamWithRecord;
@@ -157,25 +152,6 @@ export default function PowerRankingsClient() {
     fetchStandings();
   }, [standingsLoaded]);
 
-  // Fetch team stats for all teams in a single bulk request
-  useEffect(() => {
-    async function fetchAllTeamStats() {
-      try {
-        const response = await fetch(getApiPath('api/nfl/team-stats/all'));
-        if (!response.ok) {
-          throw new Error(`Failed to fetch team stats: ${response.status}`);
-        }
-
-        const data = await response.json();
-        setTeamStats(data.stats || {});
-      } catch (error) {
-        console.error('Failed to fetch team stats:', error);
-        setTeamStats({});
-      }
-    }
-
-    fetchAllTeamStats();
-  }, []);
 
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
@@ -187,8 +163,7 @@ export default function PowerRankingsClient() {
   const [showResetDialog, setShowResetDialog] = useState(false);
   const [history, setHistory] = useState<RankedTeam[][]>([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
-  const [comparisonTeams, setComparisonTeams] = useState<number[]>([]);
-  const [showActionsMenu, setShowActionsMenu] = useState(false);
+    const [showActionsMenu, setShowActionsMenu] = useState(false);
   const [logoDataUrls, setLogoDataUrls] = useState<Record<string, string>>({});
   const [logoImages, setLogoImages] = useState<Record<string, HTMLImageElement>>({});
   const [logosLoaded, setLogosLoaded] = useState(false);
@@ -207,8 +182,6 @@ export default function PowerRankingsClient() {
   const [savedRankings, setSavedRankings] = useState<Array<{ name: string; date: string; rankings: RankedTeam[] }>>([]);
   const [saveNameInput, setSaveNameInput] = useState('');
 
-  // Team stats state
-  const [teamStats, setTeamStats] = useState<Record<string, TeamStats>>({});
 
   // Helper function to save to history
   const saveToHistory = (newRankings: RankedTeam[]) => {
@@ -842,18 +815,6 @@ export default function PowerRankingsClient() {
     setShowResetDialog(false);
   };
 
-  // Handle team comparison toggle
-  const handleTeamClick = (index: number) => {
-    if (comparisonTeams.includes(index)) {
-      setComparisonTeams(comparisonTeams.filter(i => i !== index));
-    } else if (comparisonTeams.length < 4) {
-      setComparisonTeams([...comparisonTeams, index]);
-    } else {
-      // Replace the first team if already have 4
-      setComparisonTeams([...comparisonTeams.slice(1), index]);
-    }
-  };
-
   // Keyboard shortcuts for undo/redo
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -867,9 +828,8 @@ export default function PowerRankingsClient() {
         e.preventDefault();
         redo();
       }
-      // Escape to clear comparison and mobile selection
+      // Escape to close menus and clear mobile selection
       if (e.key === 'Escape') {
-        setComparisonTeams([]);
         setShowActionsMenu(false);
         setSelectedMoveIndex(null);
       }
@@ -931,77 +891,10 @@ export default function PowerRankingsClient() {
           {/* Instructions - shown immediately for better LCP */}
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
             <p className="text-sm text-blue-900">
-              <strong>How to use:</strong> {isMobile ? 'Tap a team to select it, then use the arrow buttons to move it up or down. Tap the rank number to jump to a specific position.' : 'Drag and drop teams to reorder, or click the rank number to type a new position.'} Click team logos to compare teams.
+              <strong>How to use:</strong> {isMobile ? 'Tap a team to select it, then use the arrow buttons to move it up or down. Tap the rank number to jump to a specific position.' : 'Drag and drop teams to reorder, or click the rank number to type a new position.'}
             </p>
           </div>
 
-          {/* Comparison Mode Banner - min-height reserves space to prevent CLS */}
-          <div className={`transition-all duration-200 ${standingsLoaded && comparisonTeams.length > 0 ? 'min-h-[60px]' : ''}`}>
-          {standingsLoaded && comparisonTeams.length > 0 && (
-            <div className="bg-purple-50 border border-purple-200 rounded-lg p-4 mb-6">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <svg className="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                  </svg>
-                  <span className="text-sm font-semibold text-purple-900">
-                    {comparisonTeams.length === 1 ? 'Select more teams to compare (up to 4)' : `Comparing ${comparisonTeams.length} teams`}
-                  </span>
-                  {comparisonTeams.length >= 2 && (
-                    <span className="text-sm text-purple-700">
-                      {comparisonTeams.map((idx, i) =>
-                        `${i > 0 ? ' vs ' : ''}${rankings[idx].team.fullName}`
-                      ).join('')}
-                    </span>
-                  )}
-                </div>
-                <button
-                  onClick={() => setComparisonTeams([])}
-                  className="text-purple-600 hover:text-purple-800 text-sm font-medium"
-                >
-                  Clear
-                </button>
-              </div>
-              {comparisonTeams.length >= 2 && (
-                <div className="mt-4 grid grid-cols-2 lg:grid-cols-4 gap-3">
-                  {comparisonTeams.map((teamIndex) => {
-                    const team = rankings[teamIndex].team;
-                    const stats = teamStats[team.id] || {};
-                    return (
-                      <div key={teamIndex} className="bg-white rounded-lg p-3 border border-purple-200">
-                        <div className="flex items-center gap-2 mb-2">
-                          <img src={team.logoUrl} alt={team.name} width={32} height={32} className="w-8 h-8 object-contain" />
-                          <div className="min-w-0 flex-1">
-                            <div className="font-bold text-gray-900 text-sm truncate">{team.fullName}</div>
-                            <div className="text-xs text-gray-600">Rank #{rankings[teamIndex].rank}</div>
-                          </div>
-                        </div>
-                        <div className="space-y-0.5 text-xs">
-                          <div className="flex justify-between">
-                            <span className="text-gray-600">Record:</span>
-                            <span className="font-semibold">{team.liveRecord || team.record}</span>
-                          </div>
-                          <div className="flex justify-between">
-                            <span className="text-gray-600">Conf. Rank:</span>
-                            <span className="font-semibold">{team.conferenceRank}</span>
-                          </div>
-                          <div className="flex justify-between">
-                            <span className="text-gray-600">PPG:</span>
-                            <span className="font-semibold">{stats.ppg || '-'}</span>
-                          </div>
-                          <div className="flex justify-between">
-                            <span className="text-gray-600">Opp PPG:</span>
-                            <span className="font-semibold">{stats.oppPpg || '-'}</span>
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-          )}
-          </div>
 
           {/* Loading State */}
           {!standingsLoaded && (
@@ -1199,7 +1092,6 @@ export default function PowerRankingsClient() {
                 </thead>
                 <tbody>
                   {rankings.map((rankedTeam, index) => {
-                    const isComparing = comparisonTeams.includes(index);
                     const isSelectedForMove = selectedMoveIndex === index;
                     return (
                     <tr
@@ -1212,16 +1104,15 @@ export default function PowerRankingsClient() {
                       onDrop={(e) => !isMobile && handleDrop(e, index)}
                       onClick={() => handleRowTap(index)}
                       className={`
-                        border-b border-gray-200 transition-all duration-300 ease-in-out relative
+                        border-b border-gray-200 transition-all duration-300 ease-in-out relative border-l-4
                         ${isMobile ? 'cursor-pointer' : 'cursor-move'}
                         ${draggedIndex === index ? 'opacity-50 scale-95' : 'scale-100'}
                         ${dragOverIndex === index ? 'bg-blue-100 shadow-lg' : 'hover:bg-gray-50'}
-                        ${isComparing ? 'bg-purple-50 border-l-4' : 'border-l-4'}
                         ${isSelectedForMove ? 'bg-blue-50 ring-2 ring-blue-400 ring-inset' : ''}
                       `}
                       style={{
-                        borderLeftColor: isComparing ? '#9333ea' : rankedTeam.team.primaryColor,
-                        backgroundColor: isSelectedForMove ? '#eff6ff' : isComparing ? '#faf5ff' : undefined
+                        borderLeftColor: rankedTeam.team.primaryColor,
+                        backgroundColor: isSelectedForMove ? '#eff6ff' : undefined
                       }}
                     >
                       {/* Rank Number (Editable) */}
@@ -1260,23 +1151,11 @@ export default function PowerRankingsClient() {
                       {/* Team Info */}
                       <td className="px-2 sm:px-4 py-3 sm:py-4">
                         <div className="flex items-center gap-2 sm:gap-3 relative">
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleTeamClick(index);
-                            }}
-                            className={`
-                              w-8 h-8 sm:w-10 sm:h-10 rounded-lg transition-all flex-shrink-0
-                              ${isComparing ? 'ring-4 ring-purple-500 bg-purple-100' : 'hover:ring-2 hover:ring-gray-300'}
-                            `}
-                            title={isComparing ? 'Click to remove from comparison' : 'Click to compare teams'}
-                          >
-                            <img
-                              src={rankedTeam.team.logoUrl}
-                              alt={rankedTeam.team.name}
-                              className="w-8 h-8 sm:w-10 sm:h-10 object-contain"
-                            />
-                          </button>
+                          <img
+                            src={rankedTeam.team.logoUrl}
+                            alt={rankedTeam.team.name}
+                            className="w-8 h-8 sm:w-10 sm:h-10 object-contain flex-shrink-0"
+                          />
                           <div className="min-w-0 flex-1">
                             <div className="font-semibold text-gray-900 text-sm sm:text-base truncate">
                               {rankedTeam.team.fullName}
