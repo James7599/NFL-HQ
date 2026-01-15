@@ -95,6 +95,13 @@ export default function StatsPageContent() {
   const [selectedPlayer, setSelectedPlayer] = useState<PlayerFullStats | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  // Image error tracking
+  const [imageErrors, setImageErrors] = useState<Set<string>>(new Set());
+
+  const handleImageError = (playerSlug: string) => {
+    setImageErrors(prev => new Set(prev).add(playerSlug));
+  };
+
   // Reset display limit when category changes
   useEffect(() => {
     setDisplayLimit(25);
@@ -380,9 +387,32 @@ export default function StatsPageContent() {
                               <Link
                                 href={`/players/${player.playerSlug}`}
                                 onClick={(e) => e.stopPropagation()}
-                                className="font-semibold text-base text-[#0050A0] hover:underline"
+                                className="flex items-center gap-2 sm:gap-3 group"
                               >
-                                {player.name}
+                                {/* Player Image */}
+                                {!imageErrors.has(player.playerSlug) ? (
+                                  <img
+                                    src={`https://a.espncdn.com/combiner/i?img=/i/headshots/nfl/players/full/${player.playerId}.png&w=80&h=58`}
+                                    alt={player.name}
+                                    className="w-8 h-8 sm:w-10 sm:h-10 rounded-full object-cover bg-gray-100 flex-shrink-0"
+                                    onError={() => handleImageError(player.playerSlug)}
+                                  />
+                                ) : (
+                                  <div
+                                    className="w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center flex-shrink-0 bg-gray-100"
+                                    style={{ backgroundColor: team ? `${team.primaryColor}20` : '#f3f4f6' }}
+                                  >
+                                    <span
+                                      className="font-semibold text-xs sm:text-sm"
+                                      style={{ color: team?.primaryColor || '#6b7280' }}
+                                    >
+                                      {player.name.split(' ').map(n => n[0]).join('')}
+                                    </span>
+                                  </div>
+                                )}
+                                <span className="font-semibold text-sm sm:text-base text-[#0050A0] group-hover:underline">
+                                  {player.name}
+                                </span>
                               </Link>
                             </td>
 
@@ -541,14 +571,23 @@ export default function StatsPageContent() {
                                 }`}>
                                   {idx + 1}
                                 </span>
-                                {team && (
+                                {/* Player headshot */}
+                                {!imageErrors.has(player.playerSlug) ? (
                                   <img
-                                    src={team.logoUrl}
-                                    alt={team.abbreviation}
-
-
-                                    className="w-4 h-4 flex-shrink-0"
+                                    src={`https://a.espncdn.com/combiner/i?img=/i/headshots/nfl/players/full/${player.playerId}.png&w=80&h=58`}
+                                    alt={player.name}
+                                    className="w-6 h-6 rounded-full object-cover bg-gray-100 flex-shrink-0"
+                                    onError={() => handleImageError(player.playerSlug)}
                                   />
+                                ) : (
+                                  <div
+                                    className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0"
+                                    style={{ backgroundColor: team ? `${team.primaryColor}20` : '#f3f4f6' }}
+                                  >
+                                    <span className="font-semibold text-[8px]" style={{ color: team?.primaryColor || '#6b7280' }}>
+                                      {player.name.split(' ').map(n => n[0]).join('')}
+                                    </span>
+                                  </div>
                                 )}
                                 <span className="text-xs font-medium text-gray-900 truncate flex-1">{player.name}</span>
                                 <span className="text-xs font-bold text-[#0050A0]">{displayValue}</span>
