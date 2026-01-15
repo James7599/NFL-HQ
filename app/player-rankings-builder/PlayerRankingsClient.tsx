@@ -913,12 +913,15 @@ export default function PlayerRankingsClient() {
       {/* Main Content */}
       <main className="flex-1 lg:ml-64 min-w-0">
         {/* Header */}
-        <div className="bg-[#0050A0] text-white pt-[57px] lg:pt-0 pb-4 lg:pb-6">
+        <div
+          style={{ background: 'linear-gradient(to right, rgba(0,0,0,0.35), rgba(0,0,0,0)), #0050A0' }}
+          className="text-white pt-[57px] lg:pt-0 pb-4 lg:pb-6"
+        >
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 pt-4 lg:pt-10">
             <h1 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold mb-3">
               NFL Player Rankings Builder
             </h1>
-            <p className="text-base sm:text-lg lg:text-xl xl:text-2xl opacity-90">
+            <p className="text-base sm:text-lg lg:text-xl xl:text-2xl text-white/80">
               Create your own custom NFL player rankings
             </p>
           </div>
