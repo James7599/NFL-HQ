@@ -175,7 +175,7 @@ export default function SalaryCapTab({ team }: SalaryCapTabProps) {
               <div className="text-center">
                 <h4 className="text-sm font-semibold text-gray-700 mb-2 uppercase tracking-wide">Salary Cap</h4>
                 <div className="text-2xl font-bold text-gray-900 mb-1">${(salaryCapData.teamSummary.salaryCap / 1000000).toFixed(1)}M</div>
-                <div className="text-sm text-gray-600">2025 Season</div>
+                <div className="text-sm text-gray-600">2026 Season</div>
               </div>
             </div>
 
@@ -213,10 +213,10 @@ export default function SalaryCapTab({ team }: SalaryCapTabProps) {
           </div>
         </div>
 
-        {/* 2025 Active Roster Cap */}
+        {/* 2026 Active Roster Cap */}
         <div className="bg-white rounded-xl p-6 shadow-sm">
           <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 gap-4">
-            <h3 className="text-lg font-semibold text-gray-800">2025 Active Roster Cap</h3>
+            <h3 className="text-lg font-semibold text-gray-800">2026 Active Roster Cap</h3>
             <button
               onClick={() => setShowPotentialSavings(!showPotentialSavings)}
               className={`px-4 py-2 rounded-lg font-medium transition-colors border ${
