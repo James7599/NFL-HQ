@@ -341,9 +341,9 @@ img {
 }
 
 .pfsn-footer-container {
-  max-width: 1100px;
+  max-width: 100%;
   margin: 0 auto;
-  padding: 0 30px 0 80px;
+  padding: 0 60px;
 }
 
 .footer-columns {
