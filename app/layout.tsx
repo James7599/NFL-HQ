@@ -8,6 +8,7 @@ import StructuredData from '@/components/StructuredData';
 import { WebVitals } from '@/components/WebVitals';
 import VideoPlayerScript from '@/components/VideoPlayerScript';
 import NFLScoreTicker from '@/components/NFLScoreTicker';
+import Footer from '@/components/Footer';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://profootballnetwork.com/nfl-hq'),
@@ -128,6 +129,7 @@ export default function RootLayout({
         <WebVitals />
         <VideoPlayerScript />
         {children}
+        <Footer />
       </body>
     </html>
   );
