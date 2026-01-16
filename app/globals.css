@@ -311,24 +311,12 @@ img {
   }
 }
 
-/* ========================================
-   PFSN Footer Styles
-   ======================================== */
-
-.pfsn-footer *,
-.pfsn-footer *::before,
-.pfsn-footer *::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
+/* PFSN Footer */
 .pfsn-footer {
   background: #000000;
   color: white;
   padding: 70px 0 40px;
   margin-top: 0;
-  margin-bottom: 40px;
   width: 100%;
 }
 
@@ -341,9 +329,9 @@ img {
 }
 
 .pfsn-footer-container {
-  max-width: 100%;
+  max-width: 1373px;
   margin: 0 auto;
-  padding: 0 60px;
+  padding: 0 30px;
 }
 
 .footer-columns {
@@ -450,17 +438,7 @@ img {
   line-height: 1.6;
 }
 
-/* Footer Responsive Styles */
-@media (max-width: 1200px) {
-  .footer-column-title {
-    font-size: 16px;
-  }
-
-  .footer-links a {
-    font-size: 16px;
-  }
-}
-
+/* Responsive Footer */
 @media (max-width: 1024px) {
   .footer-columns {
     grid-template-columns: repeat(2, 1fr);
@@ -489,15 +467,5 @@ img {
 
   .footer-links li {
     margin-bottom: 8px;
-  }
-}
-
-@media (max-width: 480px) {
-  .footer-column-title {
-    font-size: 16px;
-  }
-
-  .footer-links a {
-    font-size: 16px;
   }
 }
