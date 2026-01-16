@@ -6,9 +6,17 @@ iframe[id^="google_ads_iframe"] {
 
 /* Raptive Header Ad Restriction */
 .raptive-pfn-header-90 {
+  min-height: 105px;
   height: 90px;
   max-height: 90px;
   overflow: hidden;
+}
+
+/* Raptive Footer Message - push to end of page content */
+.adthrive-footer-message {
+  order: 9999;
+  margin-bottom: 100px;
+  width: 100%;
 }
 
 :root {
@@ -27,6 +35,10 @@ body {
   -moz-osx-font-smoothing: grayscale;
   /* Prevent layout shifts during font loading */
   font-display: swap;
+  /* Flex container to allow reordering of injected elements */
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
 
 @layer utilities {
