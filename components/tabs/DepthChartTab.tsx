@@ -1,17 +1,13 @@
 'use client';
 
 import useSWR from 'swr';
+import Link from 'next/link';
 import LayoutStabilizer from '@/components/LayoutStabilizer';
 import { SWRErrorFallback } from '@/components/ErrorBoundary';
 import { TeamData } from '@/data/teams';
 import { getApiPath } from '@/utils/api';
 import { getContrastTextColor } from '@/utils/colorHelpers';
 import { fetcher, defaultSWROptions } from '@/lib/fetcher';
-
-// Helper function to generate PFSN URL
-const getPFSNUrl = (playerName: string) => {
-  return `https://www.profootballnetwork.com/players/${playerName.toLowerCase().replace(/[.\s]+/g, '-').replace(/[^\w-]/g, '').replace(/-+/g, '-')}/`;
-};
 
 interface DepthChartPlayer {
   name: string;
@@ -75,60 +71,52 @@ const PositionTable = ({
                 <td className="p-3 font-medium text-gray-900">{position.abbreviation}</td>
                 <td className="p-3">
                   {starter ? (
-                    <a
-                      href={getPFSNUrl(starter.name)}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                    <Link
+                      href={`/nfl-hq/players/${starter.slug}`}
                       className="font-medium hover:underline cursor-pointer"
                       style={{ color: team.primaryColor }}
                     >
                       {starter.name}
-                    </a>
+                    </Link>
                   ) : (
                     <span className="text-gray-600">-</span>
                   )}
                 </td>
                 <td className="p-3">
                   {second ? (
-                    <a
-                      href={getPFSNUrl(second.name)}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                    <Link
+                      href={`/nfl-hq/players/${second.slug}`}
                       className="font-medium hover:underline cursor-pointer"
                       style={{ color: team.primaryColor }}
                     >
                       {second.name}
-                    </a>
+                    </Link>
                   ) : (
                     <span className="text-gray-600">-</span>
                   )}
                 </td>
                 <td className="p-3">
                   {third ? (
-                    <a
-                      href={getPFSNUrl(third.name)}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                    <Link
+                      href={`/nfl-hq/players/${third.slug}`}
                       className="font-medium hover:underline cursor-pointer"
                       style={{ color: team.primaryColor }}
                     >
                       {third.name}
-                    </a>
+                    </Link>
                   ) : (
                     <span className="text-gray-600">-</span>
                   )}
                 </td>
                 <td className="p-3">
                   {fourth ? (
-                    <a
-                      href={getPFSNUrl(fourth.name)}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                    <Link
+                      href={`/nfl-hq/players/${fourth.slug}`}
                       className="font-medium hover:underline cursor-pointer"
                       style={{ color: team.primaryColor }}
                     >
                       {fourth.name}
-                    </a>
+                    </Link>
                   ) : (
                     <span className="text-gray-600">-</span>
                   )}

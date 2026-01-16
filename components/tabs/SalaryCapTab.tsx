@@ -2,17 +2,13 @@
 
 import { useState, useMemo } from 'react';
 import useSWR from 'swr';
+import Link from 'next/link';
 import LayoutStabilizer from '@/components/LayoutStabilizer';
 import { SWRErrorFallback } from '@/components/ErrorBoundary';
 import { TeamData } from '@/data/teams';
 import { getApiPath } from '@/utils/api';
 import { getContrastTextColor } from '@/utils/colorHelpers';
 import { fetcher, defaultSWROptions } from '@/lib/fetcher';
-
-// Helper function to generate PFSN URL
-const getPFSNUrl = (playerName: string) => {
-  return `https://www.profootballnetwork.com/players/${playerName.toLowerCase().replace(/[.\s]+/g, '-').replace(/[^\w-]/g, '').replace(/-+/g, '-')}/`;
-};
 
 interface CapPlayer {
   name: string;
@@ -296,15 +292,13 @@ export default function SalaryCapTab({ team }: SalaryCapTabProps) {
                 {sortedData.map((player, index) => (
                   <tr key={player.name} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
                     <td className="p-3 whitespace-nowrap">
-                      <a
-                        href={getPFSNUrl(player.name)}
-                        target="_blank"
-                        rel="noopener noreferrer"
+                      <Link
+                        href={`/nfl-hq/players/${player.slug}`}
                         className="font-medium hover:underline cursor-pointer"
                         style={{ color: team.primaryColor }}
                       >
                         {player.name}
-                      </a>
+                      </Link>
                     </td>
                     <td className="p-3 text-gray-900 font-medium whitespace-nowrap">
                       ${(player.capHit / 1000000).toFixed(1)}M

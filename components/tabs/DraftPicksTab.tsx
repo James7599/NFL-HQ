@@ -1,15 +1,16 @@
 'use client';
 
 import { useState, useMemo, useEffect, useCallback } from 'react';
+import Link from 'next/link';
 import LayoutStabilizer from '@/components/LayoutStabilizer';
 import { TeamData } from '@/data/teams';
 import { getApiPath } from '@/utils/api';
 import { getContrastTextColor } from '@/utils/colorHelpers';
 import futureDraftPicksData from '@/data/futureDraftPicks.json';
 
-// Helper function to generate PFSN URL
-const getPFSNUrl = (playerName: string) => {
-  return `https://www.profootballnetwork.com/players/${playerName.toLowerCase().replace(/[.\s]+/g, '-').replace(/[^\w-]/g, '').replace(/-+/g, '-')}/`;
+// Helper function to generate player slug from name
+const getPlayerSlug = (playerName: string) => {
+  return playerName.toLowerCase().replace(/[.\s]+/g, '-').replace(/[^\w-]/g, '').replace(/-+/g, '-');
 };
 
 // Helper function to format trade notes
@@ -324,15 +325,13 @@ export default function DraftPicksTab({ team }: DraftPicksTabProps) {
                               {isFuturePick ? (
                                 <span className="font-medium text-gray-900">TBD</span>
                               ) : (
-                                <a
-                                  href={getPFSNUrl(pick.name)}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
+                                <Link
+                                  href={`/nfl-hq/players/${getPlayerSlug(pick.name)}`}
                                   className="font-medium hover:underline cursor-pointer"
                                   style={{ color: team.primaryColor }}
                                 >
                                   {pick.name}
-                                </a>
+                                </Link>
                               )}
                             </td>
                             <td className="p-3 text-gray-700">{pick.position}</td>

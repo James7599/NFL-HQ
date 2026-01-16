@@ -531,8 +531,7 @@ export default function PlayerProfileClient({ playerSlug }: Props) {
                   />
                 ) : (
                   <div
-                    className="w-full h-full rounded-full flex items-center justify-center text-3xl lg:text-4xl font-bold"
-                    style={{ backgroundColor: player.team.secondaryColor || '#e5e7eb', color: player.team.primaryColor }}
+                    className="w-full h-full rounded-full flex items-center justify-center text-3xl lg:text-4xl font-bold bg-gray-200 text-gray-600"
                   >
                     {getInitials(player.name)}
                   </div>
