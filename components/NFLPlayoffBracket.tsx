@@ -343,12 +343,17 @@ export default function NFLPlayoffBracket() {
         const sortedWinners = [...wcWinners].sort((a, b) => a.seed - b.seed);
 
         // Lowest seed (highest number) plays the 1 seed
+        // Only set if game is not already completed (preserve manual entries)
         const lowestSeed = sortedWinners[2]; // highest seed number
-        newData[`${conference}-div-1`].team2 = { seed: lowestSeed.seed, name: lowestSeed.name, teamId: lowestSeed.teamId };
+        if (!newData[`${conference}-div-1`].completed) {
+          newData[`${conference}-div-1`].team2 = { seed: lowestSeed.seed, name: lowestSeed.name, teamId: lowestSeed.teamId };
+        }
 
         // Other two winners play each other
-        newData[`${conference}-div-2`].team1 = { seed: sortedWinners[0].seed, name: sortedWinners[0].name, teamId: sortedWinners[0].teamId };
-        newData[`${conference}-div-2`].team2 = { seed: sortedWinners[1].seed, name: sortedWinners[1].name, teamId: sortedWinners[1].teamId };
+        if (!newData[`${conference}-div-2`].completed) {
+          newData[`${conference}-div-2`].team1 = { seed: sortedWinners[0].seed, name: sortedWinners[0].name, teamId: sortedWinners[0].teamId };
+          newData[`${conference}-div-2`].team2 = { seed: sortedWinners[1].seed, name: sortedWinners[1].name, teamId: sortedWinners[1].teamId };
+        }
       }
     };
 
