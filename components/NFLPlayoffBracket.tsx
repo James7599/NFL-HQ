@@ -106,11 +106,11 @@ const initialPlayoffData: { [key: string]: Matchup } = {
   // NFC Divisional Round
   'nfc-div-1': {
     id: 'nfc-div-1',
-    team1: { seed: 1, name: 'Seahawks', teamId: 'seattle-seahawks' },
-    team2: null,
+    team1: { seed: 1, name: 'Seahawks', teamId: 'seattle-seahawks', score: 41, isWinner: true },
+    team2: { seed: 6, name: '49ers', teamId: 'san-francisco-49ers', score: 6 },
     round: 'Divisional',
     date: 'Sat, Jan 17',
-    completed: false,
+    completed: true,
   },
   'nfc-div-2': {
     id: 'nfc-div-2',
