@@ -89,11 +89,11 @@ const initialPlayoffData: { [key: string]: Matchup } = {
   // AFC Divisional Round
   'afc-div-1': {
     id: 'afc-div-1',
-    team1: { seed: 1, name: 'Broncos', teamId: 'denver-broncos' },
-    team2: null,
+    team1: { seed: 1, name: 'Broncos', teamId: 'denver-broncos', score: 33, isWinner: true },
+    team2: { seed: 6, name: 'Bills', teamId: 'buffalo-bills', score: 30 },
     round: 'Divisional',
     date: 'Sat, Jan 17',
-    completed: false,
+    completed: true,
   },
   'afc-div-2': {
     id: 'afc-div-2',
