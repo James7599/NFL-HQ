@@ -4,7 +4,7 @@ import { useState } from 'react';
 import NFLTeamsSidebar from '@/components/NFLTeamsSidebar';
 
 export default function SuperBowlLXContent() {
-  const [activeMatchup, setActiveMatchup] = useState<'seahawks-offense' | 'broncos-offense'>('seahawks-offense');
+  const [activeMatchup, setActiveMatchup] = useState<'seahawks-offense' | 'patriots-offense'>('seahawks-offense');
 
   return (
     <div className="flex min-h-screen bg-gray-50">
@@ -53,15 +53,15 @@ export default function SuperBowlLXContent() {
           {/* Team Logos */}
           <div className="flex items-center justify-center gap-6 sm:gap-10 lg:gap-16 mb-6">
             <img
-              src="https://staticd.profootballnetwork.com/skm/assets/nfl-mockup/team-logos/Broncos.png"
-              alt="Denver Broncos"
+              src="/nfl-hq/new-england-patriots.png"
+              alt="New England Patriots"
               className="w-32 h-32 sm:w-44 sm:h-44 lg:w-56 lg:h-56 object-contain"
             />
             <span className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-700">
               vs.
             </span>
             <img
-              src="https://staticd.profootballnetwork.com/skm/assets/nfl-mockup/team-logos/Seahawks.png"
+              src="/nfl-hq/seattle-seahawks-sb.png"
               alt="Seattle Seahawks"
               className="w-32 h-32 sm:w-44 sm:h-44 lg:w-56 lg:h-56 object-contain"
             />
@@ -117,44 +117,44 @@ export default function SuperBowlLXContent() {
             {/* Stats Table - Center */}
             <div className="flex-1 w-full rounded-lg overflow-hidden">
                 <div className="flex">
-                  <div className="flex-1 p-3 text-center text-gray-900 bg-white"></div>
+                  <div className="flex-1 p-3 text-center text-gray-900 bg-white">14-3</div>
                   <div className="flex-1 p-3 text-center font-semibold text-white bg-[#0050A0] max-w-[180px] lg:max-w-[250px] min-[1600px]:max-w-[300px]">2025 Record</div>
-                  <div className="flex-1 p-3 text-center text-gray-900 bg-white"></div>
+                  <div className="flex-1 p-3 text-center text-gray-900 bg-white">14-3</div>
                 </div>
                 <div className="flex">
-                  <div className="flex-1 p-3 text-center text-gray-900 bg-gray-100"></div>
+                  <div className="flex-1 p-3 text-center text-gray-900 bg-gray-100">44.2%</div>
                   <div className="flex-1 p-3 text-center font-semibold text-white bg-[#0050A0] max-w-[180px] lg:max-w-[250px] min-[1600px]:max-w-[300px]">PFSN Projected Win Rate</div>
-                  <div className="flex-1 p-3 text-center text-gray-900 bg-gray-100"></div>
+                  <div className="flex-1 p-3 text-center text-gray-900 bg-gray-100">55.8%</div>
                 </div>
                 <div className="flex">
-                  <div className="flex-1 p-3 text-center text-gray-900 bg-white"></div>
+                  <div className="flex-1 p-3 text-center text-gray-900 bg-white">7th</div>
                   <div className="flex-1 p-3 text-center font-semibold text-white bg-[#0050A0] max-w-[180px] lg:max-w-[250px] min-[1600px]:max-w-[300px]">Power Ranking</div>
-                  <div className="flex-1 p-3 text-center text-gray-900 bg-white"></div>
+                  <div className="flex-1 p-3 text-center text-gray-900 bg-white">1st</div>
                 </div>
                 <div className="flex">
-                  <div className="flex-1 p-3 text-center text-gray-900 bg-gray-100"></div>
+                  <div className="flex-1 p-3 text-center text-gray-900 bg-gray-100">2nd (86.6 B)</div>
                   <div className="flex-1 p-3 text-center font-semibold text-white bg-[#0050A0] max-w-[180px] lg:max-w-[250px] min-[1600px]:max-w-[300px]">Offense</div>
-                  <div className="flex-1 p-3 text-center text-gray-900 bg-gray-100"></div>
+                  <div className="flex-1 p-3 text-center text-gray-900 bg-gray-100">9th (79.8 C+)</div>
                 </div>
                 <div className="flex">
-                  <div className="flex-1 p-3 text-center text-gray-900 bg-white">Stidham (N/A)</div>
+                  <div className="flex-1 p-3 text-center text-gray-900 bg-white">Maye 2nd (91.1 A-)</div>
                   <div className="flex-1 p-3 text-center font-semibold text-white bg-[#0050A0] max-w-[180px] lg:max-w-[250px] min-[1600px]:max-w-[300px]">Quarterback</div>
                   <div className="flex-1 p-3 text-center text-gray-900 bg-white">Darnold 13th (78.7 C+)</div>
                 </div>
                 <div className="flex">
-                  <div className="flex-1 p-3 text-center text-gray-900 bg-gray-100"></div>
+                  <div className="flex-1 p-3 text-center text-gray-900 bg-gray-100">12th (74.5 C)</div>
                   <div className="flex-1 p-3 text-center font-semibold text-white bg-[#0050A0] max-w-[180px] lg:max-w-[250px] min-[1600px]:max-w-[300px]">Offensive Line</div>
-                  <div className="flex-1 p-3 text-center text-gray-900 bg-gray-100"></div>
+                  <div className="flex-1 p-3 text-center text-gray-900 bg-gray-100">17th (72.0 C)</div>
                 </div>
                 <div className="flex">
-                  <div className="flex-1 p-3 text-center text-gray-900 bg-white"></div>
+                  <div className="flex-1 p-3 text-center text-gray-900 bg-white">12th (78.2 C+)</div>
                   <div className="flex-1 p-3 text-center font-semibold text-white bg-[#0050A0] max-w-[180px] lg:max-w-[250px] min-[1600px]:max-w-[300px]">Defense</div>
-                  <div className="flex-1 p-3 text-center text-gray-900 bg-white"></div>
+                  <div className="flex-1 p-3 text-center text-gray-900 bg-white">3rd (88.4 B+)</div>
                 </div>
                 <div className="flex">
-                  <div className="flex-1 p-3 text-center text-gray-900 bg-gray-100"></div>
+                  <div className="flex-1 p-3 text-center text-gray-900 bg-gray-100">20th (73.9 C-)</div>
                   <div className="flex-1 p-3 text-center font-semibold text-white bg-[#0050A0] max-w-[180px] lg:max-w-[250px] min-[1600px]:max-w-[300px]">Special Teams</div>
-                  <div className="flex-1 p-3 text-center text-gray-900 bg-gray-100"></div>
+                  <div className="flex-1 p-3 text-center text-gray-900 bg-gray-100">2nd (90.9 A-)</div>
                 </div>
             </div>
 
@@ -190,14 +190,10 @@ export default function SuperBowlLXContent() {
                 </div>
                 <div>
                   <span className="font-semibold text-gray-700">Referee:</span>
-                  <span className="text-gray-600 ml-2">TBD</span>
+                  <span className="text-gray-600 ml-2">Shawn Smith</span>
                 </div>
                 <div>
                   <span className="font-semibold text-gray-700">Weather:</span>
-                  <span className="text-gray-600 ml-2">TBD</span>
-                </div>
-                <div>
-                  <span className="font-semibold text-gray-700">Spread:</span>
                   <span className="text-gray-600 ml-2">TBD</span>
                 </div>
               </div>
@@ -206,28 +202,28 @@ export default function SuperBowlLXContent() {
 
           {/* NFL Field Diagram with Coach Boxes on sides (1400px+) */}
           <div className="mt-[50px] flex gap-4">
-            {/* Broncos Coaches Box - Left side on 1400px+ */}
+            {/* Patriots Coaches Box - Left side on 1400px+ */}
             <div className="hidden min-[1400px]:block w-[375px] flex-shrink-0">
               <div className="rounded-lg overflow-hidden border border-gray-200 sticky top-4">
                 <div className="bg-[#0050A0] text-white px-4 py-3">
-                  <h3 className="font-semibold text-center">Broncos Coaches</h3>
+                  <h3 className="font-semibold text-center">Patriots Coaches</h3>
                 </div>
                 <div className="bg-white p-4 space-y-3">
                   <div>
                     <span className="font-semibold text-gray-700">Head Coach:</span>
-                    <span className="text-gray-600 ml-2">Sean Payton</span>
+                    <span className="text-gray-600 ml-2">Mike Vrabel</span>
                   </div>
                   <div>
                     <span className="font-semibold text-gray-700">Offensive Coordinator:</span>
-                    <span className="text-gray-600 ml-2">Joe Lombardi</span>
+                    <span className="text-gray-600 ml-2">Josh McDaniels</span>
                   </div>
                   <div>
                     <span className="font-semibold text-gray-700">Defensive Coordinator:</span>
-                    <span className="text-gray-600 ml-2">Vance Joseph</span>
+                    <span className="text-gray-600 ml-2">Terrell Williams</span>
                   </div>
                   <div>
                     <span className="font-semibold text-gray-700">Spec. Teams Coordinator:</span>
-                    <span className="text-gray-600 ml-2">Darren Rizzi</span>
+                    <span className="text-gray-600 ml-2">Jeremy Springer</span>
                   </div>
                 </div>
               </div>
@@ -245,17 +241,17 @@ export default function SuperBowlLXContent() {
                         : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                     }`}
                   >
-                    Seahawks Offense vs. Broncos Defense
+                    Seahawks Offense vs. Patriots Defense
                   </button>
                   <button
-                    onClick={() => setActiveMatchup('broncos-offense')}
+                    onClick={() => setActiveMatchup('patriots-offense')}
                     className={`flex-1 py-3 px-4 font-semibold text-sm rounded-tr-lg transition-colors ${
-                      activeMatchup === 'broncos-offense'
+                      activeMatchup === 'patriots-offense'
                         ? 'bg-[#0050A0] text-white'
                         : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                     }`}
                   >
-                    Broncos Offense vs. Seahawks Defense
+                    Patriots Offense vs. Seahawks Defense
                   </button>
                 </div>
 
@@ -297,20 +293,20 @@ export default function SuperBowlLXContent() {
                   {/* Defense Section */}
                   <div className="mb-20">
                     <p className="text-white text-center font-bold mb-4 text-lg">
-                      {activeMatchup === 'seahawks-offense' ? 'BRONCOS DEFENSE' : 'SEAHAWKS DEFENSE'}
+                      {activeMatchup === 'seahawks-offense' ? 'PATRIOTS DEFENSE' : 'SEAHAWKS DEFENSE'}
                     </p>
 
                     {/* Safeties */}
                     <div className="flex justify-center gap-24 mb-4">
                       <div className="text-center">
                         <span className="bg-white text-green-800 px-3 py-1 rounded font-bold text-sm block">S</span>
-                        <span className="text-white text-xs mt-1 block">Player</span>
-                        <span className="text-white/80 text-xs block">XX.X XX</span>
+                        <span className="text-white text-xs mt-1 block">{activeMatchup === 'seahawks-offense' ? 'Hawkins' : 'Bryant'}</span>
+                        <span className="text-white/80 text-xs block">{activeMatchup === 'seahawks-offense' ? '76.4 C' : '84.0 B'}</span>
                       </div>
                       <div className="text-center">
                         <span className="bg-white text-green-800 px-3 py-1 rounded font-bold text-sm block">S</span>
-                        <span className="text-white text-xs mt-1 block">Player</span>
-                        <span className="text-white/80 text-xs block">XX.X XX</span>
+                        <span className="text-white text-xs mt-1 block">{activeMatchup === 'seahawks-offense' ? 'Woodson' : 'Okada'}</span>
+                        <span className="text-white/80 text-xs block">{activeMatchup === 'seahawks-offense' ? '69.7 D+' : '73.3 C'}</span>
                       </div>
                     </div>
 
@@ -318,23 +314,28 @@ export default function SuperBowlLXContent() {
                     <div className="flex justify-between px-8 mb-4">
                       <div className="text-center">
                         <span className="bg-white text-green-800 px-3 py-1 rounded font-bold text-sm block">CB</span>
-                        <span className="text-white text-xs mt-1 block">Player</span>
-                        <span className="text-white/80 text-xs block">XX.X XX</span>
+                        <span className="text-white text-xs mt-1 block">{activeMatchup === 'seahawks-offense' ? 'Gonzalez' : 'Woolen'}</span>
+                        <span className="text-white/80 text-xs block">{activeMatchup === 'seahawks-offense' ? '85.7 B' : '81.7 B-'}</span>
                       </div>
                       <div className="text-center">
                         <span className="bg-white text-green-800 px-3 py-1 rounded font-bold text-sm block">LB</span>
-                        <span className="text-white text-xs mt-1 block">Player</span>
-                        <span className="text-white/80 text-xs block">XX.X XX</span>
+                        <span className="text-white text-xs mt-1 block">{activeMatchup === 'seahawks-offense' ? 'Spillane' : 'Jones'}</span>
+                        <span className="text-white/80 text-xs block">{activeMatchup === 'seahawks-offense' ? '85.3 B' : '89.9 B+'}</span>
                       </div>
                       <div className="text-center">
                         <span className="bg-white text-green-800 px-3 py-1 rounded font-bold text-sm block">LB</span>
-                        <span className="text-white text-xs mt-1 block">Player</span>
-                        <span className="text-white/80 text-xs block">XX.X XX</span>
+                        <span className="text-white text-xs mt-1 block">{activeMatchup === 'seahawks-offense' ? 'Gibbens' : 'Thomas'}</span>
+                        <span className="text-white/80 text-xs block">{activeMatchup === 'seahawks-offense' ? '70.4 C-' : '77.9 C+'}</span>
+                      </div>
+                      <div className="text-center">
+                        <span className="bg-white text-green-800 px-3 py-1 rounded font-bold text-sm block">{activeMatchup === 'seahawks-offense' ? 'LB' : 'S'}</span>
+                        <span className="text-white text-xs mt-1 block">{activeMatchup === 'seahawks-offense' ? 'Eliss' : 'Emmanwori'}</span>
+                        <span className="text-white/80 text-xs block">{activeMatchup === 'seahawks-offense' ? '62.7 D-' : '80.2 B-'}</span>
                       </div>
                       <div className="text-center">
                         <span className="bg-white text-green-800 px-3 py-1 rounded font-bold text-sm block">CB</span>
-                        <span className="text-white text-xs mt-1 block">Player</span>
-                        <span className="text-white/80 text-xs block">XX.X XX</span>
+                        <span className="text-white text-xs mt-1 block">{activeMatchup === 'seahawks-offense' ? 'Davis III' : 'Witherspoon'}</span>
+                        <span className="text-white/80 text-xs block">{activeMatchup === 'seahawks-offense' ? '78.8 C+' : '76.2 C'}</span>
                       </div>
                     </div>
 
@@ -342,23 +343,23 @@ export default function SuperBowlLXContent() {
                     <div className="flex justify-center gap-4">
                       <div className="text-center">
                         <span className="bg-white text-green-800 px-3 py-1 rounded font-bold text-sm block">EDGE</span>
-                        <span className="text-white text-xs mt-1 block">Player</span>
-                        <span className="text-white/80 text-xs block">XX.X XX</span>
+                        <span className="text-white text-xs mt-1 block">{activeMatchup === 'seahawks-offense' ? 'Landry III' : 'Nwosu'}</span>
+                        <span className="text-white/80 text-xs block">{activeMatchup === 'seahawks-offense' ? '76.3 C' : '74.0 C'}</span>
                       </div>
                       <div className="text-center">
                         <span className="bg-white text-green-800 px-3 py-1 rounded font-bold text-sm block">DT</span>
-                        <span className="text-white text-xs mt-1 block">Player</span>
-                        <span className="text-white/80 text-xs block">XX.X XX</span>
+                        <span className="text-white text-xs mt-1 block">{activeMatchup === 'seahawks-offense' ? 'Williams' : 'Williams'}</span>
+                        <span className="text-white/80 text-xs block">{activeMatchup === 'seahawks-offense' ? '87.9 B+' : '84.2 B'}</span>
                       </div>
                       <div className="text-center">
                         <span className="bg-white text-green-800 px-3 py-1 rounded font-bold text-sm block">DT</span>
-                        <span className="text-white text-xs mt-1 block">Player</span>
-                        <span className="text-white/80 text-xs block">XX.X XX</span>
+                        <span className="text-white text-xs mt-1 block">{activeMatchup === 'seahawks-offense' ? 'Barmore' : 'Murphy II'}</span>
+                        <span className="text-white/80 text-xs block">{activeMatchup === 'seahawks-offense' ? '78.6 C+' : '81.2 B-'}</span>
                       </div>
                       <div className="text-center">
                         <span className="bg-white text-green-800 px-3 py-1 rounded font-bold text-sm block">EDGE</span>
-                        <span className="text-white text-xs mt-1 block">Player</span>
-                        <span className="text-white/80 text-xs block">XX.X XX</span>
+                        <span className="text-white text-xs mt-1 block">{activeMatchup === 'seahawks-offense' ? 'Chaisson' : 'Lawrence'}</span>
+                        <span className="text-white/80 text-xs block">{activeMatchup === 'seahawks-offense' ? '76.2 C' : '81.5 B-'}</span>
                       </div>
                     </div>
                   </div>
@@ -366,40 +367,40 @@ export default function SuperBowlLXContent() {
                   {/* Offense Section */}
                   <div className="mt-20">
                     <p className="text-white text-center font-bold mb-4 text-lg">
-                      {activeMatchup === 'seahawks-offense' ? 'SEAHAWKS OFFENSE' : 'BRONCOS OFFENSE'}
+                      {activeMatchup === 'seahawks-offense' ? 'SEAHAWKS OFFENSE' : 'PATRIOTS OFFENSE'}
                     </p>
 
                     {/* Offensive Line with TE on right */}
                     <div className="flex justify-center gap-4 mb-4">
                       <div className="text-center">
                         <span className="bg-white text-green-800 px-3 py-1 rounded font-bold text-sm block">LT</span>
-                        <span className="text-white text-xs mt-1 block">Player</span>
-                        <span className="text-white/80 text-xs block">XX.X XX</span>
+                        <span className="text-white text-xs mt-1 block">{activeMatchup === 'patriots-offense' ? 'Campbell' : 'Cross'}</span>
+                        <span className="text-white/80 text-xs block">{activeMatchup === 'patriots-offense' ? '75.1 C' : '79.1 C+'}</span>
                       </div>
                       <div className="text-center">
                         <span className="bg-white text-green-800 px-3 py-1 rounded font-bold text-sm block">LG</span>
-                        <span className="text-white text-xs mt-1 block">Player</span>
-                        <span className="text-white/80 text-xs block">XX.X XX</span>
+                        <span className="text-white text-xs mt-1 block">{activeMatchup === 'patriots-offense' ? 'Wilson' : 'Zabel'}</span>
+                        <span className="text-white/80 text-xs block">{activeMatchup === 'patriots-offense' ? '69.5 D+' : '77.1 C+'}</span>
                       </div>
                       <div className="text-center">
                         <span className="bg-white text-green-800 px-3 py-1 rounded font-bold text-sm block">C</span>
-                        <span className="text-white text-xs mt-1 block">Player</span>
-                        <span className="text-white/80 text-xs block">XX.X XX</span>
+                        <span className="text-white text-xs mt-1 block">{activeMatchup === 'patriots-offense' ? 'Bradbury' : 'Sundell'}</span>
+                        <span className="text-white/80 text-xs block">{activeMatchup === 'patriots-offense' ? '80.4 B-' : '78.6 C+'}</span>
                       </div>
                       <div className="text-center">
                         <span className="bg-white text-green-800 px-3 py-1 rounded font-bold text-sm block">RG</span>
-                        <span className="text-white text-xs mt-1 block">Player</span>
-                        <span className="text-white/80 text-xs block">XX.X XX</span>
+                        <span className="text-white text-xs mt-1 block">{activeMatchup === 'patriots-offense' ? 'Onwenu' : 'Bradford'}</span>
+                        <span className="text-white/80 text-xs block">{activeMatchup === 'patriots-offense' ? '87.0 B+' : '74.7 C'}</span>
                       </div>
                       <div className="text-center">
                         <span className="bg-white text-green-800 px-3 py-1 rounded font-bold text-sm block">RT</span>
-                        <span className="text-white text-xs mt-1 block">Player</span>
-                        <span className="text-white/80 text-xs block">XX.X XX</span>
+                        <span className="text-white text-xs mt-1 block">{activeMatchup === 'patriots-offense' ? 'Moses' : 'Lucas'}</span>
+                        <span className="text-white/80 text-xs block">{activeMatchup === 'patriots-offense' ? '85.2 B' : '82.5 B-'}</span>
                       </div>
                       <div className="text-center ml-2">
                         <span className="bg-white text-green-800 px-3 py-1 rounded font-bold text-sm block">TE</span>
-                        <span className="text-white text-xs mt-1 block">Player</span>
-                        <span className="text-white/80 text-xs block">XX.X XX</span>
+                        <span className="text-white text-xs mt-1 block">{activeMatchup === 'patriots-offense' ? 'Henry' : 'Barner'}</span>
+                        <span className="text-white/80 text-xs block">{activeMatchup === 'patriots-offense' ? '82.0 B-' : '77.4 C+'}</span>
                       </div>
                     </div>
 
@@ -407,18 +408,23 @@ export default function SuperBowlLXContent() {
                     <div className="flex justify-between px-8 mb-4">
                       <div className="text-center">
                         <span className="bg-white text-green-800 px-3 py-1 rounded font-bold text-sm block">WR</span>
-                        <span className="text-white text-xs mt-1 block">Player</span>
-                        <span className="text-white/80 text-xs block">XX.X XX</span>
+                        <span className="text-white text-xs mt-1 block">{activeMatchup === 'patriots-offense' ? 'Diggs' : 'Smith-Njigba'}</span>
+                        <span className="text-white/80 text-xs block">{activeMatchup === 'patriots-offense' ? '87.0 B+' : '94.4 A'}</span>
                       </div>
                       <div className="text-center">
                         <span className="bg-white text-green-800 px-3 py-1 rounded font-bold text-sm block">QB</span>
-                        <span className="text-white text-xs mt-1 block">Player</span>
-                        <span className="text-white/80 text-xs block">XX.X XX</span>
+                        <span className="text-white text-xs mt-1 block">{activeMatchup === 'patriots-offense' ? 'Maye' : 'Darnold'}</span>
+                        <span className="text-white/80 text-xs block">{activeMatchup === 'patriots-offense' ? '91.1 A-' : '78.7 C+'}</span>
+                      </div>
+                      <div className="text-center ml-12">
+                        <span className="bg-white text-green-800 px-3 py-1 rounded font-bold text-sm block">WR</span>
+                        <span className="text-white text-xs mt-1 block">{activeMatchup === 'patriots-offense' ? 'Douglas' : 'Shaheed'}</span>
+                        <span className="text-white/80 text-xs block">{activeMatchup === 'patriots-offense' ? '79.3 C+' : '71.9 C-'}</span>
                       </div>
                       <div className="text-center">
                         <span className="bg-white text-green-800 px-3 py-1 rounded font-bold text-sm block">WR</span>
-                        <span className="text-white text-xs mt-1 block">Player</span>
-                        <span className="text-white/80 text-xs block">XX.X XX</span>
+                        <span className="text-white text-xs mt-1 block">{activeMatchup === 'patriots-offense' ? 'Boutte' : 'Kupp'}</span>
+                        <span className="text-white/80 text-xs block">{activeMatchup === 'patriots-offense' ? '81.5 B-' : '73.2 C'}</span>
                       </div>
                     </div>
 
@@ -426,8 +432,8 @@ export default function SuperBowlLXContent() {
                     <div className="flex justify-center">
                       <div className="text-center">
                         <span className="bg-white text-green-800 px-3 py-1 rounded font-bold text-sm block">RB</span>
-                        <span className="text-white text-xs mt-1 block">Player</span>
-                        <span className="text-white/80 text-xs block">XX.X XX</span>
+                        <span className="text-white text-xs mt-1 block">{activeMatchup === 'patriots-offense' ? 'Stevenson' : 'Walker III'}</span>
+                        <span className="text-white/80 text-xs block">{activeMatchup === 'patriots-offense' ? '54.4 F' : '65.8 D'}</span>
                       </div>
                     </div>
                   </div>
@@ -443,19 +449,19 @@ export default function SuperBowlLXContent() {
                 <div className="bg-white p-4 space-y-3">
                   <div>
                     <span className="font-semibold text-gray-700">Head Coach:</span>
-                    <span className="text-gray-600 ml-2">Name</span>
+                    <span className="text-gray-600 ml-2">Mike Macdonald</span>
                   </div>
                   <div>
                     <span className="font-semibold text-gray-700">Offensive Coordinator:</span>
-                    <span className="text-gray-600 ml-2">Name</span>
+                    <span className="text-gray-600 ml-2">Klint Kubiak</span>
                   </div>
                   <div>
                     <span className="font-semibold text-gray-700">Defensive Coordinator:</span>
-                    <span className="text-gray-600 ml-2">Name</span>
+                    <span className="text-gray-600 ml-2">Aden Durde</span>
                   </div>
                   <div>
                     <span className="font-semibold text-gray-700">Spec. Teams Coordinator:</span>
-                    <span className="text-gray-600 ml-2">Name</span>
+                    <span className="text-gray-600 ml-2">Jay Harbaugh</span>
                   </div>
                 </div>
               </div>
@@ -464,27 +470,27 @@ export default function SuperBowlLXContent() {
 
               {/* Coach Boxes - Only visible below 1400px */}
               <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-4 min-[1400px]:hidden">
-                {/* Broncos Coaches Box */}
+                {/* Patriots Coaches Box */}
                 <div className="rounded-lg overflow-hidden border border-gray-200">
                   <div className="bg-[#0050A0] text-white px-4 py-3">
-                    <h3 className="font-semibold text-center">Broncos Coaches</h3>
+                    <h3 className="font-semibold text-center">Patriots Coaches</h3>
                   </div>
                   <div className="bg-white p-4 space-y-3">
                     <div>
                       <span className="font-semibold text-gray-700">Head Coach:</span>
-                      <span className="text-gray-600 ml-2">Sean Payton</span>
+                      <span className="text-gray-600 ml-2">Mike Vrabel</span>
                     </div>
                     <div>
                       <span className="font-semibold text-gray-700">Offensive Coordinator:</span>
-                      <span className="text-gray-600 ml-2">Joe Lombardi</span>
+                      <span className="text-gray-600 ml-2">Josh McDaniels</span>
                     </div>
                     <div>
                       <span className="font-semibold text-gray-700">Defensive Coordinator:</span>
-                      <span className="text-gray-600 ml-2">Vance Joseph</span>
+                      <span className="text-gray-600 ml-2">Terrell Williams</span>
                     </div>
                     <div>
                       <span className="font-semibold text-gray-700">Spec. Teams Coordinator:</span>
-                      <span className="text-gray-600 ml-2">Darren Rizzi</span>
+                      <span className="text-gray-600 ml-2">Jeremy Springer</span>
                     </div>
                   </div>
                 </div>
@@ -496,19 +502,19 @@ export default function SuperBowlLXContent() {
                   <div className="bg-white p-4 space-y-3">
                     <div>
                       <span className="font-semibold text-gray-700">Head Coach:</span>
-                      <span className="text-gray-600 ml-2">Name</span>
+                      <span className="text-gray-600 ml-2">Mike Macdonald</span>
                     </div>
                     <div>
                       <span className="font-semibold text-gray-700">Offensive Coordinator:</span>
-                      <span className="text-gray-600 ml-2">Name</span>
+                      <span className="text-gray-600 ml-2">Klint Kubiak</span>
                     </div>
                     <div>
                       <span className="font-semibold text-gray-700">Defensive Coordinator:</span>
-                      <span className="text-gray-600 ml-2">Name</span>
+                      <span className="text-gray-600 ml-2">Aden Durde</span>
                     </div>
                     <div>
                       <span className="font-semibold text-gray-700">Spec. Teams Coordinator:</span>
-                      <span className="text-gray-600 ml-2">Name</span>
+                      <span className="text-gray-600 ml-2">Jay Harbaugh</span>
                     </div>
                   </div>
                 </div>
@@ -592,14 +598,10 @@ export default function SuperBowlLXContent() {
                     </div>
                     <div>
                       <span className="font-semibold text-gray-700">Referee:</span>
-                      <span className="text-gray-600 ml-2">TBD</span>
+                      <span className="text-gray-600 ml-2">Shawn Smith</span>
                     </div>
                     <div>
                       <span className="font-semibold text-gray-700">Weather:</span>
-                      <span className="text-gray-600 ml-2">TBD</span>
-                    </div>
-                    <div>
-                      <span className="font-semibold text-gray-700">Spread:</span>
                       <span className="text-gray-600 ml-2">TBD</span>
                     </div>
                   </div>
