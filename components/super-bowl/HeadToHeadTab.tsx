@@ -81,64 +81,64 @@ export default function HeadToHeadTab() {
   const seahawksPlayoffWins = playoffGames.filter(g => g.result === 'L').length;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Head-to-Head Record Summary */}
       <div className="rounded-lg overflow-hidden border border-gray-200">
-        <div className="bg-[#0050A0] text-white px-6 py-4">
-          <h2 className="text-xl font-bold text-center">Patriots vs Seahawks: All-Time Series</h2>
+        <div className="bg-gradient-to-r from-[#002244] via-[#0050A0] to-[#002244] text-white px-4 sm:px-6 py-3 sm:py-4">
+          <h2 className="text-base sm:text-xl font-bold text-center">Patriots vs Seahawks: All-Time Series</h2>
         </div>
 
-        <div className="p-6 bg-white">
+        <div className="p-4 sm:p-6 bg-white">
           {/* Main Record Display */}
-          <div className="flex items-center justify-center gap-8 mb-8">
+          <div className="flex items-center justify-center gap-4 sm:gap-8 mb-6 sm:mb-8">
             <div className="text-center">
-              <img src="/nfl-hq/new-england-patriots.png" alt="Patriots" className="w-20 h-20 mx-auto mb-2" />
-              <div className="text-3xl font-bold text-[#002244]">{patriotsWins}</div>
-              <div className="text-sm text-gray-600">Wins</div>
+              <img src="/nfl-hq/new-england-patriots.png" alt="Patriots" className="w-14 h-14 sm:w-20 sm:h-20 mx-auto mb-2" />
+              <div className="text-2xl sm:text-3xl font-bold text-[#002244]">{patriotsWins}</div>
+              <div className="text-xs sm:text-sm text-gray-600">Wins</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-gray-400">-</div>
+              <div className="text-xl sm:text-2xl font-bold text-gray-600">-</div>
             </div>
             <div className="text-center">
-              <img src="/nfl-hq/seattle-seahawks-sb.png" alt="Seahawks" className="w-20 h-20 mx-auto mb-2" />
-              <div className="text-3xl font-bold text-[#002244]">{seahawksWins}</div>
-              <div className="text-sm text-gray-600">Wins</div>
+              <img src="/nfl-hq/seattle-seahawks-sb.png" alt="Seahawks" className="w-14 h-14 sm:w-20 sm:h-20 mx-auto mb-2" />
+              <div className="text-2xl sm:text-3xl font-bold text-[#002244]">{seahawksWins}</div>
+              <div className="text-xs sm:text-sm text-gray-600">Wins</div>
             </div>
           </div>
 
           {/* Record Breakdown */}
-          <div className="grid grid-cols-2 gap-4 mb-6">
-            <div className="bg-gray-50 rounded-lg p-4 text-center">
-              <div className="text-sm text-gray-600 mb-1">Regular Season</div>
-              <div className="text-xl font-bold">
+          <div className="grid grid-cols-2 gap-2 sm:gap-4 mb-4 sm:mb-6">
+            <div className="bg-gray-50 rounded-lg p-3 sm:p-4 text-center">
+              <div className="text-xs sm:text-sm text-gray-600 mb-1">Regular Season</div>
+              <div className="text-lg sm:text-xl font-bold">
                 <span className="text-[#002244]">{patriotsRegSeasonWins}</span>
-                <span className="text-gray-400 mx-2">-</span>
+                <span className="text-gray-600 mx-1 sm:mx-2">-</span>
                 <span className="text-[#002244]">{seahawksRegSeasonWins}</span>
               </div>
             </div>
-            <div className="bg-gray-50 rounded-lg p-4 text-center">
-              <div className="text-sm text-gray-600 mb-1">Playoffs</div>
-              <div className="text-xl font-bold">
+            <div className="bg-gray-50 rounded-lg p-3 sm:p-4 text-center">
+              <div className="text-xs sm:text-sm text-gray-600 mb-1">Playoffs</div>
+              <div className="text-lg sm:text-xl font-bold">
                 <span className="text-[#002244]">{patriotsPlayoffWins}</span>
-                <span className="text-gray-400 mx-2">-</span>
+                <span className="text-gray-600 mx-1 sm:mx-2">-</span>
                 <span className="text-[#002244]">{seahawksPlayoffWins}</span>
               </div>
             </div>
           </div>
 
           {/* Super Bowl XLIX Highlight */}
-          <div className="bg-gradient-to-r from-[#D4AF37]/10 to-[#FFD700]/10 border border-[#D4AF37] rounded-lg p-4 mb-6">
-            <div className="flex items-center justify-center gap-2 mb-2">
+          <div className="bg-gradient-to-r from-[#D4AF37]/10 to-[#FFD700]/10 border border-[#D4AF37] rounded-lg p-3 sm:p-4 mb-4 sm:mb-6">
+            <div className="flex items-center justify-center gap-1 sm:gap-2 mb-2">
               <span className="text-[#D4AF37] font-bold">★</span>
-              <span className="font-bold text-gray-800">Super Bowl XLIX (February 1, 2015)</span>
+              <span className="font-bold text-gray-800 text-sm sm:text-base">Super Bowl XLIX (February 1, 2015)</span>
               <span className="text-[#D4AF37] font-bold">★</span>
             </div>
-            <div className="text-center text-gray-700">
+            <div className="text-center text-gray-700 text-sm sm:text-base">
               <span className="font-semibold">New England Patriots 28</span>
-              <span className="mx-2">-</span>
+              <span className="mx-1 sm:mx-2">-</span>
               <span className="font-semibold">Seattle Seahawks 24</span>
             </div>
-            <div className="text-center text-sm text-gray-500 mt-1">
+            <div className="text-center text-xs sm:text-sm text-gray-600 mt-1">
               Malcolm Butler's goal-line interception sealed the Patriots' 4th championship
             </div>
           </div>
@@ -147,71 +147,73 @@ export default function HeadToHeadTab() {
 
       {/* Franchise Comparison */}
       <div className="rounded-lg overflow-hidden border border-gray-200">
-        <div className="bg-[#0050A0] text-white px-6 py-4">
-          <h3 className="font-bold text-lg">Franchise Comparison</h3>
+        <div className="bg-[#0050A0] text-white px-4 sm:px-6 py-3 sm:py-4">
+          <h3 className="font-bold text-base sm:text-lg">Franchise Comparison</h3>
         </div>
         <div className="overflow-x-auto bg-white">
           <table className="w-full">
             <thead>
               <tr className="bg-gray-100">
-                <th className="py-3 px-4 text-left text-sm font-semibold text-gray-700">Stat</th>
-                <th className="py-3 px-4 text-center text-sm font-semibold text-gray-700">
-                  <div className="flex items-center justify-center gap-2">
-                    <img src="/nfl-hq/new-england-patriots.png" alt="Patriots" className="w-6 h-6" />
-                    Patriots
+                <th className="py-2 sm:py-3 px-2 sm:px-4 text-left text-xs sm:text-sm font-semibold text-gray-700">Stat</th>
+                <th className="py-2 sm:py-3 px-2 sm:px-4 text-center text-xs sm:text-sm font-semibold text-gray-700">
+                  <div className="flex items-center justify-center gap-1 sm:gap-2">
+                    <img src="/nfl-hq/new-england-patriots.png" alt="Patriots" className="w-5 h-5 sm:w-6 sm:h-6" />
+                    <span className="hidden sm:inline">Patriots</span>
+                    <span className="sm:hidden">NE</span>
                   </div>
                 </th>
-                <th className="py-3 px-4 text-center text-sm font-semibold text-gray-700">
-                  <div className="flex items-center justify-center gap-2">
-                    <img src="/nfl-hq/seattle-seahawks-sb.png" alt="Seahawks" className="w-6 h-6" />
-                    Seahawks
+                <th className="py-2 sm:py-3 px-2 sm:px-4 text-center text-xs sm:text-sm font-semibold text-gray-700">
+                  <div className="flex items-center justify-center gap-1 sm:gap-2">
+                    <img src="/nfl-hq/seattle-seahawks-sb.png" alt="Seahawks" className="w-5 h-5 sm:w-6 sm:h-6" />
+                    <span className="hidden sm:inline">Seahawks</span>
+                    <span className="sm:hidden">SEA</span>
                   </div>
                 </th>
               </tr>
             </thead>
             <tbody>
               <tr className="border-b">
-                <td className="py-3 px-4 text-gray-700">All-Time Record</td>
-                <td className={`py-3 px-4 text-center font-semibold ${patriotsStats.wins > seahawksStats.wins ? 'text-green-600' : ''}`}>
+                <td className="py-2 sm:py-3 px-2 sm:px-4 text-xs sm:text-sm text-gray-700">All-Time Record</td>
+                <td className={`py-2 sm:py-3 px-2 sm:px-4 text-center text-xs sm:text-sm font-semibold ${patriotsStats.wins > seahawksStats.wins ? 'text-green-600' : ''}`}>
                   {patriotsStats.wins}-{patriotsStats.losses}
                 </td>
-                <td className={`py-3 px-4 text-center font-semibold ${seahawksStats.wins > patriotsStats.wins ? 'text-green-600' : ''}`}>
+                <td className={`py-2 sm:py-3 px-2 sm:px-4 text-center text-xs sm:text-sm font-semibold ${seahawksStats.wins > patriotsStats.wins ? 'text-green-600' : ''}`}>
                   {seahawksStats.wins}-{seahawksStats.losses}
                 </td>
               </tr>
               <tr className="border-b bg-gray-50">
-                <td className="py-3 px-4 text-gray-700">Win Percentage</td>
-                <td className={`py-3 px-4 text-center font-semibold ${patriotsStats.winPct > seahawksStats.winPct ? 'text-green-600' : ''}`}>
+                <td className="py-2 sm:py-3 px-2 sm:px-4 text-xs sm:text-sm text-gray-700">Win Percentage</td>
+                <td className={`py-2 sm:py-3 px-2 sm:px-4 text-center text-xs sm:text-sm font-semibold ${patriotsStats.winPct > seahawksStats.winPct ? 'text-green-600' : ''}`}>
                   {(patriotsStats.winPct * 100).toFixed(1)}%
                 </td>
-                <td className={`py-3 px-4 text-center font-semibold ${seahawksStats.winPct > patriotsStats.winPct ? 'text-green-600' : ''}`}>
+                <td className={`py-2 sm:py-3 px-2 sm:px-4 text-center text-xs sm:text-sm font-semibold ${seahawksStats.winPct > patriotsStats.winPct ? 'text-green-600' : ''}`}>
                   {(seahawksStats.winPct * 100).toFixed(1)}%
                 </td>
               </tr>
               <tr className="border-b bg-gray-50">
-                <td className="py-3 px-4 text-gray-700">Playoff Appearances</td>
-                <td className={`py-3 px-4 text-center font-semibold ${patriotsStats.playoffApps > seahawksStats.playoffApps ? 'text-green-600' : ''}`}>
+                <td className="py-2 sm:py-3 px-2 sm:px-4 text-xs sm:text-sm text-gray-700"><span className="hidden sm:inline">Playoff Appearances</span><span className="sm:hidden">Playoff Apps</span></td>
+                <td className={`py-2 sm:py-3 px-2 sm:px-4 text-center text-xs sm:text-sm font-semibold ${patriotsStats.playoffApps > seahawksStats.playoffApps ? 'text-green-600' : ''}`}>
                   {patriotsStats.playoffApps}
                 </td>
-                <td className={`py-3 px-4 text-center font-semibold ${seahawksStats.playoffApps > patriotsStats.playoffApps ? 'text-green-600' : ''}`}>
+                <td className={`py-2 sm:py-3 px-2 sm:px-4 text-center text-xs sm:text-sm font-semibold ${seahawksStats.playoffApps > patriotsStats.playoffApps ? 'text-green-600' : ''}`}>
                   {seahawksStats.playoffApps}
                 </td>
               </tr>
               <tr className="border-b bg-gray-50">
-                <td className="py-3 px-4 text-gray-700">Super Bowl Appearances</td>
-                <td className={`py-3 px-4 text-center font-semibold ${patriotsStats.finalsApps > seahawksStats.finalsApps ? 'text-green-600' : ''}`}>
+                <td className="py-2 sm:py-3 px-2 sm:px-4 text-xs sm:text-sm text-gray-700"><span className="hidden sm:inline">Super Bowl Appearances</span><span className="sm:hidden">SB Apps</span></td>
+                <td className={`py-2 sm:py-3 px-2 sm:px-4 text-center text-xs sm:text-sm font-semibold ${patriotsStats.finalsApps > seahawksStats.finalsApps ? 'text-green-600' : ''}`}>
                   {patriotsStats.finalsApps}
                 </td>
-                <td className={`py-3 px-4 text-center font-semibold ${seahawksStats.finalsApps > patriotsStats.finalsApps ? 'text-green-600' : ''}`}>
+                <td className={`py-2 sm:py-3 px-2 sm:px-4 text-center text-xs sm:text-sm font-semibold ${seahawksStats.finalsApps > patriotsStats.finalsApps ? 'text-green-600' : ''}`}>
                   {seahawksStats.finalsApps}
                 </td>
               </tr>
               <tr>
-                <td className="py-3 px-4 text-gray-700 font-semibold">Championships</td>
-                <td className={`py-3 px-4 text-center font-bold text-lg ${patriotsStats.championships > seahawksStats.championships ? 'text-green-600' : ''}`}>
+                <td className="py-2 sm:py-3 px-2 sm:px-4 text-xs sm:text-sm text-gray-700 font-semibold">Championships</td>
+                <td className={`py-2 sm:py-3 px-2 sm:px-4 text-center font-bold text-sm sm:text-lg ${patriotsStats.championships > seahawksStats.championships ? 'text-green-600' : ''}`}>
                   {patriotsStats.championships}
                 </td>
-                <td className={`py-3 px-4 text-center font-bold text-lg ${seahawksStats.championships > patriotsStats.championships ? 'text-green-600' : ''}`}>
+                <td className={`py-2 sm:py-3 px-2 sm:px-4 text-center font-bold text-sm sm:text-lg ${seahawksStats.championships > patriotsStats.championships ? 'text-green-600' : ''}`}>
                   {seahawksStats.championships}
                 </td>
               </tr>
@@ -222,17 +224,17 @@ export default function HeadToHeadTab() {
 
       {/* Game History */}
       <div className="rounded-lg overflow-hidden border border-gray-200">
-        <div className="bg-[#0050A0] text-white px-6 py-4">
-          <h3 className="font-bold text-lg">Game History</h3>
+        <div className="bg-[#0050A0] text-white px-4 sm:px-6 py-3 sm:py-4">
+          <h3 className="font-bold text-base sm:text-lg">Game History</h3>
         </div>
         <div className="overflow-x-auto bg-white">
           <table className="w-full">
             <thead>
               <tr className="bg-gray-100">
-                <th className="py-3 px-4 text-left text-sm font-semibold text-gray-700">Date</th>
-                <th className="py-3 px-4 text-left text-sm font-semibold text-gray-700">Matchup</th>
-                <th className="py-3 px-4 text-center text-sm font-semibold text-gray-700">Score</th>
-                <th className="py-3 px-4 text-center text-sm font-semibold text-gray-700">Result</th>
+                <th className="py-2 sm:py-3 px-2 sm:px-4 text-left text-xs sm:text-sm font-semibold text-gray-700">Date</th>
+                <th className="py-2 sm:py-3 px-2 sm:px-4 text-left text-xs sm:text-sm font-semibold text-gray-700 hidden sm:table-cell">Matchup</th>
+                <th className="py-2 sm:py-3 px-2 sm:px-4 text-center text-xs sm:text-sm font-semibold text-gray-700">Score</th>
+                <th className="py-2 sm:py-3 px-2 sm:px-4 text-center text-xs sm:text-sm font-semibold text-gray-700">Result</th>
               </tr>
             </thead>
             <tbody>
@@ -243,24 +245,24 @@ export default function HeadToHeadTab() {
 
                 return (
                   <tr key={idx} className={`border-b ${game.isSuperBowl ? 'bg-[#D4AF37]/10' : idx % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}>
-                    <td className="py-3 px-4 text-gray-700 whitespace-nowrap">
+                    <td className="py-2 sm:py-3 px-2 sm:px-4 text-xs sm:text-sm text-gray-700 whitespace-nowrap">
                       {game.date}
-                      {game.isSuperBowl && <span className="ml-2 text-[#D4AF37] font-bold">★</span>}
+                      {game.isSuperBowl && <span className="ml-1 sm:ml-2 text-[#D4AF37] font-bold">★</span>}
                     </td>
-                    <td className="py-3 px-4 text-gray-700">
+                    <td className="py-2 sm:py-3 px-2 sm:px-4 text-xs sm:text-sm text-gray-700 hidden sm:table-cell">
                       <span className={!patriotsHome ? 'font-semibold' : ''}>{game.visitor}</span>
-                      <span className="mx-2 text-gray-400">@</span>
+                      <span className="mx-2 text-gray-600">@</span>
                       <span className={patriotsHome ? 'font-semibold' : ''}>{game.home}</span>
                       {game.isSuperBowl && <span className="ml-2 text-xs text-[#D4AF37] font-semibold">{game.superBowlName}</span>}
                     </td>
-                    <td className="py-3 px-4 text-center font-mono">
+                    <td className="py-2 sm:py-3 px-2 sm:px-4 text-center text-xs sm:text-sm tabular-nums">
                       <span className={game.result === 'W' ? 'font-bold text-green-600' : ''}>{patriotsScore}</span>
-                      <span className="mx-2 text-gray-400">-</span>
+                      <span className="mx-1 sm:mx-2 text-gray-600">-</span>
                       <span className={game.result === 'L' ? 'font-bold text-green-600' : ''}>{seahawksScore}</span>
-                      {game.isOvertime && <span className="ml-1 text-xs text-gray-500">OT</span>}
+                      {game.isOvertime && <span className="ml-1 text-xs text-gray-600">OT</span>}
                     </td>
-                    <td className="py-3 px-4 text-center">
-                      <span className={`px-2 py-1 rounded text-xs font-semibold ${
+                    <td className="py-2 sm:py-3 px-2 sm:px-4 text-center">
+                      <span className={`px-1.5 sm:px-2 py-1 rounded text-xs font-semibold ${
                         game.result === 'W'
                           ? 'bg-[#002244] text-white'
                           : 'bg-[#002244]/20 text-[#002244]'
@@ -276,10 +278,10 @@ export default function HeadToHeadTab() {
         </div>
 
         {headToHeadGames.length > 5 && (
-          <div className="p-4 text-center border-t bg-white">
+          <div className="p-3 sm:p-4 text-center border-t bg-white">
             <button
               onClick={() => setShowAllGames(!showAllGames)}
-              className="px-6 py-2 bg-[#0050A0] text-white rounded-lg hover:bg-[#003d7a] font-medium transition-colors cursor-pointer"
+              className="px-4 sm:px-6 py-2 bg-[#0050A0] text-white rounded-lg hover:bg-[#003d7a] text-sm sm:text-base font-medium transition-colors cursor-pointer min-h-[44px]"
             >
               {showAllGames ? 'Show Less' : `Show All ${headToHeadGames.length} Games`}
             </button>

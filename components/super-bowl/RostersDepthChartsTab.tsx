@@ -212,7 +212,7 @@ export default function RostersDepthChartsTab() {
     const players = currentRoster[activeSection as keyof RosterData] as Player[];
     if (!players || players.length === 0) {
       return (
-        <div className="p-8 text-center text-gray-500">
+        <div className="p-8 text-center text-gray-600">
           No players in this section
         </div>
       );
@@ -307,7 +307,7 @@ export default function RostersDepthChartsTab() {
                               {player.impactPlus.toFixed(1)}
                             </a>
                           ) : (
-                            <span className="text-gray-400">-</span>
+                            <span className="text-gray-600">-</span>
                           )}
                         </td>
                         <td className="px-3 py-3 text-gray-700 whitespace-nowrap text-center">{player.experience === 0 ? 'R' : player.experience}</td>
@@ -374,7 +374,7 @@ export default function RostersDepthChartsTab() {
                           {starter.name}
                         </Link>
                       ) : (
-                        <span className="text-gray-400">-</span>
+                        <span className="text-gray-600">-</span>
                       )}
                     </td>
                     <td className="p-3">
@@ -387,7 +387,7 @@ export default function RostersDepthChartsTab() {
                           {second.name}
                         </Link>
                       ) : (
-                        <span className="text-gray-400">-</span>
+                        <span className="text-gray-600">-</span>
                       )}
                     </td>
                     <td className="p-3">
@@ -400,7 +400,7 @@ export default function RostersDepthChartsTab() {
                           {third.name}
                         </Link>
                       ) : (
-                        <span className="text-gray-400">-</span>
+                        <span className="text-gray-600">-</span>
                       )}
                     </td>
                     <td className="p-3">
@@ -413,7 +413,7 @@ export default function RostersDepthChartsTab() {
                           {fourth.name}
                         </Link>
                       ) : (
-                        <span className="text-gray-400">-</span>
+                        <span className="text-gray-600">-</span>
                       )}
                     </td>
                   </tr>
@@ -472,23 +472,24 @@ export default function RostersDepthChartsTab() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* View Mode & Team Toggle */}
-      <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
+      <div className="flex flex-col sm:flex-row justify-center items-center gap-3 sm:gap-4">
         <div className="flex justify-center gap-2">
           <button
             onClick={() => setViewMode('roster')}
-            className={`px-4 py-2 rounded-lg font-medium transition-colors cursor-pointer ${
+            className={`px-3 sm:px-4 py-2 rounded-lg text-sm sm:text-base font-medium transition-colors cursor-pointer min-h-[44px] ${
               viewMode === 'roster'
                 ? 'bg-[#0050A0] text-white'
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
             }`}
           >
-            Full Roster
+            <span className="hidden sm:inline">Full Roster</span>
+            <span className="sm:hidden">Roster</span>
           </button>
           <button
             onClick={() => setViewMode('depth-chart')}
-            className={`px-4 py-2 rounded-lg font-medium transition-colors cursor-pointer ${
+            className={`px-3 sm:px-4 py-2 rounded-lg text-sm sm:text-base font-medium transition-colors cursor-pointer min-h-[44px] ${
               viewMode === 'depth-chart'
                 ? 'bg-[#0050A0] text-white'
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -505,24 +506,24 @@ export default function RostersDepthChartsTab() {
         <div className="flex justify-center gap-2">
           <button
             onClick={() => { setSelectedTeam('patriots'); setActiveSection('activeRoster'); }}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors cursor-pointer ${
+            className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 rounded-lg text-sm sm:text-base font-medium transition-colors cursor-pointer min-h-[44px] ${
               selectedTeam === 'patriots'
                 ? 'bg-[#002244] text-white'
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
             }`}
           >
-            <img src="/nfl-hq/new-england-patriots.png" alt="Patriots" className="w-6 h-6" />
+            <img src="/nfl-hq/new-england-patriots.png" alt="Patriots" className="w-5 h-5 sm:w-6 sm:h-6" />
             Patriots
           </button>
           <button
             onClick={() => { setSelectedTeam('seahawks'); setActiveSection('activeRoster'); }}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors cursor-pointer ${
+            className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 rounded-lg text-sm sm:text-base font-medium transition-colors cursor-pointer min-h-[44px] ${
               selectedTeam === 'seahawks'
                 ? 'bg-[#002244] text-white'
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
             }`}
           >
-            <img src="/nfl-hq/seattle-seahawks-sb.png" alt="Seahawks" className="w-6 h-6" />
+            <img src="/nfl-hq/seattle-seahawks-sb.png" alt="Seahawks" className="w-5 h-5 sm:w-6 sm:h-6" />
             Seahawks
           </button>
         </div>
@@ -531,21 +532,22 @@ export default function RostersDepthChartsTab() {
       {/* Main Content */}
       <div className="bg-white rounded-lg shadow-md overflow-hidden">
         {/* Team Header */}
-        <div className="px-6 py-4 border-b" style={{ backgroundColor: team.primaryColor }}>
-          <div className="flex items-center gap-3">
-            <img src={team.logo} alt={team.name} className="w-10 h-10 object-contain" />
-            <h3 className="text-lg font-bold text-white">
-              {team.name} {viewMode === 'roster' ? 'Roster' : 'Depth Chart'}
+        <div className="px-4 sm:px-6 py-3 sm:py-4 border-b" style={{ backgroundColor: team.primaryColor }}>
+          <div className="flex items-center gap-2 sm:gap-3">
+            <img src={team.logo} alt={team.name} className="w-8 h-8 sm:w-10 sm:h-10 object-contain" />
+            <h3 className="text-base sm:text-lg font-bold text-white">
+              <span className="hidden sm:inline">{team.name} {viewMode === 'roster' ? 'Roster' : 'Depth Chart'}</span>
+              <span className="sm:hidden">{team.shortName} {viewMode === 'roster' ? 'Roster' : 'Depth'}</span>
             </h3>
           </div>
         </div>
 
-        <div className="p-4 sm:p-6">
+        <div className="p-3 sm:p-6">
           {viewMode === 'roster' && currentRoster && (
             <>
               {/* Section Tabs */}
-              <div className="mb-6">
-                <div className="flex flex-wrap gap-2">
+              <div className="mb-4 sm:mb-6">
+                <div className="flex flex-wrap gap-1.5 sm:gap-2">
                   {Object.keys(currentRoster).map((sectionKey) => {
                     const section = getSectionInfo(sectionKey, currentRoster);
                     if (section.count === 0) return null;
@@ -554,7 +556,7 @@ export default function RostersDepthChartsTab() {
                       <button
                         key={sectionKey}
                         onClick={() => setActiveSection(sectionKey)}
-                        className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer ${
+                        className={`px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors cursor-pointer min-h-[36px] sm:min-h-[44px] ${
                           activeSection === sectionKey
                             ? 'text-white'
                             : 'text-gray-600 bg-gray-100 hover:bg-gray-200'

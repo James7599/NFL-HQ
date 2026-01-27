@@ -98,7 +98,7 @@ export default function HistoryTab() {
       <div className="flex rounded-lg overflow-hidden border border-gray-200">
         <button
           onClick={() => setActiveSection('results')}
-          className={`flex-1 py-3 px-4 font-semibold text-sm transition-colors cursor-pointer ${
+          className={`flex-1 py-3 px-2 sm:px-4 font-semibold text-xs sm:text-sm transition-colors cursor-pointer min-h-[44px] ${
             activeSection === 'results'
               ? 'bg-[#0050A0] text-white'
               : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -108,7 +108,7 @@ export default function HistoryTab() {
         </button>
         <button
           onClick={() => setActiveSection('records')}
-          className={`flex-1 py-3 px-4 font-semibold text-sm transition-colors cursor-pointer ${
+          className={`flex-1 py-3 px-2 sm:px-4 font-semibold text-xs sm:text-sm transition-colors cursor-pointer min-h-[44px] ${
             activeSection === 'records'
               ? 'bg-[#0050A0] text-white'
               : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -118,7 +118,7 @@ export default function HistoryTab() {
         </button>
         <button
           onClick={() => setActiveSection('teams')}
-          className={`flex-1 py-3 px-4 font-semibold text-sm transition-colors cursor-pointer ${
+          className={`flex-1 py-3 px-2 sm:px-4 font-semibold text-xs sm:text-sm transition-colors cursor-pointer min-h-[44px] ${
             activeSection === 'teams'
               ? 'bg-[#0050A0] text-white'
               : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -130,29 +130,24 @@ export default function HistoryTab() {
 
       {/* All Results Section */}
       {activeSection === 'results' && (
-        <div className="rounded-lg overflow-hidden border border-gray-200">
-          {/* Header */}
-          <div className="bg-[#0050A0] text-white px-6 py-4">
-            <h2 className="text-xl font-bold">Super Bowl Results</h2>
-          </div>
-
-          <div className="bg-white p-6">
+        <div className="rounded-lg overflow-hidden border border-gray-200 bg-white">
+          <div className="p-3 sm:p-6">
             {/* Filters */}
-            <div className="flex flex-col md:flex-row gap-4 mb-6">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-4 sm:mb-6">
               <div className="flex-1">
                 <input
                   type="text"
                   placeholder="Search by team, MVP, venue..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0050A0]"
+                  className="w-full px-3 sm:px-4 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0050A0] min-h-[44px]"
                 />
               </div>
               <div>
                 <select
                   value={selectedTeam}
                   onChange={(e) => setSelectedTeam(e.target.value)}
-                  className="w-full md:w-48 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0050A0] cursor-pointer"
+                  className="w-full sm:w-48 px-3 sm:px-4 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0050A0] cursor-pointer min-h-[44px]"
                 >
                   <option value="">All Teams</option>
                   {allTeams.map(team => (
@@ -163,18 +158,18 @@ export default function HistoryTab() {
             </div>
 
             {/* Results Table */}
-            <div className="overflow-x-auto">
-              <table className="w-full">
+            <div className="overflow-x-auto -mx-3 sm:mx-0 px-3 sm:px-0">
+              <table className="w-full min-w-[600px]">
                 <thead>
                   <tr className="bg-gray-100">
                     <th
-                      className="py-3 px-4 text-left text-sm font-semibold text-gray-700 cursor-pointer hover:bg-gray-200"
+                      className="py-2 sm:py-3 px-2 sm:px-4 text-left text-xs sm:text-sm font-semibold text-gray-700 cursor-pointer hover:bg-gray-200"
                       onClick={() => handleSort('number')}
                     >
                       SB <SortIcon field="number" />
                     </th>
                     <th
-                      className="py-3 px-4 text-left text-sm font-semibold text-gray-700 cursor-pointer hover:bg-gray-200"
+                      className="py-2 sm:py-3 px-2 sm:px-4 text-left text-xs sm:text-sm font-semibold text-gray-700 cursor-pointer hover:bg-gray-200"
                       onClick={() => handleSort('date')}
                     >
                       Date <SortIcon field="date" />
@@ -233,9 +228,9 @@ export default function HistoryTab() {
                             </Link>
                           </div>
                         </td>
-                        <td className="py-3 px-4 text-center font-mono">
+                        <td className="py-3 px-4 text-center tabular-nums">
                           <span className="font-bold text-green-600">{sb.winnerScore}</span>
-                          <span className="text-gray-400 mx-1">-</span>
+                          <span className="text-gray-600 mx-1">-</span>
                           <span className="text-gray-600">{sb.loserScore}</span>
                         </td>
                         <td className="py-3 px-4">
@@ -254,7 +249,7 @@ export default function HistoryTab() {
                         <td className="py-3 px-4">
                           <div>
                             <p className="font-medium">{sb.mvp.player}</p>
-                            <p className="text-xs text-gray-500">{sb.mvp.position}, {sb.mvp.team}</p>
+                            <p className="text-xs text-gray-600">{sb.mvp.position}, {sb.mvp.team}</p>
                           </div>
                         </td>
                         <td className="py-3 px-4 text-sm text-gray-600 hidden lg:table-cell">{sb.venue}</td>
@@ -266,7 +261,7 @@ export default function HistoryTab() {
             </div>
 
             {filteredHistory.length === 0 && (
-              <p className="text-center text-gray-500 py-8">No results found</p>
+              <p className="text-center text-gray-600 py-8">No results found</p>
             )}
           </div>
         </div>
@@ -275,16 +270,12 @@ export default function HistoryTab() {
       {/* Records Section */}
       {activeSection === 'records' && (
         <div className="space-y-6">
-          <div className="rounded-lg overflow-hidden border border-gray-200">
-            <div className="bg-[#0050A0] text-white px-6 py-4">
-              <h2 className="text-xl font-bold">Super Bowl Records</h2>
-            </div>
-
-            <div className="bg-white p-6">
+          <div className="rounded-lg overflow-hidden border border-gray-200 bg-white">
+            <div className="p-6">
               {/* Team Records */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                 <div className="border border-gray-200 rounded-lg overflow-hidden">
-                  <div className="bg-green-600 text-white px-4 py-2">
+                  <div className="bg-[#0050A0] text-white px-4 py-2">
                     <h3 className="font-semibold">Most Super Bowl Wins</h3>
                   </div>
                   <div className="p-4 space-y-3">
@@ -293,15 +284,15 @@ export default function HistoryTab() {
                       return (
                         <div key={item.team} className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
-                            <span className="text-lg font-bold text-gray-400 w-6">{idx + 1}.</span>
+                            <span className="text-lg font-bold text-gray-600 w-6">{idx + 1}.</span>
                             {team?.logoUrl && (
                               <img src={team.logoUrl} alt="" className="w-6 h-6 object-contain" />
                             )}
                             <span className="font-medium">{item.team}</span>
                           </div>
                           <div className="text-right">
-                            <span className="font-bold text-green-600">{item.wins}</span>
-                            <span className="text-gray-500 text-sm ml-1">({item.appearances} app.)</span>
+                            <span className="font-bold text-[#0050A0]">{item.wins}</span>
+                            <span className="text-gray-600 text-sm ml-1">({item.appearances} app.)</span>
                           </div>
                         </div>
                       );
@@ -310,7 +301,7 @@ export default function HistoryTab() {
                 </div>
 
                 <div className="border border-gray-200 rounded-lg overflow-hidden">
-                  <div className="bg-red-600 text-white px-4 py-2">
+                  <div className="bg-[#002244] text-white px-4 py-2">
                     <h3 className="font-semibold">Most Super Bowl Losses</h3>
                   </div>
                   <div className="p-4 space-y-3">
@@ -319,13 +310,13 @@ export default function HistoryTab() {
                       return (
                         <div key={item.team} className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
-                            <span className="text-lg font-bold text-gray-400 w-6">{idx + 1}.</span>
+                            <span className="text-lg font-bold text-gray-600 w-6">{idx + 1}.</span>
                             {team?.logoUrl && (
                               <img src={team.logoUrl} alt="" className="w-6 h-6 object-contain" />
                             )}
                             <span className="font-medium">{item.team}</span>
                           </div>
-                          <span className="font-bold text-red-600">{item.losses}</span>
+                          <span className="font-bold text-[#002244]">{item.losses}</span>
                         </div>
                       );
                     })}
@@ -337,38 +328,38 @@ export default function HistoryTab() {
               <h3 className="text-lg font-semibold mb-4 text-gray-800">Individual Records</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
-                  <p className="text-sm text-gray-500 mb-1">Most Passing Yards (Single Game)</p>
+                  <p className="text-sm text-gray-600 mb-1">Most Passing Yards (Single Game)</p>
                   <p className="text-2xl font-bold text-[#0050A0]">{superBowlRecords.mostPassingYards.record}</p>
                   <p className="font-medium">{superBowlRecords.mostPassingYards.player}</p>
-                  <p className="text-sm text-gray-500">{superBowlRecords.mostPassingYards.game}</p>
+                  <p className="text-sm text-gray-600">{superBowlRecords.mostPassingYards.game}</p>
                 </div>
 
                 <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
-                  <p className="text-sm text-gray-500 mb-1">Most Rushing Yards (Single Game)</p>
+                  <p className="text-sm text-gray-600 mb-1">Most Rushing Yards (Single Game)</p>
                   <p className="text-2xl font-bold text-[#0050A0]">{superBowlRecords.mostRushingYards.record}</p>
                   <p className="font-medium">{superBowlRecords.mostRushingYards.player}</p>
-                  <p className="text-sm text-gray-500">{superBowlRecords.mostRushingYards.game}</p>
+                  <p className="text-sm text-gray-600">{superBowlRecords.mostRushingYards.game}</p>
                 </div>
 
                 <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
-                  <p className="text-sm text-gray-500 mb-1">Most Receiving Yards (Single Game)</p>
+                  <p className="text-sm text-gray-600 mb-1">Most Receiving Yards (Single Game)</p>
                   <p className="text-2xl font-bold text-[#0050A0]">{superBowlRecords.mostReceivingYards.record}</p>
                   <p className="font-medium">{superBowlRecords.mostReceivingYards.player}</p>
-                  <p className="text-sm text-gray-500">{superBowlRecords.mostReceivingYards.game}</p>
+                  <p className="text-sm text-gray-600">{superBowlRecords.mostReceivingYards.game}</p>
                 </div>
 
                 <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
-                  <p className="text-sm text-gray-500 mb-1">Most Points (Single Game - Team)</p>
+                  <p className="text-sm text-gray-600 mb-1">Most Points (Single Game - Team)</p>
                   <p className="text-2xl font-bold text-[#0050A0]">{superBowlRecords.mostPointsScored.record}</p>
                   <p className="font-medium">{superBowlRecords.mostPointsScored.team}</p>
-                  <p className="text-sm text-gray-500">{superBowlRecords.mostPointsScored.game} ({superBowlRecords.mostPointsScored.score})</p>
+                  <p className="text-sm text-gray-600">{superBowlRecords.mostPointsScored.game} ({superBowlRecords.mostPointsScored.score})</p>
                 </div>
 
                 <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
-                  <p className="text-sm text-gray-500 mb-1">Largest Margin of Victory</p>
+                  <p className="text-sm text-gray-600 mb-1">Largest Margin of Victory</p>
                   <p className="text-2xl font-bold text-[#0050A0]">{superBowlRecords.largestMargin.record} pts</p>
                   <p className="font-medium">{superBowlRecords.largestMargin.team}</p>
-                  <p className="text-sm text-gray-500">{superBowlRecords.largestMargin.game} ({superBowlRecords.largestMargin.score})</p>
+                  <p className="text-sm text-gray-600">{superBowlRecords.largestMargin.game} ({superBowlRecords.largestMargin.score})</p>
                 </div>
               </div>
 
@@ -393,12 +384,8 @@ export default function HistoryTab() {
 
       {/* By Team Section */}
       {activeSection === 'teams' && (
-        <div className="rounded-lg overflow-hidden border border-gray-200">
-          <div className="bg-[#0050A0] text-white px-6 py-4">
-            <h2 className="text-xl font-bold">Super Bowl History by Team</h2>
-          </div>
-
-          <div className="bg-white p-6">
+        <div className="rounded-lg overflow-hidden border border-gray-200 bg-white">
+          <div className="p-6">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {winsByTeam.map(({ teamId, wins }) => {
                 const team = allTeams.find(t => t.id === teamId);
@@ -416,7 +403,7 @@ export default function HistoryTab() {
                       <img src={team.logoUrl} alt={team.name} className="w-12 h-12 object-contain" />
                       <div>
                         <h3 className="font-bold" style={{ color: team.primaryColor }}>{team.fullName}</h3>
-                        <p className="text-sm text-gray-500">
+                        <p className="text-sm text-gray-600">
                           {history.wins}W - {history.losses}L ({history.appearances} appearances)
                         </p>
                       </div>

@@ -173,7 +173,7 @@ export default function StatsComparisonTab() {
   const renderTeamStats = () => {
     if (!patriotsData?.teamStats || !seahawksData?.teamStats) {
       return (
-        <div className="text-center py-8 text-gray-500">
+        <div className="text-center py-8 text-gray-600">
           No team stats available
         </div>
       );
@@ -324,13 +324,13 @@ export default function StatsComparisonTab() {
           >
             {player.name}
           </Link>
-          <div className="text-sm text-gray-500">{getStatValue(player, playerCategory)}</div>
+          <div className="text-sm text-gray-600">{getStatValue(player, playerCategory)}</div>
         </div>
         <div className="text-right">
           <div className="text-xl font-bold" style={{ color: teamColor }}>
             {getMainStat(player, playerCategory).toLocaleString()}
           </div>
-          <div className="text-xs text-gray-500">
+          <div className="text-xs text-gray-600">
             {playerCategory === 'defense' ? 'TCK' : 'YDS'}
           </div>
         </div>
@@ -357,7 +357,7 @@ export default function StatsComparisonTab() {
                   )}
                 </div>
               ) : (
-                <div className="text-center py-4 text-gray-500">No stats available</div>
+                <div className="text-center py-4 text-gray-600">No stats available</div>
               )}
             </div>
           </div>
@@ -378,7 +378,7 @@ export default function StatsComparisonTab() {
                   )}
                 </div>
               ) : (
-                <div className="text-center py-4 text-gray-500">No stats available</div>
+                <div className="text-center py-4 text-gray-600">No stats available</div>
               )}
             </div>
           </div>
@@ -420,12 +420,12 @@ export default function StatsComparisonTab() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* View Mode Toggle */}
       <div className="flex justify-center gap-2">
         <button
           onClick={() => setViewMode('team')}
-          className={`px-6 py-2 rounded-lg font-medium transition-colors cursor-pointer ${
+          className={`px-4 sm:px-6 py-2 rounded-lg font-medium text-sm sm:text-base transition-colors cursor-pointer min-h-[44px] ${
             viewMode === 'team'
               ? 'bg-[#0050A0] text-white'
               : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -435,7 +435,7 @@ export default function StatsComparisonTab() {
         </button>
         <button
           onClick={() => setViewMode('player')}
-          className={`px-6 py-2 rounded-lg font-medium transition-colors cursor-pointer ${
+          className={`px-4 sm:px-6 py-2 rounded-lg font-medium text-sm sm:text-base transition-colors cursor-pointer min-h-[44px] ${
             viewMode === 'player'
               ? 'bg-[#0050A0] text-white'
               : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -452,7 +452,7 @@ export default function StatsComparisonTab() {
             <button
               key={cat}
               onClick={() => setPlayerCategory(cat)}
-              className={`px-4 py-2 rounded-lg font-medium transition-colors cursor-pointer ${
+              className={`px-3 sm:px-4 py-2 rounded-lg font-medium text-xs sm:text-sm transition-colors cursor-pointer min-h-[44px] ${
                 playerCategory === cat
                   ? 'bg-[#0050A0] text-white'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -461,21 +461,21 @@ export default function StatsComparisonTab() {
               {categoryLabels[cat]}
             </button>
           ))}
-          <span className="text-sm text-gray-500 ml-2">Regular Season</span>
+          <span className="text-xs sm:text-sm text-gray-600 ml-2">Regular Season</span>
         </div>
       )}
 
       {/* Team Logos Header */}
-      <div className="bg-white rounded-lg shadow-md p-4">
+      <div className="bg-white rounded-lg shadow-md p-3 sm:p-4">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <img src="/nfl-hq/new-england-patriots.png" alt="Patriots" className="w-12 h-12" />
-            <span className="font-bold text-gray-800">Patriots</span>
+          <div className="flex items-center gap-2 sm:gap-3">
+            <img src="/nfl-hq/new-england-patriots.png" alt="Patriots" className="w-8 h-8 sm:w-12 sm:h-12" />
+            <span className="font-bold text-gray-800 text-sm sm:text-base">Patriots</span>
           </div>
-          <span className="text-xl font-bold text-gray-400">vs</span>
-          <div className="flex items-center gap-3">
-            <span className="font-bold text-gray-800">Seahawks</span>
-            <img src="/nfl-hq/seattle-seahawks-sb.png" alt="Seahawks" className="w-12 h-12" />
+          <span className="text-base sm:text-xl font-bold text-gray-500">vs</span>
+          <div className="flex items-center gap-2 sm:gap-3">
+            <span className="font-bold text-gray-800 text-sm sm:text-base">Seahawks</span>
+            <img src="/nfl-hq/seattle-seahawks-sb.png" alt="Seahawks" className="w-8 h-8 sm:w-12 sm:h-12" />
           </div>
         </div>
       </div>

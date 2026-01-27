@@ -33,24 +33,24 @@ function CountdownTimer({ targetDate }: { targetDate: string }) {
   }, [targetDate]);
 
   return (
-    <div className="mt-2 text-center">
-      <div className="text-white text-sm sm:text-base font-semibold uppercase tracking-wider mb-2">Kickoff In</div>
-      <div className="flex gap-2 sm:gap-3 justify-center">
-        <div className="bg-black/30 backdrop-blur-sm rounded w-14 sm:w-16 lg:w-18 py-2 sm:py-3">
-          <div className="text-white font-bold text-xl sm:text-2xl lg:text-3xl tabular-nums">{timeLeft.days}</div>
-          <div className="text-white/70 text-[10px] sm:text-xs uppercase">Days</div>
+    <div className="text-center">
+      <div className="text-white text-xs sm:text-sm lg:text-base font-semibold uppercase tracking-wider mb-1 sm:mb-2">Kickoff In</div>
+      <div className="flex gap-1 sm:gap-2 lg:gap-3 justify-center">
+        <div className="bg-black/30 backdrop-blur-sm rounded w-10 sm:w-14 lg:w-16 py-1 sm:py-2 lg:py-3">
+          <div className="text-white font-bold text-base sm:text-xl lg:text-2xl tabular-nums">{timeLeft.days}</div>
+          <div className="text-white text-[10px] sm:text-xs uppercase">Days</div>
         </div>
-        <div className="bg-black/30 backdrop-blur-sm rounded w-14 sm:w-16 lg:w-18 py-2 sm:py-3">
-          <div className="text-white font-bold text-xl sm:text-2xl lg:text-3xl tabular-nums">{timeLeft.hours}</div>
-          <div className="text-white/70 text-[10px] sm:text-xs uppercase">Hrs</div>
+        <div className="bg-black/30 backdrop-blur-sm rounded w-10 sm:w-14 lg:w-16 py-1 sm:py-2 lg:py-3">
+          <div className="text-white font-bold text-base sm:text-xl lg:text-2xl tabular-nums">{timeLeft.hours}</div>
+          <div className="text-white text-[10px] sm:text-xs uppercase">Hrs</div>
         </div>
-        <div className="bg-black/30 backdrop-blur-sm rounded w-14 sm:w-16 lg:w-18 py-2 sm:py-3">
-          <div className="text-white font-bold text-xl sm:text-2xl lg:text-3xl tabular-nums">{timeLeft.minutes}</div>
-          <div className="text-white/70 text-[10px] sm:text-xs uppercase">Min</div>
+        <div className="bg-black/30 backdrop-blur-sm rounded w-10 sm:w-14 lg:w-16 py-1 sm:py-2 lg:py-3">
+          <div className="text-white font-bold text-base sm:text-xl lg:text-2xl tabular-nums">{timeLeft.minutes}</div>
+          <div className="text-white text-[10px] sm:text-xs uppercase">Min</div>
         </div>
-        <div className="bg-black/30 backdrop-blur-sm rounded w-14 sm:w-16 lg:w-18 py-2 sm:py-3">
-          <div className="text-white font-bold text-xl sm:text-2xl lg:text-3xl tabular-nums">{timeLeft.seconds}</div>
-          <div className="text-white/70 text-[10px] sm:text-xs uppercase">Sec</div>
+        <div className="bg-black/30 backdrop-blur-sm rounded w-10 sm:w-14 lg:w-16 py-1 sm:py-2 lg:py-3">
+          <div className="text-white font-bold text-base sm:text-xl lg:text-2xl tabular-nums">{timeLeft.seconds}</div>
+          <div className="text-white text-[10px] sm:text-xs uppercase">Sec</div>
         </div>
       </div>
     </div>
@@ -198,25 +198,26 @@ export default function SuperBowlLXContent() {
         {/* Tab Navigation */}
         <div className="bg-white border-b border-gray-200">
           <div className="container mx-auto px-4 xl:px-8">
-            <nav className="flex space-x-4 sm:space-x-8 overflow-x-auto scrollbar-hide">
+            <nav className="flex space-x-1 sm:space-x-4 lg:space-x-8 overflow-x-auto scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0">
               {[
-                { id: 'overview', label: 'Overview' },
-                { id: 'rosters', label: 'Rosters & Depth Charts' },
-                { id: 'injuries', label: 'Injury Report' },
-                { id: 'stats', label: 'Stats Comparison' },
-                { id: 'head-to-head', label: 'Head-to-Head' },
-                { id: 'history', label: 'Super Bowl History' },
+                { id: 'overview', label: 'Overview', mobileLabel: 'Overview' },
+                { id: 'rosters', label: 'Rosters & Depth Charts', mobileLabel: 'Rosters' },
+                { id: 'injuries', label: 'Injury Report', mobileLabel: 'Injuries' },
+                { id: 'stats', label: 'Stats Comparison', mobileLabel: 'Stats' },
+                { id: 'head-to-head', label: 'Head-to-Head', mobileLabel: 'H2H' },
+                { id: 'history', label: 'Super Bowl History', mobileLabel: 'History' },
               ].map((tab) => (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id as MainTab)}
-                  className={`py-4 px-2 sm:px-3 border-b-2 font-medium text-sm whitespace-nowrap transition-colors cursor-pointer ${
+                  className={`py-3 sm:py-4 px-2 sm:px-3 border-b-2 font-medium text-xs sm:text-sm whitespace-nowrap transition-colors cursor-pointer min-h-[44px] ${
                     activeTab === tab.id
                       ? 'border-[#0050A0] text-[#0050A0]'
                       : 'border-transparent text-gray-600 hover:text-gray-700 hover:border-gray-300'
                   }`}
                 >
-                  {tab.label}
+                  <span className="sm:hidden">{tab.mobileLabel}</span>
+                  <span className="hidden sm:inline">{tab.label}</span>
                 </button>
               ))}
             </nav>
@@ -239,39 +240,39 @@ export default function SuperBowlLXContent() {
             <>
 
               {/* Hero Section with Gradient */}
-              <div className="bg-gradient-to-r from-[#C60C30] via-[#002244] via-50% to-[#69BE28] rounded-xl p-6 mb-6 shadow-lg">
+              <div className="bg-gradient-to-r from-[#C60C30] via-[#002244] via-50% to-[#69BE28] rounded-xl p-4 sm:p-6 mb-4 sm:mb-6 shadow-lg">
                 {/* Team Logos and Super Bowl Logo */}
-                <div className="flex items-center justify-center gap-4 sm:gap-8 lg:gap-12">
+                <div className="flex items-center justify-between sm:justify-center gap-2 sm:gap-8 lg:gap-12">
                   {/* Patriots Side */}
-                  <div className="flex flex-col items-center">
+                  <div className="flex flex-col items-center flex-shrink-0">
                     <img
                       src="/nfl-hq/new-england-patriots.png"
                       alt="New England Patriots"
-                      className="w-28 h-28 sm:w-36 sm:h-36 lg:w-44 lg:h-44 object-contain drop-shadow-lg"
+                      className="w-20 h-20 sm:w-36 sm:h-36 lg:w-44 lg:h-44 object-contain drop-shadow-lg"
                     />
                     {/* Record Badge */}
-                    <div className="mt-2 bg-white/20 backdrop-blur-sm rounded-full px-4 py-1">
-                      <span className="text-white font-bold text-lg sm:text-xl">14-3</span>
-                      <span className="text-white/80 text-sm ml-2">#2 AFC</span>
+                    <div className="mt-1 sm:mt-2 bg-white/20 backdrop-blur-sm rounded-full px-2 sm:px-4 py-0.5 sm:py-1">
+                      <span className="text-white font-bold text-sm sm:text-xl">14-3</span>
+                      <span className="text-white text-xs sm:text-sm ml-1 sm:ml-2">#2 AFC</span>
                     </div>
                   </div>
 
                   {/* Countdown Timer Center */}
-                  <div className="flex flex-col items-center justify-center">
+                  <div className="flex flex-col items-center justify-center flex-shrink min-w-0">
                     <CountdownTimer targetDate="2026-02-08T18:30:00-05:00" />
                   </div>
 
                   {/* Seahawks Side */}
-                  <div className="flex flex-col items-center">
+                  <div className="flex flex-col items-center flex-shrink-0">
                     <img
                       src="/nfl-hq/seattle-seahawks-sb.png"
                       alt="Seattle Seahawks"
-                      className="w-28 h-28 sm:w-36 sm:h-36 lg:w-44 lg:h-44 object-contain drop-shadow-lg"
+                      className="w-20 h-20 sm:w-36 sm:h-36 lg:w-44 lg:h-44 object-contain drop-shadow-lg"
                     />
                     {/* Record Badge */}
-                    <div className="mt-2 bg-white/20 backdrop-blur-sm rounded-full px-4 py-1">
-                      <span className="text-white font-bold text-lg sm:text-xl">14-3</span>
-                      <span className="text-white/80 text-sm ml-2">#1 NFC</span>
+                    <div className="mt-1 sm:mt-2 bg-white/20 backdrop-blur-sm rounded-full px-2 sm:px-4 py-0.5 sm:py-1">
+                      <span className="text-white font-bold text-sm sm:text-xl">14-3</span>
+                      <span className="text-white text-xs sm:text-sm ml-1 sm:ml-2">#1 NFC</span>
                     </div>
                   </div>
                 </div>
@@ -326,47 +327,51 @@ export default function SuperBowlLXContent() {
 
             {/* Stats Table - Center with Team Color Accents */}
             <div className="flex-1 w-full rounded-lg overflow-hidden border border-gray-200">
-                {/* Header Row */}
-                <div className="flex">
-                  <div className="flex-1 p-3 text-center font-bold text-white bg-[#002244] border-b-4 border-[#C60C30]">Patriots</div>
-                  <div className="flex-1 p-3 text-center font-semibold text-white bg-[#0050A0] max-w-[180px] lg:max-w-[250px] min-[1600px]:max-w-[300px]">Category</div>
-                  <div className="flex-1 p-3 text-center font-bold text-white bg-[#002244] border-b-4 border-[#69BE28]">Seahawks</div>
+              <div className="overflow-x-auto">
+                <div className="min-w-[320px]">
+                  {/* Header Row */}
+                  <div className="flex">
+                    <div className="flex-1 p-2 sm:p-3 text-center font-bold text-white bg-[#002244] border-b-4 border-[#C60C30] text-sm sm:text-base">Patriots</div>
+                    <div className="w-[100px] sm:w-[140px] lg:w-[180px] xl:w-[250px] p-2 sm:p-3 text-center font-semibold text-white bg-[#0050A0] text-xs sm:text-sm lg:text-base">Category</div>
+                    <div className="flex-1 p-2 sm:p-3 text-center font-bold text-white bg-[#002244] border-b-4 border-[#69BE28] text-sm sm:text-base">Seahawks</div>
+                  </div>
+                  <div className="flex">
+                    <div className="flex-1 p-2 sm:p-3 text-center text-[#002244] font-semibold bg-[#002244]/5 text-xs sm:text-sm lg:text-base">44.2%</div>
+                    <div className="w-[100px] sm:w-[140px] lg:w-[180px] xl:w-[250px] p-2 sm:p-3 text-center font-semibold text-white bg-[#0050A0] text-[10px] sm:text-xs lg:text-sm">Projected Win Rate</div>
+                    <div className="flex-1 p-2 sm:p-3 text-center text-[#002244] font-semibold bg-[#69BE28]/10 text-xs sm:text-sm lg:text-base">55.8%</div>
+                  </div>
+                  <div className="flex">
+                    <div className="flex-1 p-2 sm:p-3 text-center text-[#002244] bg-white text-xs sm:text-sm lg:text-base">7th</div>
+                    <div className="w-[100px] sm:w-[140px] lg:w-[180px] xl:w-[250px] p-2 sm:p-3 text-center font-semibold text-white bg-[#0050A0] text-[10px] sm:text-xs lg:text-sm">Power Ranking</div>
+                    <div className="flex-1 p-2 sm:p-3 text-center text-[#002244] bg-white text-xs sm:text-sm lg:text-base">1st</div>
+                  </div>
+                  <div className="flex">
+                    <div className="flex-1 p-2 sm:p-3 text-center text-[#002244] bg-[#002244]/5 text-xs sm:text-sm lg:text-base">2nd (86.6 B)</div>
+                    <div className="w-[100px] sm:w-[140px] lg:w-[180px] xl:w-[250px] p-2 sm:p-3 text-center font-semibold text-white bg-[#0050A0] text-[10px] sm:text-xs lg:text-sm">Offense</div>
+                    <div className="flex-1 p-2 sm:p-3 text-center text-[#002244] bg-[#69BE28]/10 text-xs sm:text-sm lg:text-base">9th (79.8 C+)</div>
+                  </div>
+                  <div className="flex">
+                    <div className="flex-1 p-2 sm:p-3 text-center text-[#002244] bg-white text-xs sm:text-sm lg:text-base">Maye 2nd (91.1 A-)</div>
+                    <div className="w-[100px] sm:w-[140px] lg:w-[180px] xl:w-[250px] p-2 sm:p-3 text-center font-semibold text-white bg-[#0050A0] text-[10px] sm:text-xs lg:text-sm">Quarterback</div>
+                    <div className="flex-1 p-2 sm:p-3 text-center text-[#002244] bg-white text-xs sm:text-sm lg:text-base">Darnold 13th (78.7 C+)</div>
+                  </div>
+                  <div className="flex">
+                    <div className="flex-1 p-2 sm:p-3 text-center text-[#002244] bg-[#002244]/5 text-xs sm:text-sm lg:text-base">12th (74.5 C)</div>
+                    <div className="w-[100px] sm:w-[140px] lg:w-[180px] xl:w-[250px] p-2 sm:p-3 text-center font-semibold text-white bg-[#0050A0] text-[10px] sm:text-xs lg:text-sm">O-Line</div>
+                    <div className="flex-1 p-2 sm:p-3 text-center text-[#002244] bg-[#69BE28]/10 text-xs sm:text-sm lg:text-base">17th (72.0 C)</div>
+                  </div>
+                  <div className="flex">
+                    <div className="flex-1 p-2 sm:p-3 text-center text-[#002244] bg-white text-xs sm:text-sm lg:text-base">12th (78.2 C+)</div>
+                    <div className="w-[100px] sm:w-[140px] lg:w-[180px] xl:w-[250px] p-2 sm:p-3 text-center font-semibold text-white bg-[#0050A0] text-[10px] sm:text-xs lg:text-sm">Defense</div>
+                    <div className="flex-1 p-2 sm:p-3 text-center text-[#002244] bg-white text-xs sm:text-sm lg:text-base">3rd (88.4 B+)</div>
+                  </div>
+                  <div className="flex">
+                    <div className="flex-1 p-2 sm:p-3 text-center text-[#002244] bg-[#002244]/5 text-xs sm:text-sm lg:text-base">20th (73.9 C-)</div>
+                    <div className="w-[100px] sm:w-[140px] lg:w-[180px] xl:w-[250px] p-2 sm:p-3 text-center font-semibold text-white bg-[#0050A0] text-[10px] sm:text-xs lg:text-sm">Special Teams</div>
+                    <div className="flex-1 p-2 sm:p-3 text-center text-[#002244] bg-[#69BE28]/10 text-xs sm:text-sm lg:text-base">2nd (90.9 A-)</div>
+                  </div>
                 </div>
-                <div className="flex">
-                  <div className="flex-1 p-3 text-center text-[#002244] font-semibold bg-[#002244]/5">44.2%</div>
-                  <div className="flex-1 p-3 text-center font-semibold text-white bg-[#0050A0] max-w-[180px] lg:max-w-[250px] min-[1600px]:max-w-[300px]">PFSN Projected Win Rate</div>
-                  <div className="flex-1 p-3 text-center text-[#002244] font-semibold bg-[#69BE28]/10">55.8%</div>
-                </div>
-                <div className="flex">
-                  <div className="flex-1 p-3 text-center text-[#002244] bg-white">7th</div>
-                  <div className="flex-1 p-3 text-center font-semibold text-white bg-[#0050A0] max-w-[180px] lg:max-w-[250px] min-[1600px]:max-w-[300px]">Power Ranking</div>
-                  <div className="flex-1 p-3 text-center text-[#002244] bg-white">1st</div>
-                </div>
-                <div className="flex">
-                  <div className="flex-1 p-3 text-center text-[#002244] bg-[#002244]/5">2nd (86.6 B)</div>
-                  <div className="flex-1 p-3 text-center font-semibold text-white bg-[#0050A0] max-w-[180px] lg:max-w-[250px] min-[1600px]:max-w-[300px]">Offense</div>
-                  <div className="flex-1 p-3 text-center text-[#002244] bg-[#69BE28]/10">9th (79.8 C+)</div>
-                </div>
-                <div className="flex">
-                  <div className="flex-1 p-3 text-center text-[#002244] bg-white">Maye 2nd (91.1 A-)</div>
-                  <div className="flex-1 p-3 text-center font-semibold text-white bg-[#0050A0] max-w-[180px] lg:max-w-[250px] min-[1600px]:max-w-[300px]">Quarterback</div>
-                  <div className="flex-1 p-3 text-center text-[#002244] bg-white">Darnold 13th (78.7 C+)</div>
-                </div>
-                <div className="flex">
-                  <div className="flex-1 p-3 text-center text-[#002244] bg-[#002244]/5">12th (74.5 C)</div>
-                  <div className="flex-1 p-3 text-center font-semibold text-white bg-[#0050A0] max-w-[180px] lg:max-w-[250px] min-[1600px]:max-w-[300px]">Offensive Line</div>
-                  <div className="flex-1 p-3 text-center text-[#002244] bg-[#69BE28]/10">17th (72.0 C)</div>
-                </div>
-                <div className="flex">
-                  <div className="flex-1 p-3 text-center text-[#002244] bg-white">12th (78.2 C+)</div>
-                  <div className="flex-1 p-3 text-center font-semibold text-white bg-[#0050A0] max-w-[180px] lg:max-w-[250px] min-[1600px]:max-w-[300px]">Defense</div>
-                  <div className="flex-1 p-3 text-center text-[#002244] bg-white">3rd (88.4 B+)</div>
-                </div>
-                <div className="flex">
-                  <div className="flex-1 p-3 text-center text-[#002244] bg-[#002244]/5">20th (73.9 C-)</div>
-                  <div className="flex-1 p-3 text-center font-semibold text-white bg-[#0050A0] max-w-[180px] lg:max-w-[250px] min-[1600px]:max-w-[300px]">Special Teams</div>
-                  <div className="flex-1 p-3 text-center text-[#002244] bg-[#69BE28]/10">2nd (90.9 A-)</div>
-                </div>
+              </div>
             </div>
 
             {/* Game Information Box - Right (hidden below 1400px) */}
@@ -512,12 +517,12 @@ export default function SuperBowlLXContent() {
                       <div className="text-center">
                         <span className="bg-white text-green-800 w-14 py-1 rounded font-bold text-sm block text-center mx-auto">S</span>
                         <span className="text-white text-xs mt-1 block">{activeMatchup === 'seahawks-offense' ? 'Hawkins' : 'Bryant'}</span>
-                        <span className="text-white/80 text-xs block">{activeMatchup === 'seahawks-offense' ? '76.4 C' : '84.0 B'}</span>
+                        <span className="text-white text-xs block">{activeMatchup === 'seahawks-offense' ? '76.4 C' : '84.0 B'}</span>
                       </div>
                       <div className="text-center">
                         <span className="bg-white text-green-800 w-14 py-1 rounded font-bold text-sm block text-center mx-auto">S</span>
                         <span className="text-white text-xs mt-1 block">{activeMatchup === 'seahawks-offense' ? 'Woodson' : 'Love'}</span>
-                        <span className="text-white/80 text-xs block">{activeMatchup === 'seahawks-offense' ? '69.7 D+' : '90.7 A-'}</span>
+                        <span className="text-white text-xs block">{activeMatchup === 'seahawks-offense' ? '69.7 D+' : '90.7 A-'}</span>
                       </div>
                     </div>
 
@@ -526,27 +531,27 @@ export default function SuperBowlLXContent() {
                       <div className="text-center">
                         <span className="bg-white text-green-800 w-14 py-1 rounded font-bold text-sm block text-center mx-auto">CB</span>
                         <span className="text-white text-xs mt-1 block">{activeMatchup === 'seahawks-offense' ? 'Gonzalez' : 'Woolen'}</span>
-                        <span className="text-white/80 text-xs block">{activeMatchup === 'seahawks-offense' ? '85.7 B' : '81.7 B-'}</span>
+                        <span className="text-white text-xs block">{activeMatchup === 'seahawks-offense' ? '85.7 B' : '81.7 B-'}</span>
                       </div>
                       <div className="text-center">
                         <span className="bg-white text-green-800 w-14 py-1 rounded font-bold text-sm block text-center mx-auto">LB</span>
                         <span className="text-white text-xs mt-1 block">{activeMatchup === 'seahawks-offense' ? 'Spillane' : 'Jones'}</span>
-                        <span className="text-white/80 text-xs block">{activeMatchup === 'seahawks-offense' ? '85.3 B' : '89.9 B+'}</span>
+                        <span className="text-white text-xs block">{activeMatchup === 'seahawks-offense' ? '85.3 B' : '89.9 B+'}</span>
                       </div>
                       <div className="text-center">
                         <span className="bg-white text-green-800 w-14 py-1 rounded font-bold text-sm block text-center mx-auto">LB</span>
                         <span className="text-white text-xs mt-1 block">{activeMatchup === 'seahawks-offense' ? 'Gibbens' : 'Thomas'}</span>
-                        <span className="text-white/80 text-xs block">{activeMatchup === 'seahawks-offense' ? '70.4 C-' : '77.9 C+'}</span>
+                        <span className="text-white text-xs block">{activeMatchup === 'seahawks-offense' ? '70.4 C-' : '77.9 C+'}</span>
                       </div>
                       <div className="text-center">
                         <span className="bg-white text-green-800 w-14 py-1 rounded font-bold text-sm block text-center mx-auto">{activeMatchup === 'seahawks-offense' ? 'LB' : 'S'}</span>
                         <span className="text-white text-xs mt-1 block">{activeMatchup === 'seahawks-offense' ? 'Elliss' : 'Emmanwori'}</span>
-                        <span className="text-white/80 text-xs block">{activeMatchup === 'seahawks-offense' ? '62.7 D-' : '80.2 B-'}</span>
+                        <span className="text-white text-xs block">{activeMatchup === 'seahawks-offense' ? '62.7 D-' : '80.2 B-'}</span>
                       </div>
                       <div className="text-center">
                         <span className="bg-white text-green-800 w-14 py-1 rounded font-bold text-sm block text-center mx-auto">CB</span>
                         <span className="text-white text-xs mt-1 block">{activeMatchup === 'seahawks-offense' ? 'Davis III' : 'Witherspoon'}</span>
-                        <span className="text-white/80 text-xs block">{activeMatchup === 'seahawks-offense' ? '78.8 C+' : '76.2 C'}</span>
+                        <span className="text-white text-xs block">{activeMatchup === 'seahawks-offense' ? '78.8 C+' : '76.2 C'}</span>
                       </div>
                     </div>
 
@@ -555,22 +560,22 @@ export default function SuperBowlLXContent() {
                       <div className="text-center">
                         <span className="bg-white text-green-800 w-14 py-1 rounded font-bold text-sm block text-center mx-auto">EDGE</span>
                         <span className="text-white text-xs mt-1 block">{activeMatchup === 'seahawks-offense' ? 'Landry III' : 'Nwosu'}</span>
-                        <span className="text-white/80 text-xs block">{activeMatchup === 'seahawks-offense' ? '76.3 C' : '74.0 C'}</span>
+                        <span className="text-white text-xs block">{activeMatchup === 'seahawks-offense' ? '76.3 C' : '74.0 C'}</span>
                       </div>
                       <div className="text-center">
                         <span className="bg-white text-green-800 w-14 py-1 rounded font-bold text-sm block text-center mx-auto">DT</span>
                         <span className="text-white text-xs mt-1 block">{activeMatchup === 'seahawks-offense' ? 'Williams' : 'Williams'}</span>
-                        <span className="text-white/80 text-xs block">{activeMatchup === 'seahawks-offense' ? '87.9 B+' : '84.2 B'}</span>
+                        <span className="text-white text-xs block">{activeMatchup === 'seahawks-offense' ? '87.9 B+' : '84.2 B'}</span>
                       </div>
                       <div className="text-center">
                         <span className="bg-white text-green-800 w-14 py-1 rounded font-bold text-sm block text-center mx-auto">DT</span>
                         <span className="text-white text-xs mt-1 block">{activeMatchup === 'seahawks-offense' ? 'Barmore' : 'Murphy II'}</span>
-                        <span className="text-white/80 text-xs block">{activeMatchup === 'seahawks-offense' ? '78.6 C+' : '81.2 B-'}</span>
+                        <span className="text-white text-xs block">{activeMatchup === 'seahawks-offense' ? '78.6 C+' : '81.2 B-'}</span>
                       </div>
                       <div className="text-center">
                         <span className="bg-white text-green-800 w-14 py-1 rounded font-bold text-sm block text-center mx-auto">EDGE</span>
                         <span className="text-white text-xs mt-1 block">{activeMatchup === 'seahawks-offense' ? 'Chaisson' : 'Lawrence'}</span>
-                        <span className="text-white/80 text-xs block">{activeMatchup === 'seahawks-offense' ? '76.2 C' : '81.5 B-'}</span>
+                        <span className="text-white text-xs block">{activeMatchup === 'seahawks-offense' ? '76.2 C' : '81.5 B-'}</span>
                       </div>
                     </div>
                   </div>
@@ -586,27 +591,27 @@ export default function SuperBowlLXContent() {
                       <div className="text-center">
                         <span className="bg-white text-green-800 w-14 py-1 rounded font-bold text-sm block text-center mx-auto">LT</span>
                         <span className="text-white text-xs mt-1 block">{activeMatchup === 'patriots-offense' ? 'Campbell' : 'Cross'}</span>
-                        <span className="text-white/80 text-xs block">{activeMatchup === 'patriots-offense' ? '75.1 C' : '79.1 C+'}</span>
+                        <span className="text-white text-xs block">{activeMatchup === 'patriots-offense' ? '75.1 C' : '79.1 C+'}</span>
                       </div>
                       <div className="text-center">
                         <span className="bg-white text-green-800 w-14 py-1 rounded font-bold text-sm block text-center mx-auto">LG</span>
                         <span className="text-white text-xs mt-1 block">{activeMatchup === 'patriots-offense' ? 'Wilson' : 'Zabel'}</span>
-                        <span className="text-white/80 text-xs block">{activeMatchup === 'patriots-offense' ? '69.5 D+' : '77.1 C+'}</span>
+                        <span className="text-white text-xs block">{activeMatchup === 'patriots-offense' ? '69.5 D+' : '77.1 C+'}</span>
                       </div>
                       <div className="text-center">
                         <span className="bg-white text-green-800 w-14 py-1 rounded font-bold text-sm block text-center mx-auto">C</span>
                         <span className="text-white text-xs mt-1 block">{activeMatchup === 'patriots-offense' ? 'Bradbury' : 'Sundell'}</span>
-                        <span className="text-white/80 text-xs block">{activeMatchup === 'patriots-offense' ? '80.4 B-' : '78.6 C+'}</span>
+                        <span className="text-white text-xs block">{activeMatchup === 'patriots-offense' ? '80.4 B-' : '78.6 C+'}</span>
                       </div>
                       <div className="text-center">
                         <span className="bg-white text-green-800 w-14 py-1 rounded font-bold text-sm block text-center mx-auto">RG</span>
                         <span className="text-white text-xs mt-1 block">{activeMatchup === 'patriots-offense' ? 'Onwenu' : 'Bradford'}</span>
-                        <span className="text-white/80 text-xs block">{activeMatchup === 'patriots-offense' ? '87.0 B+' : '74.7 C'}</span>
+                        <span className="text-white text-xs block">{activeMatchup === 'patriots-offense' ? '87.0 B+' : '74.7 C'}</span>
                       </div>
                       <div className="text-center">
                         <span className="bg-white text-green-800 w-14 py-1 rounded font-bold text-sm block text-center mx-auto">RT</span>
                         <span className="text-white text-xs mt-1 block">{activeMatchup === 'patriots-offense' ? 'Moses' : 'Lucas'}</span>
-                        <span className="text-white/80 text-xs block">{activeMatchup === 'patriots-offense' ? '85.2 B' : '82.5 B-'}</span>
+                        <span className="text-white text-xs block">{activeMatchup === 'patriots-offense' ? '85.2 B' : '82.5 B-'}</span>
                       </div>
                     </div>
 
@@ -615,27 +620,27 @@ export default function SuperBowlLXContent() {
                       <div className="text-center w-20">
                         <span className="bg-white text-green-800 w-14 py-1 rounded font-bold text-sm block text-center mx-auto">WR</span>
                         <span className="text-white text-xs mt-1 block">{activeMatchup === 'patriots-offense' ? 'Diggs' : 'Smith-Njigba'}</span>
-                        <span className="text-white/80 text-xs block">{activeMatchup === 'patriots-offense' ? '87.0 B+' : '94.4 A'}</span>
+                        <span className="text-white text-xs block">{activeMatchup === 'patriots-offense' ? '87.0 B+' : '94.4 A'}</span>
                       </div>
                       <div className="text-center w-20">
                         <span className="bg-white text-green-800 w-14 py-1 rounded font-bold text-sm block text-center mx-auto">TE</span>
                         <span className="text-white text-xs mt-1 block">{activeMatchup === 'patriots-offense' ? 'Henry' : 'Barner'}</span>
-                        <span className="text-white/80 text-xs block">{activeMatchup === 'patriots-offense' ? '82.0 B-' : '77.4 C+'}</span>
+                        <span className="text-white text-xs block">{activeMatchup === 'patriots-offense' ? '82.0 B-' : '77.4 C+'}</span>
                       </div>
                       <div className="text-center w-20">
                         <span className="bg-white text-green-800 w-14 py-1 rounded font-bold text-sm block text-center mx-auto">QB</span>
                         <span className="text-white text-xs mt-1 block">{activeMatchup === 'patriots-offense' ? 'Maye' : 'Darnold'}</span>
-                        <span className="text-white/80 text-xs block">{activeMatchup === 'patriots-offense' ? '91.1 A-' : '78.7 C+'}</span>
+                        <span className="text-white text-xs block">{activeMatchup === 'patriots-offense' ? '91.1 A-' : '78.7 C+'}</span>
                       </div>
                       <div className="text-center w-20">
                         <span className="bg-white text-green-800 w-14 py-1 rounded font-bold text-sm block text-center mx-auto">WR</span>
                         <span className="text-white text-xs mt-1 block">{activeMatchup === 'patriots-offense' ? 'Douglas' : 'Shaheed'}</span>
-                        <span className="text-white/80 text-xs block">{activeMatchup === 'patriots-offense' ? '79.3 C+' : '71.9 C-'}</span>
+                        <span className="text-white text-xs block">{activeMatchup === 'patriots-offense' ? '79.3 C+' : '71.9 C-'}</span>
                       </div>
                       <div className="text-center w-20">
                         <span className="bg-white text-green-800 w-14 py-1 rounded font-bold text-sm block text-center mx-auto">WR</span>
                         <span className="text-white text-xs mt-1 block">{activeMatchup === 'patriots-offense' ? 'Boutte' : 'Kupp'}</span>
-                        <span className="text-white/80 text-xs block">{activeMatchup === 'patriots-offense' ? '81.5 B-' : '73.2 C'}</span>
+                        <span className="text-white text-xs block">{activeMatchup === 'patriots-offense' ? '81.5 B-' : '73.2 C'}</span>
                       </div>
                     </div>
 
@@ -644,7 +649,7 @@ export default function SuperBowlLXContent() {
                       <div className="text-center">
                         <span className="bg-white text-green-800 w-14 py-1 rounded font-bold text-sm block text-center mx-auto">RB</span>
                         <span className="text-white text-xs mt-1 block">{activeMatchup === 'patriots-offense' ? 'Stevenson' : 'Walker III'}</span>
-                        <span className="text-white/80 text-xs block">{activeMatchup === 'patriots-offense' ? '54.4 F' : '65.8 D'}</span>
+                        <span className="text-white text-xs block">{activeMatchup === 'patriots-offense' ? '54.4 F' : '65.8 D'}</span>
                       </div>
                     </div>
                   </div>

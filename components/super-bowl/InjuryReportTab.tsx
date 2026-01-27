@@ -277,17 +277,17 @@ export default function InjuryReportTab() {
     if (injuries.length === 0) return null;
 
     return (
-      <div className="bg-white rounded-xl p-4 shadow-sm border-l-4" style={{ borderLeftColor: teamColor }}>
-        <h4 className={`text-sm font-semibold mb-3 pb-2 border-b border-gray-200 ${colorClass}`}>
+      <div className="bg-white rounded-xl p-3 sm:p-4 shadow-sm border-l-4" style={{ borderLeftColor: teamColor }}>
+        <h4 className={`text-xs sm:text-sm font-semibold mb-2 sm:mb-3 pb-2 border-b border-gray-200 ${colorClass}`}>
           {title} ({injuries.length})
         </h4>
-        <div className="space-y-2">
+        <div className="space-y-1.5 sm:space-y-2">
           {injuries.map((playerInjury, idx) => (
-            <div key={idx} className={`flex items-center gap-3 p-2 rounded-lg ${bgClass}`}>
+            <div key={idx} className={`flex items-center gap-2 sm:gap-3 p-1.5 sm:p-2 rounded-lg ${bgClass}`}>
               <img
                 src={`https://staticd.profootballnetwork.com/skm/assets/player-images/nfl/${playerInjury.player.slug}.png?w=48`}
                 alt={playerInjury.player.name}
-                className="w-8 h-8 rounded-full object-cover flex-shrink-0"
+                className="w-7 h-7 sm:w-8 sm:h-8 rounded-full object-cover flex-shrink-0"
                 onError={(e) => {
                   const target = e.target as HTMLImageElement;
                   target.style.display = 'none';
@@ -296,30 +296,30 @@ export default function InjuryReportTab() {
                 }}
               />
               <div
-                className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0"
+                className="w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center flex-shrink-0"
                 style={{
                   backgroundColor: `${teamColor}20`,
                   display: 'none'
                 }}
               >
-                <span className="font-semibold text-[10px]" style={{ color: teamColor }}>
+                <span className="font-semibold text-xs" style={{ color: teamColor }}>
                   {playerInjury.player.name.split(' ').map(n => n[0]).join('')}
                 </span>
               </div>
               <div className="flex-1 min-w-0">
                 <Link
                   href={`/players/${playerInjury.player.slug}`}
-                  className="font-medium text-sm hover:underline cursor-pointer"
+                  className="font-medium text-xs sm:text-sm hover:underline cursor-pointer"
                   style={{ color: teamColor }}
                 >
                   {playerInjury.player.name}
                 </Link>
-                <div className="text-xs text-gray-500">
+                <div className="text-xs text-gray-600">
                   #{playerInjury.player.jerseyNumber} • {playerInjury.player.position}
                 </div>
               </div>
               <div className="text-right">
-                <div className="text-sm font-medium text-gray-700">
+                <div className="text-xs sm:text-sm font-medium text-gray-700">
                   {simplifyInjury(playerInjury.injury.injury)}
                 </div>
               </div>
@@ -338,26 +338,26 @@ export default function InjuryReportTab() {
   ) => {
     return (
       <div className="bg-white rounded-lg shadow-md overflow-hidden">
-        <div className="px-6 py-4 border-b" style={{ backgroundColor: teamColor }}>
-          <div className="flex items-center gap-3">
-            <img src={teamLogo} alt={teamName} className="w-10 h-10 object-contain" />
-            <h3 className="text-lg font-bold text-white">{teamName} Injury Report</h3>
+        <div className="px-4 sm:px-6 py-3 sm:py-4 border-b" style={{ backgroundColor: teamColor }}>
+          <div className="flex items-center gap-2 sm:gap-3">
+            <img src={teamLogo} alt={teamName} className="w-8 h-8 sm:w-10 sm:h-10 object-contain" />
+            <h3 className="text-base sm:text-lg font-bold text-white">{teamName} Injury Report</h3>
           </div>
         </div>
 
-        <div className="p-4">
+        <div className="p-3 sm:p-4">
           {!teamData || teamData.totalMatched === 0 ? (
-            <div className="text-center py-8 text-gray-600">
-              <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-green-100 flex items-center justify-center">
-                <svg className="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="text-center py-6 sm:py-8 text-gray-600">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 mx-auto mb-3 rounded-full bg-green-100 flex items-center justify-center">
+                <svg className="w-5 h-5 sm:w-6 sm:h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
               </div>
               <p className="font-medium text-green-600">No injuries reported</p>
-              <p className="text-sm text-gray-500">All players are healthy and available</p>
+              <p className="text-xs sm:text-sm text-gray-600">All players are healthy and available</p>
             </div>
           ) : (
-            <div className="space-y-4">
+            <div className="space-y-3 sm:space-y-4">
               {renderInjuryCategory('Questionable', teamData.injuries.questionable, 'text-yellow-700', 'bg-yellow-50', teamColor)}
               {renderInjuryCategory('Doubtful', teamData.injuries.doubtful, 'text-orange-700', 'bg-orange-50', teamColor)}
               {renderInjuryCategory('Out', teamData.injuries.out, 'text-red-700', 'bg-red-50', teamColor)}
@@ -408,31 +408,31 @@ export default function InjuryReportTab() {
   const currentTeamColor = '#002244';
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Team Selector & Legend */}
-      <div className="flex flex-col sm:flex-row justify-center gap-4">
+      <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4">
         {/* Team Selector */}
         <div className="flex justify-center gap-2">
           <button
             onClick={() => setSelectedTeam('patriots')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors cursor-pointer ${
+            className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 rounded-lg text-sm sm:text-base font-medium transition-colors cursor-pointer min-h-[44px] ${
               selectedTeam === 'patriots'
                 ? 'bg-[#002244] text-white'
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
             }`}
           >
-            <img src="/nfl-hq/new-england-patriots.png" alt="Patriots" className="w-6 h-6" />
+            <img src="/nfl-hq/new-england-patriots.png" alt="Patriots" className="w-5 h-5 sm:w-6 sm:h-6" />
             Patriots
           </button>
           <button
             onClick={() => setSelectedTeam('seahawks')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors cursor-pointer ${
+            className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 rounded-lg text-sm sm:text-base font-medium transition-colors cursor-pointer min-h-[44px] ${
               selectedTeam === 'seahawks'
                 ? 'bg-[#002244] text-white'
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
             }`}
           >
-            <img src="/nfl-hq/seattle-seahawks-sb.png" alt="Seahawks" className="w-6 h-6" />
+            <img src="/nfl-hq/seattle-seahawks-sb.png" alt="Seahawks" className="w-5 h-5 sm:w-6 sm:h-6" />
             Seahawks
           </button>
         </div>
