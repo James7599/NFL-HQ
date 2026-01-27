@@ -1,6 +1,9 @@
 import type { Metadata } from 'next';
 import SuperBowlLXContent from '@/components/SuperBowlLXContent';
 
+// Force dynamic rendering due to useSearchParams in SuperBowlLXContent
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: 'Super Bowl LX: Patriots vs Seahawks | February 8, 2026',
   description: 'Complete Super Bowl LX coverage featuring the New England Patriots vs Seattle Seahawks. Game info, rosters, depth charts, injury reports, stats comparison, head-to-head matchups, and Super Bowl history. February 8, 2026 at Levi\'s Stadium in Santa Clara, CA.',
