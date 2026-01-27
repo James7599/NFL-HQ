@@ -25,17 +25,20 @@ interface PlayerStat {
   // Passing
   yards?: number;
   touchdowns?: number;
-  interceptions?: number;
+  interceptions?: number | { interceptions?: number };
   completions?: number;
   attempts?: number;
   qb_rating?: string;
   // Rushing
+  yards_per_rush_attempt?: number;
   // Receiving
   receptions?: number;
   targets?: number;
   // Defense
   tackles?: {
     total_tackles?: number;
+    solo_tackles?: number;
+    tackle_assists?: number;
   };
   sacks?: {
     sacks?: number;
@@ -269,7 +272,8 @@ export default function StatsComparisonTab() {
         case 'receiving':
           return `${player.receptions || 0} REC, ${player.targets || 0} TGT, ${player.touchdowns || 0} TD`;
         case 'defense':
-          return `${player.tackles?.solo_tackles || 0} SOLO, ${player.tackles?.tackle_assists || 0} AST, ${player.sacks?.sacks || 0} SCK, ${player.interceptions?.interceptions || 0} INT`;
+          const defInt = typeof player.interceptions === 'object' ? player.interceptions?.interceptions : 0;
+          return `${player.tackles?.solo_tackles || 0} SOLO, ${player.tackles?.tackle_assists || 0} AST, ${player.sacks?.sacks || 0} SCK, ${defInt || 0} INT`;
         default:
           return '-';
       }
