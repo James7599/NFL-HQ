@@ -184,7 +184,7 @@ export default function PlayerProfileClient({ playerSlug }: Props) {
   const [player, setPlayer] = useState<PlayerProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [imageError, setImageError] = useState(false);
+  const [imageSource, setImageSource] = useState<'pfn' | 'local' | 'fallback'>('pfn');
   const [articles, setArticles] = useState<Article[]>([]);
   const [visibleArticles, setVisibleArticles] = useState(3);
   const [selectedSeason, setSelectedSeason] = useState<number | 'career'>('career');
@@ -289,6 +289,7 @@ export default function PlayerProfileClient({ playerSlug }: Props) {
 
         if (playerResult.status === 'fulfilled' && playerResult.value) {
           setPlayer(playerResult.value);
+          setImageSource('pfn'); // Reset image cascade for new player
         }
 
         if (articlesResult.status === 'fulfilled') {
@@ -522,12 +523,18 @@ export default function PlayerProfileClient({ playerSlug }: Props) {
             <div className="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-8 mb-4 lg:mb-0">
               {/* Headshot */}
               <div className="w-28 h-28 lg:w-32 lg:h-32 rounded-full flex items-center justify-center shadow-lg overflow-hidden flex-shrink-0 bg-white">
-                {!imageError ? (
+                {imageSource !== 'fallback' ? (
                   <img
-                    src={player.headshotUrl}
+                    src={imageSource === 'pfn' ? player.headshotUrl : `/player-images/${player.slug}.png`}
                     alt={player.name}
                     className="w-full h-full object-cover object-[center_15%] scale-[1.4]"
-                    onError={() => setImageError(true)}
+                    onError={() => {
+                      if (imageSource === 'pfn') {
+                        setImageSource('local');
+                      } else {
+                        setImageSource('fallback');
+                      }
+                    }}
                   />
                 ) : (
                   <div

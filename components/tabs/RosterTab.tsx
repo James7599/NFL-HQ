@@ -9,6 +9,7 @@ import { getContrastTextColor } from '@/utils/colorHelpers';
 import LayoutStabilizer from '@/components/LayoutStabilizer';
 import { SWRErrorFallback } from '@/components/ErrorBoundary';
 import { fetcher, defaultSWROptions } from '@/lib/fetcher';
+import PlayerImage from '@/components/PlayerImage';
 
 interface Player {
   name: string;
@@ -274,31 +275,12 @@ export default function RosterTab({ team }: RosterTabProps) {
                             <td className="px-3 py-3 font-semibold text-gray-900 whitespace-nowrap text-center">{player.jerseyNumber}</td>
                             <td className="px-3 py-3">
                               <div className="flex items-center space-x-3 min-w-[200px]">
-                                <img
-                                  src={`https://staticd.profootballnetwork.com/skm/assets/player-images/nfl/${player.slug}.png?w=80`}
-                                  alt={player.name}
-                                  className="w-8 h-8 rounded-full object-cover flex-shrink-0"
-                                  onError={(e) => {
-                                    const target = e.target as HTMLImageElement;
-                                    target.style.display = 'none';
-                                    const fallback = target.nextElementSibling as HTMLElement;
-                                    if (fallback) fallback.style.display = 'flex';
-                                  }}
+                                <PlayerImage
+                                  slug={player.slug}
+                                  name={player.name}
+                                  size="sm"
+                                  teamColor={team.primaryColor}
                                 />
-                                <div
-                                  className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0"
-                                  style={{
-                                    backgroundColor: `${team.primaryColor}20`,
-                                    display: 'none'
-                                  }}
-                                >
-                                  <span
-                                    className="font-semibold text-xs"
-                                    style={{ color: team.primaryColor }}
-                                  >
-                                    {player.name.split(' ').map(n => n[0]).join('')}
-                                  </span>
-                                </div>
                                 <div className="flex flex-col">
                                   <Link
                                     href={`/players/${player.slug}`}
